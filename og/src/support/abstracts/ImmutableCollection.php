@@ -47,7 +47,7 @@ abstract class ImmutableCollection extends BaseCollection
      */
     function set($key, $value)
     {
-        if ( ! $this->authorized($key))
+        if ( ! $this->mutable($key))
             return NULL;
 
         # attempt writing the value to the key
@@ -115,7 +115,7 @@ abstract class ImmutableCollection extends BaseCollection
      *
      * @return null
      */
-    protected function authorized($key)
+    protected function mutable($key)
     {
         # extract all of the key segments (if any)
         $path = explode('.', $key);
