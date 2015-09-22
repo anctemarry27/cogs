@@ -414,7 +414,7 @@ final class EventsDispatcher implements IlluminateEventsDispatcherInterface
 
         foreach ($this->wildcards as $wildcard => $listeners)
         {
-            if (Str::pattern_matches($wildcard, $eventName))
+            if (Str::pattern_matches($eventName, $wildcard))
                 $wildcards = array_merge($wildcards, $listeners);
         }
 

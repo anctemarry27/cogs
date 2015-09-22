@@ -69,18 +69,18 @@ class Str
      *
      * @author   bohwaz <http://php.net/manual/en/function.json-encode.php#102091>
      *
-     * @param     $to_convert
+     * @param     $data
      * @param int $indent
      *
      * @return string
      */
-    static function encode_readable_json($to_convert, $indent = 0)
+    static function encode_readable_json($data, $indent = 0)
     {
         $_escape = function ($str) { return preg_replace("!([\b\t\n\r\f\"\\'])!", "\\\\\\1", $str); };
 
         $out = '';
 
-        foreach ($to_convert as $key => $value)
+        foreach ($data as $key => $value)
         {
             $out .= str_repeat("\t", $indent + 1);
             $out .= "\"" . $_escape((string) $key) . "\": ";
@@ -349,12 +349,13 @@ class Str
     /**
      * Determine if a given string matches a given pattern.
      *
-     * @param  string $pattern
      * @param  string $value
+     *
+     * @param  string $pattern
      *
      * @return bool
      */
-    static function pattern_matches($pattern, $value)
+    static function pattern_matches($value, $pattern)
     {
         if ($pattern == $value)
             return TRUE;
