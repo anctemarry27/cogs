@@ -9,10 +9,6 @@
 use ArrayAccess;
 use Og\Support\Str;
 
-/**
- * Change Log:
- *      20150824 - Removed extend of Collection and encapsulated it.
- */
 final class Paths extends Config implements ArrayAccess
 {
     /**
