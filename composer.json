@@ -18,7 +18,6 @@
         "illuminate/container"           : "^5.2@dev",
         "nikic/fast-route"               : "dev-master",
         "psr/http-message"               : "^1.0@dev",
-        "relay/relay"                    : "1.x-dev",
         "symfony/yaml"                   : "^2.0@dev",
         "vlucas/phpdotenv"               : "^2.1@dev",
         "zendframework/zend-diactoros"   : "^1.0@dev",
