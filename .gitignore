@@ -1,0 +1,8 @@
+/vendor/
+/local/
+/composer.lock
+/.idea/
+/public/Bukku_eBook_Book_Template.zip
+/public/capture_pixelhint.zip
+/build/
+/public/assets/bower/

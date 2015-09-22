@@ -1,0 +1,25 @@
+{
+    "name"        : "cogs",
+    "version"     : "0.1.0",
+    "authors"     : [
+        "Odd Greg <odd.greg@gmail.com>"
+    ],
+    "description" : "A Personal PHP Framework",
+    "main"        : "www/index.php",
+    "moduleType"  : [
+        "globals"
+    ],
+    "keywords"    : [
+        "framework",
+        "php"
+    ],
+    "license"     : "MIT",
+    "private"     : true,
+    "ignore"      : [
+        "**/.*",
+        "tests"
+    ],
+    "dependencies": {
+        "jquery": "~2.1.4"
+    }
+}
