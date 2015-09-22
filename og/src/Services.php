@@ -147,32 +147,5 @@ class Services implements ServiceManagerInterface
     {
         return $this->providers;
     }
-
-    /**
-     * TODO - I don't think this works.
-     *
-     * Determines if a definition is registered via a service provider.
-     *
-     * @param  string $alias
-     *
-     * @return boolean
-     */
-    function isInServiceProvider($alias)
-    {
-        foreach ($this->providers as $provider => $state)
-        {
-            if ( ! $provider instanceof ServiceProvider)
-                /** @var ServiceProvider $provider */
-                $provider = new $provider($this->di);
-
-            if ($provider->provides($alias))
-            {
-                $provider->register();
-
-                return TRUE;
-            }
-        }
-
-        return FALSE;
-    }
+    
 }

@@ -120,7 +120,6 @@ class Inflector
                 is_string($arg) && (
                     $this->di->has($arg) ||
                     $this->di->isSingleton($arg) ||
-                    $this->di->getServices()->isInServiceProvider($arg) ||
                     class_exists($arg)
                 )
             ) ? $this->di->get($arg) : $arg;
