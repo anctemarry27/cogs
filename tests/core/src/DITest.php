@@ -34,7 +34,7 @@
         public function test00_construct()
         {
             $this->assertTrue((new Forge)->getInstance() === (new Forge)->getInstance());
-            $this->sm->loadConfiguration()->registerServiceProviders();
+            $this->sm->registerServiceProviders();
             
         }
 

@@ -41,9 +41,6 @@ class Services implements ServiceManagerInterface
     {
         $this->loadConfiguration();
 
-        if ( ! is_string($provider))
-            throw new \InvalidArgumentException('ServiceProvider requires a class name.');
-
         $this->providers[$provider] = ['registered' => FALSE, 'booted' => FALSE];;
 
         if ($as_dependency)
@@ -86,7 +83,7 @@ class Services implements ServiceManagerInterface
     }
 
     /**
-     * @return $this
+     * Load the Services configuration if not already loaded.
      */
     function loadConfiguration()
     {
@@ -99,8 +96,6 @@ class Services implements ServiceManagerInterface
                 $this->add($provider);
 
         }
-
-        return $this;
     }
 
     /**
@@ -147,5 +142,5 @@ class Services implements ServiceManagerInterface
     {
         return $this->providers;
     }
-    
+
 }
