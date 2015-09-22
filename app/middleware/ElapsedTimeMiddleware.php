@@ -6,14 +6,11 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use Og\Support\Traits\WithEvents;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 class ElapsedTimeMiddleware extends Middleware
 {
-    use WithEvents;
-
     /**
      * @param Request       $request
      * @param Response      $response
