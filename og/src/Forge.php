@@ -29,9 +29,6 @@ use Og\Support\Interfaces\ContainerInterface;
  */
 final class Forge implements ContainerInterface, ArrayAccess
 {
-    /** @var array */
-    private $callables = [];
-
     /** @var IlluminateContainer $container */
     private static $container;
 
@@ -77,16 +74,23 @@ final class Forge implements ContainerInterface, ArrayAccess
             throw new \BadMethodCallException("The `$method` method is not associated with DI or its service container.");
     }
 
-    function __clone() { throw new ForgeNotPermittedError('Cloning the DI is not permitted.'); }
-
-    function __set_state() { throw new ForgeNotPermittedError('Setting the DI state is not permitted.'); }
-
-    function __sleep() { throw new ForgeNotPermittedError('Putting the DI to sleep is not permitted.'); }
-
-    function __wakeup() { throw new ForgeNotPermittedError('Waking the DI is not permitted.'); }
+    /*@formatter:off */
+    /*
+     *  Discourage cloning and serialization.
+     */
+    function __clone()      { throw new ForgeNotPermittedError('Cloning the DI is not permitted.'); }
+    function __set_state()  { throw new ForgeNotPermittedError('Setting the DI state is not permitted.'); }
+    function __sleep()      { throw new ForgeNotPermittedError('Putting the DI to sleep is not permitted.'); }
+    function __wakeup()     { throw new ForgeNotPermittedError('Waking the DI is not permitted.'); }
+    /*@formatter:on */
 
     /**
-     * Add a (non-shared) definition to the container
+     * Add (bind) a abstract to an implementation with optional alias.
+     *
+     * Notes:
+     *      $abstract is either [alias,abstract] or abstract.
+     *      $concrete objects that are not invokable are added as instances.
+     *      All other cases result in binding.
      *
      * @param string|array $abstract
      * @param mixed        $concrete
@@ -115,6 +119,8 @@ final class Forge implements ContainerInterface, ArrayAccess
     /**
      * Call the given Closure / class@method and inject its dependencies.
      *
+     * Note: Uses the illuminate/container `call` method.
+     *
      * @param  callable|string $callback
      * @param  array           $args
      *
@@ -126,7 +132,9 @@ final class Forge implements ContainerInterface, ArrayAccess
     }
 
     /**
-     * Get an item from the container
+     * Get a concrete item from the container.
+     *
+     * Note: Uses illuminate/container `bound()` and `make()` methods.
      *
      * @param  string $abstract
      * @param  array  $args
@@ -142,6 +150,10 @@ final class Forge implements ContainerInterface, ArrayAccess
     }
 
     /**
+     * Report whether an abstract exists in the container.
+     *
+     * Note: Uses illuminate/container `bound()` method.
+     *
      * @param string $abstract
      *
      * @return bool
@@ -152,7 +164,9 @@ final class Forge implements ContainerInterface, ArrayAccess
     }
 
     /**
-     * Add a predefined instance.
+     * Associate an abstract with a concrete object.
+     *
+     * Note: Uses illuminate/container `instance()` method.
      *
      * @param $abstract
      * @param $instance
@@ -160,31 +174,6 @@ final class Forge implements ContainerInterface, ArrayAccess
     function instance($abstract, $instance)
     {
         static::$container->instance($abstract, $instance);
-    }
-
-    /**
-     * Add a callable definition to the container
-     *
-     * @param  string   $alias
-     * @param  callable $concrete
-     *
-     */
-    function invokable($alias, callable $concrete = NULL)
-    {
-        $this->add($alias, $concrete);
-        $this->callables[] = $alias;
-    }
-
-    /**
-     * Check if an item is registered with the container
-     *
-     * @param  string $alias
-     *
-     * @return boolean
-     */
-    function isRegistered($alias)
-    {
-        $this->has($alias);
     }
 
     /**
@@ -225,6 +214,8 @@ final class Forge implements ContainerInterface, ArrayAccess
     }
 
     /**
+     * Shared is a pseudonym for `bind()` as singleton.
+     *
      * @param      $abstract
      * @param null $concrete
      *
@@ -247,12 +238,15 @@ final class Forge implements ContainerInterface, ArrayAccess
      */
     function singleton($abstract, $concrete = NULL)
     {
-        $pseudonym = NULL;
+        $alias = NULL;
 
         if (is_array($abstract))
         {
-            $pseudonym = $abstract[0];
+            $alias = $abstract[0];
             $abstract = $abstract[1];
+            
+            # register the alias because the alias is provided
+            static::$container->alias($abstract, $alias);
         }
 
         if ( ! is_callable($concrete))
@@ -261,12 +255,13 @@ final class Forge implements ContainerInterface, ArrayAccess
         if (is_callable($concrete))
             static::$container->singleton($abstract, $concrete);
 
-        if ($pseudonym)
-            static::$container->alias($abstract, $pseudonym);
     }
 
     /**
-     * Adds a service provider to the container
+     * Adds a service provider to the container.
+     * 
+     * Optionally, the service provider may be registered for use as a dependency.
+     * Normally, this is not necessary.
      *
      * @param string $provider
      * @param bool   $as_dependency
@@ -279,7 +274,7 @@ final class Forge implements ContainerInterface, ArrayAccess
     }
 
     /**
-     * Call a closure with dependency injection.
+     * Call a Closure with dependency injection.
      *
      * @param  \Closure $callback
      * @param  array    $parameters
@@ -289,18 +284,6 @@ final class Forge implements ContainerInterface, ArrayAccess
     function callWithDependencies(Closure $callback, array $parameters = [])
     {
         return static::$container->wrap($callback, $parameters);
-    }
-
-    /**
-     * Determines if a definition is registered via a service provider.
-     *
-     * @param  string $alias
-     *
-     * @return boolean
-     */
-    function isInServiceProvider($alias)
-    {
-        return static::$services->isInServiceProvider($alias);
     }
 
     /**
@@ -345,7 +328,7 @@ final class Forge implements ContainerInterface, ArrayAccess
     }
 
     /**
-     * call a method of the encapsulated container.
+     * call a method of the encapsulated illuminate/container.
      *
      * @param string $method
      * @param array  $parameters
@@ -354,8 +337,6 @@ final class Forge implements ContainerInterface, ArrayAccess
      */
     function service($method, $parameters = NULL)
     {
-        //$method = lcfirst(Str::snakecase_to_camelcase($method));
-
         # override encapsulated getInstance() method
         if ($method === 'getInstance')
             return static::$container;

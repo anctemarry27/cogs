@@ -65,23 +65,6 @@ interface ContainerInterface
     function instance($abstract, $concrete);
 
     /**
-     * Add a callable definition to the container
-     *
-     * @param  string   $alias
-     * @param  callable $concrete
-     */
-    public function invokable($alias, callable $concrete = NULL);
-
-    /**
-     * Check if an item is registered with the container
-     *
-     * @param  string $alias
-     *
-     * @return boolean
-     */
-    public function isRegistered($alias);
-
-    /**
      * Check if an item is being managed as a singleton
      *
      * @param  string $alias

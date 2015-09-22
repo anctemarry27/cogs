@@ -118,9 +118,9 @@ class Inflector
         {
             $resolved[] = (
                 is_string($arg) && (
-                    $this->di->isRegistered($arg) ||
+                    $this->di->has($arg) ||
                     $this->di->isSingleton($arg) ||
-                    $this->di->isInServiceProvider($arg) ||
+                    $this->di->getServices()->isInServiceProvider($arg) ||
                     class_exists($arg)
                 )
             ) ? $this->di->get($arg) : $arg;
