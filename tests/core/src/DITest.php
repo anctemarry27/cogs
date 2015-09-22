@@ -22,7 +22,7 @@
         /** @var Forge */
         private $di;
 
-        /** @var \Og\Support\Interfaces\ServiceManagerInterface */
+        /** @var \Og\Interfaces\ServiceManagerInterface */
         private $sm;
 
         public function setUp()

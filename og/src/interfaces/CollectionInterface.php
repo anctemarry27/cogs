@@ -1,4 +1,4 @@
-<?php namespace Og\Support\Interfaces;
+<?php namespace Og\Interfaces;
 
 /**
  * @package Og

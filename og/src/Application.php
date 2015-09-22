@@ -7,9 +7,9 @@
 
 use Og\App\Middleware\HelloWorldMiddleware;
 use Og\App\Middleware\Middleware;
-use Og\Support\Interfaces\ContainerInterface;
-use Og\Support\Interfaces\MiddlewareInterface;
-use Og\Support\Providers\CoreServiceProvider;
+use Og\Interfaces\ContainerInterface;
+use Og\Interfaces\MiddlewareInterface;
+use Og\Providers\CoreServiceProvider;
 use Zend\Diactoros\Server;
 use Zend\Stratigility\Http\Request;
 use Zend\Stratigility\Http\Response;

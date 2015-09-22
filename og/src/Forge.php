@@ -10,7 +10,7 @@ use ArrayAccess;
 use Closure;
 use Illuminate\Container\Container as IlluminateContainer;
 use Og\Exceptions\ForgeNotPermittedError;
-use Og\Support\Interfaces\ContainerInterface;
+use Og\Interfaces\ContainerInterface;
 
 /**
  * The Forge class is a Service Container and Dependency Injector/Inverter.

@@ -1,4 +1,4 @@
-<?php namespace Og\Support\Traits;
+<?php namespace Og\Traits;
 
 /**
  * @package Og
@@ -6,7 +6,7 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use Og\Support\Interfaces\ContainerInterface;
+use Og\Interfaces\ContainerInterface;
 
 trait WithContainer
 {

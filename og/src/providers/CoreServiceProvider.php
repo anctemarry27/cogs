@@ -1,4 +1,4 @@
-<?php namespace Og\Support\Providers;
+<?php namespace Og\Providers;
 
 /**
  * @package Radium Codex
@@ -12,7 +12,7 @@ use Og\Context;
 use Og\EventsDispatcher;
 use Og\Forge;
 use Og\Paths;
-use Og\Support\Abstracts\ServiceProvider;
+use Og\Abstracts\ServiceProvider;
 
 class CoreServiceProvider extends ServiceProvider
 {

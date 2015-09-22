@@ -6,7 +6,7 @@
  */
 
 use Og\Router;
-use Og\Support\Abstracts\ServiceProvider;
+use Og\Abstracts\ServiceProvider;
 
 class RoutingServiceProvider extends ServiceProvider
 {

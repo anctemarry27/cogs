@@ -7,7 +7,7 @@
 
     namespace Og;
 
-    use Og\Support\Abstracts\ServiceProvider;
+    use Og\Abstracts\ServiceProvider;
 
     class TestServiceProvider extends ServiceProvider
     {

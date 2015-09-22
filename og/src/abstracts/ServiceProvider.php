@@ -1,4 +1,4 @@
-<?php namespace Og\Support\Abstracts;
+<?php namespace Og\Abstracts;
 
 /**
  * @package Og

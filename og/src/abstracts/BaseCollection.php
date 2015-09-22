@@ -1,4 +1,4 @@
-<?php namespace Og\Support\Abstracts;
+<?php namespace Og\Abstracts;
 
 /**
  * @package Og
@@ -7,7 +7,7 @@
  */
 
 use Og\Support\Arr;
-use Og\Support\Interfaces\CollectionInterface;
+use Og\Interfaces\CollectionInterface;
 
 abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Countable, \IteratorAggregate
 {

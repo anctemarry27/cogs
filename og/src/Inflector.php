@@ -6,8 +6,8 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use Og\Support\Interfaces\ContainerInterface;
-use Og\Support\Traits\WithContainer;
+use Og\Interfaces\ContainerInterface;
+use Og\Traits\WithContainer;
 
 class Inflector
 {

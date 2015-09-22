@@ -8,7 +8,7 @@
 
 use ArrayAccess;
 use Og\Exceptions\ContextMutabilityError;
-use Og\Support\Interfaces\ContainerInterface;
+use Og\Interfaces\ContainerInterface;
 
 /**
  * Context is a dynamic data object wrangler.

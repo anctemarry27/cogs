@@ -6,9 +6,9 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use Og\Support\Abstracts\ServiceProvider;
-use Og\Support\Interfaces\ContainerInterface;
-use Og\Support\Interfaces\ServiceManagerInterface;
+use Og\Abstracts\ServiceProvider;
+use Og\Interfaces\ContainerInterface;
+use Og\Interfaces\ServiceManagerInterface;
 
 class Services implements ServiceManagerInterface
 {

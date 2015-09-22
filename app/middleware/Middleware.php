@@ -7,7 +7,7 @@
  */
 
 use Og\Application;
-use Og\Support\Interfaces\MiddlewareInterface;
+use Og\Interfaces\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Zend\Stratigility\MiddlewarePipe;

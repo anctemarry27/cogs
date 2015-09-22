@@ -6,7 +6,7 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use Og\Support\Abstracts\ImmutableCollection;
+use Og\Abstracts\ImmutableCollection;
 use Og\Support\Arr;
 use Symfony\Component\Yaml\Yaml;
 
