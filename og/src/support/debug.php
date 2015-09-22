@@ -54,7 +54,7 @@ function idump($var = NULL, $depth = 12)
     \Tracy\Debugger::$maxDepth = $depth;
 
     $args = func_get_args();
-    Arr::forget($args, func_num_args() - 1);
+    Arr::forget(func_num_args() - 1, $args);
 
     $dumper = defined('PHPUNIT_TESTS__') ? 'Tracy\Dumper::toTerminal' : 'Tracy\Debugger::dump';
 

@@ -37,14 +37,14 @@ class Arr
      *
      * @return array
      */
-    static function copy_object_to_array($obj)
+    static function copy_object($obj)
     {
         $result = [];
         foreach (get_object_vars($obj) as $key => $value)
         {
             if (is_object($value))
             {
-                $value = self::copy_object_to_array($value);
+                $value = self::copy_object($value);
             }
             $result[$key] = $value;
         }
@@ -139,12 +139,12 @@ class Arr
     /**
      * Get all of the given array except for a specified array of items.
      *
-     * @param  array        $array
      * @param  array|string $keys
+     * @param  array        $array
      *
      * @return array
      */
-    static function except($array, $keys)
+    static function except($keys, $array)
     {
         return array_diff_key($array, array_flip((array) $keys));
     }
@@ -162,7 +162,7 @@ class Arr
     {
         # extract dot-notation array structures and build the query array
         $params = [];
-        Arr::from_notation($params, $key, $value);
+        Arr::from_notation($key, $params, $value);
 
         # first element is the base key
         $key = array_keys($params)[0];
@@ -218,12 +218,11 @@ class Arr
     /**
      * Remove one or many array items from a given array using "dot" notation.
      *
-     * @param  array        $array
      * @param  array|string $keys
      *
-     * @return void
+     * @param  array        $array
      */
-    static function forget(&$array, $keys)
+    static function forget($keys, &$array)
     {
         $original = &$array;
 
@@ -249,13 +248,13 @@ class Arr
     }
 
     /**
-     * @param array  $target_array
      * @param string $dot_path
+     * @param array  $target_array
      * @param string $target_value
      *
      * @return string
      */
-    static function from_notation(Array &$target_array, $dot_path, $target_value = NULL)
+    static function from_notation($dot_path, &$target_array, $target_value = NULL)
     {
         $result_array = &$target_array;
 
@@ -341,14 +340,14 @@ class Arr
     /**
      * Insert an key/value pair before a given key in an array.
      *
-     * @param array  $originalArray - the working array
      * @param array  $originalKey   - the key into the working array
+     * @param array  $originalArray - the working array
      * @param string $insertKey     - the key to insert before the working array[key] element
      * @param string $insertValue   - the value of the array[key] to insert
      *
      * @return array
      */
-    static function insert_before_key($originalArray, $originalKey, $insertKey, $insertValue)
+    static function insert_before_key($originalKey, $originalArray, $insertKey, $insertValue)
     {
         $newArray = [];
         $inserted = FALSE;
@@ -453,13 +452,13 @@ class Arr
      *
      * @origin <http://php.net/manual/en/function.explode.php#111307>
      *
-     * @param array  $delimiters
      * @param string $string
+     * @param array  $delimiters
      * @param bool   $trim
      *
      * @return array
      */
-    static function multi_explode(array $delimiters, $string, $trim = FALSE)
+    static function multi_explode($string, array $delimiters, $trim = FALSE)
     {
         $ready = str_replace($delimiters, $delimiters[0], $string);
         $launch = explode($delimiters[0], $ready);
@@ -513,17 +512,17 @@ class Arr
     /**
      * Get a value from the array, and remove it.
      *
-     * @param  array  $array
      * @param  string $key
+     * @param  array  $array
      * @param  mixed  $default
      *
      * @return mixed
      */
-    static function pull(&$array, $key, $default = NULL)
+    static function pull($key, &$array, $default = NULL)
     {
         $value = self::get($key, $array, $default);
 
-        self::forget($array, $key);
+        self::forget($key, $array);
 
         return $value;
     }

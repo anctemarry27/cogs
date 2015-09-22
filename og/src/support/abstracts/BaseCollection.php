@@ -45,7 +45,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Cou
      */
     function delete($dot_path, $target_value)
     {
-        Arr::forget($target_value, $this->get($dot_path));
+        Arr::forget($this->get($dot_path), $target_value);
     }
 
     /**
@@ -270,7 +270,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Cou
      */
     function offsetUnset($offset)
     {
-        Arr::forget($this->container, $offset);
+        Arr::forget($offset, $this->container);
     }
 
     /**

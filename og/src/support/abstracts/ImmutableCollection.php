@@ -106,7 +106,7 @@ abstract class ImmutableCollection extends BaseCollection
         }
         else
         {
-            Arr::forget($this->read_only, $key);
+            Arr::forget($key, $this->read_only);
         }
     }
 
@@ -143,7 +143,7 @@ abstract class ImmutableCollection extends BaseCollection
             if (array_key_exists($key, $this->read_only))
                 $candidates[] = $key;
 
-        Arr::forget($vars, $candidates);
+        Arr::forget($candidates, $vars);
 
         return $vars;
     }

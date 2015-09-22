@@ -90,7 +90,7 @@
                     'value_obj'   => $obj2,
                 ]
             );
-            $obj_array = Arr::copy_object_to_array($obj1);
+            $obj_array = Arr::copy_object($obj1);
             $this->assertEquals(
                 [
                     'apples'      => 10,
@@ -111,7 +111,7 @@
                     'Beef'   => ['hamburger', 'roast beef'],
                     'Candy'  => ['start' => 'now', 'end' => 'then'],
                 ],
-                Arr::insert_before_key($this->source_array, 'Candy', "Beef", ['hamburger', 'roast beef'])
+                Arr::insert_before_key('Candy', $this->source_array, "Beef", ['hamburger', 'roast beef'])
             );
 
             ### array_except($array, $keys)
@@ -121,7 +121,7 @@
                     'Apples' => 'One',
                     'Candy'  => ['start' => 'now', 'end' => 'then'],
                 ],
-                Arr::except($this->source_array, ['Beets'])
+                Arr::except(['Beets'], $this->source_array)
             );
 
             ### array_pull(&$array, $key, $default = NULL)
@@ -129,7 +129,7 @@
             # copy the test array
             $worker = $this->source_array;
             # pull 'Beets' -> 2
-            $this->assertEquals(2, Arr::pull($worker, "Beets", $default = FALSE));
+            $this->assertEquals(2, Arr::pull("Beets", $worker, $default = FALSE));
             # verify removed from original
             $this->assertArrayNotHasKey("Beets", $worker);
 
@@ -158,7 +158,7 @@
 
             # forget by single key
             $worker = $this->source_array;
-            Arr::forget($worker, 'Candy');
+            Arr::forget('Candy', $worker);
             $this->assertEquals(
                 [
                     'Apples' => 'One',
@@ -168,7 +168,7 @@
             );
             # forget by dot path 
             $worker = $this->source_array;
-            Arr::forget($worker, 'Candy.start');
+            Arr::forget('Candy.start', $worker);
             $this->assertEquals(
                 [
                     'Apples' => 'One',
@@ -258,7 +258,7 @@
                     1 => ' Break it up',
                     2 => ' Ok?',
                 ],
-                Arr::multi_explode(['.', '!'], 'This is a string. Break it up! Ok?')
+                Arr::multi_explode('This is a string. Break it up! Ok?', ['.', '!'])
             );
 
             ### convert_list_to_indexed_array($array)
