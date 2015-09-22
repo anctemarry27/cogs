@@ -11,12 +11,15 @@ use Og\Forge;
 use Zend\Diactoros\Response\RedirectResponse;
 use Zend\Stratigility\Http\Request;
 
-/**
- * @return Application
- */
-function app()
+if ( ! function_exists('app'))
 {
-    return Forge::make('app');
+    /**
+     * @return Application
+     */
+    function app()
+    {
+        return Forge::make('app');
+    }
 }
 
 if ( ! function_exists('config'))
@@ -77,28 +80,6 @@ if ( ! function_exists('path'))
         return empty($key) ? $paths : $paths->get($key);
     }
 }
-
-//if ( ! function_exists('routing'))
-//{
-//    /**
-//     * @return Routing
-//     */
-//    function routing()
-//    {
-//        return di('routing');
-//    }
-//}
-//
-//if ( ! function_exists('router'))
-//{
-//    /**
-//     * @return Router
-//     */
-//    function router()
-//    {
-//        return di('router');
-//    }
-//}
 
 /**
  *  Returns value of a variable. Resolves closures.
@@ -183,20 +164,3 @@ if ( ! function_exists('url'))
         throw new \LogicException("url($route_name) is not implemented.");
     }
 }
-
-//if ( ! function_exists('route'))
-//{
-//    /**
-//     * @param      $route_name
-//     * @param      $method
-//     * @param      $route
-//     * @param      $handler
-//     * @param null $strategy
-//     *
-//     * @return \League\Route\RouteCollection
-//     */
-//    function route($route_name, $method, $route, $handler, $strategy = NULL)
-//    {
-//        return di('router')->namedMap($route_name, $method, $route, $handler, $strategy);
-//    }
-//}
