@@ -14,8 +14,7 @@ if ( ! defined('ROOT'))
     define('VENDOR', ROOT . 'vendor/');
     define('APP_CONFIG', ROOT . 'config/');
     define('CORE', ROOT . 'og/src/');
-    define('CORE_CONFIG', CORE . 'config/');
-    define('SUPPORT', CORE . 'support/');
+    define('SUPPORT', CORE . 'Support/');
 }
 
 return [
@@ -24,7 +23,6 @@ return [
     'vendor' => VENDOR,
     'config' => APP_CONFIG,
     'core' => CORE,
-    'core_config' => CORE_CONFIG,
     'http' => APP . "http/",
     'support' => SUPPORT,
 ];
