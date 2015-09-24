@@ -118,7 +118,7 @@ class BladeView extends Context implements ArrayAccess, Renderable
 
         # for merging
         $work = [VIEWS . $path];
-
+        
         # get a copy of the app settings for merging
         $settings = config()->copy(); # $this->app->settings;
 
@@ -136,7 +136,7 @@ class BladeView extends Context implements ArrayAccess, Renderable
         }
 
         # commit the change to the container
-        config()->importArray($settings);
+        config()->replace($settings);
     }
 
     /**
@@ -193,6 +193,7 @@ class BladeView extends Context implements ArrayAccess, Renderable
      */
     public function has_view($template)
     {
+        expose(['has_view' => $template]);
         // TODO: Implement has_view() method.
     }
 
@@ -206,6 +207,8 @@ class BladeView extends Context implements ArrayAccess, Renderable
      */
     public function render($view, $data = [])
     {
+        //ddump($this->view_finder);  
+        
         # resolve the view path based on the template paths and the view name
         $view = $this->view_finder->find($view);
 
@@ -233,6 +236,8 @@ class BladeView extends Context implements ArrayAccess, Renderable
             $resolver->register('php', function () { return new PhpEngine; });
             $resolver->register('blade', function ()
             {
+                ddump([$this->di['blade.compiler'], $this->di['files']]);
+                
                 /** @noinspection PhpParamsInspection */
                 return new CompilerEngine($this->di['blade.compiler'], $this->di['files']);
             });

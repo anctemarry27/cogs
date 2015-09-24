@@ -5,10 +5,9 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-    return [
-        'blade' => [
-            'template_paths' => [
-                VIEWS . 'templates/'
-            ]
-        ],
-    ];
+return [
+    'blade' => [
+        'cache' => ROOT . 'local/cache',
+        'template_paths' => [VIEWS . 'templates/',],
+    ],
+];
