@@ -29,7 +29,7 @@ class BladeView extends Context implements ArrayAccess, Renderable
     protected $blade_engine;
 
     /** @var ContainerInterface */
-    protected $di;
+    protected $forge;
 
     /** @var  EventsDispatcher */
     protected $dispatcher;
@@ -55,16 +55,23 @@ class BladeView extends Context implements ArrayAccess, Renderable
     /**
      * Construct a compatible environment for Blade template rendering
      *
-     * @param Forge      $app
+     * @param Forge      $container
      * @param array|NULL $settings
      */
-    public function __construct($app, array $settings = NULL)
+    public function __construct($container, array $settings = NULL)
     {
-        $this->di = $app;
-        parent::__construct($this->di);
+        $this->forge = $container;
+        parent::__construct($this->forge);
 
         # get the global context
-        $this->context = $this; #$this->di->get('context');
+        $this->context = clone $this->forge->get('context');
+        //$this->context['clone.test'] = "This is a clone test";
+
+        //ddump([
+        //    'local clone' => $this->context,
+        //    'global' => $this->container->get('context'),
+        //    'test clone' => clone $this->container->get('context')
+        //]);
 
         # settings are located in the `config/views.php` configuration file.
         $this->settings = $settings ? $settings : config('views.blade');
@@ -73,10 +80,10 @@ class BladeView extends Context implements ArrayAccess, Renderable
         # Illuminate view requires an illuminate container.
         # Fortunately, we've registered a illuminate container 
         # when loading application providers.
-        $this->ioc = $this->di->service('getInstance');
+        $this->ioc = $this->forge->service('getInstance');
 
         # instantiate an illuminate event dispatcher
-        $this->dispatcher = $this->di->get('events');
+        $this->dispatcher = $this->forge->get('events');
 
         # construct the blade factory and register classes
         $this->build_blade_factory();
@@ -100,8 +107,6 @@ class BladeView extends Context implements ArrayAccess, Renderable
     {
         $this->context[$method] = count($arguments) > 0 ? $arguments[0] : TRUE;
 
-        //$this->context[$method] = count($arguments) > 0 ? $arguments[0] : TRUE;
-
         return $this;
     }
 
@@ -117,8 +122,8 @@ class BladeView extends Context implements ArrayAccess, Renderable
         $view_settings = &config('views.blade');
 
         # for merging
-        $work = [VIEWS . $path];
-        
+        $work_path = [VIEWS . $path];
+
         # get a copy of the app settings for merging
         $settings = config()->copy(); # $this->app->settings;
 
@@ -126,13 +131,13 @@ class BladeView extends Context implements ArrayAccess, Renderable
         if ($prepend)
         {
             # overwrite the modified blade template settings
-            array_push($settings['views']['blade']['template_paths'], $work[0]);
+            array_push($settings['views']['blade']['template_paths'], $work_path[0]);
         }
-        # append the path
+        # otherwise, append the path
         else
         {
             # overwrite the modified blade template settings
-            $settings['views']['blade']['template_paths'] = array_merge($view_settings['template_paths'], $work);
+            $settings['views']['blade']['template_paths'] = array_merge($view_settings['template_paths'], $work_path);
         }
 
         # commit the change to the container
@@ -207,8 +212,6 @@ class BladeView extends Context implements ArrayAccess, Renderable
      */
     public function render($view, $data = [])
     {
-        //ddump($this->view_finder);  
-        
         # resolve the view path based on the template paths and the view name
         $view = $this->view_finder->find($view);
 
@@ -229,17 +232,15 @@ class BladeView extends Context implements ArrayAccess, Renderable
      */
     public function registerEngineResolver()
     {
-        $this->di->add('view.engine.resolver', function ()
+        $this->forge->add('view.engine.resolver', function ()
         {
             $resolver = new EngineResolver;
 
             $resolver->register('php', function () { return new PhpEngine; });
             $resolver->register('blade', function ()
             {
-                ddump([$this->di['blade.compiler'], $this->di['files']]);
-                
                 /** @noinspection PhpParamsInspection */
-                return new CompilerEngine($this->di['blade.compiler'], $this->di['files']);
+                return new CompilerEngine($this->forge['blade.compiler'], $this->forge['files']);
             });
 
             return $resolver;
@@ -274,13 +275,13 @@ class BladeView extends Context implements ArrayAccess, Renderable
         $this->registerEngineResolver();
 
         #@formatter:off
-            $this->di->add('files',          function () { return new Filesystem; });
+            $this->forge->add('files',          function () { return new Filesystem; });
             //$this->di->add('events',         function () { return new Dispatcher($this->ioc); });
-            $this->di->add('view.finder',    function () { return $this->view_finder; });
-            $this->di->add('blade.compiler', function () { return $this->blade_compiler; });
-            $this->di->add('blade',          function () { return $this->blade_engine; });
+            $this->forge->add('view.finder',    function () { return $this->view_finder; });
+            $this->forge->add('blade.compiler', function () { return $this->blade_compiler; });
+            $this->forge->add('blade',          function () { return $this->blade_engine; });
             #@formatter:on
 
-        $this->di['blade.factory'] = $this->factory;
+        $this->container['blade.factory'] = $this->factory;
     }
 }

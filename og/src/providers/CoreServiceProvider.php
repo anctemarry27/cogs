@@ -6,58 +6,45 @@
  */
 
 use Illuminate\Container\Container;
+use Og\Abstracts\ServiceProvider;
 use Og\Collection;
 use Og\Config;
 use Og\Context;
 use Og\EventsDispatcher;
 use Og\Forge;
 use Og\Paths;
-use Og\Abstracts\ServiceProvider;
 
 class CoreServiceProvider extends ServiceProvider
 {
-    public function boot()
-    {
-        //$this->di->singleton(['app', Application::class], new Application($this->di));
-    }
-
     public function register()
     {
         /** @var Forge $di */
         $di = $this->container;
 
-        $di->singleton(['container', Forge::class],
-            function () use ($di)
-            {
-                return $di;
-            }
-        );
-
-        $di->singleton(['ioc', Container::class],
-            function ()
-            {
-                return Forge::getInstance()->service('getInstance');
-            }
-        );
+        # register collections and paths
+        $di->add(['collection', Collection::class]);
+        $di->add(['paths', Paths::class]);
 
         # Core Configuration
-        $di->singleton(['config', Config::class], new Config);
+        $di->instance(['config', Config::class], new Config);
         config()->importFolder(APP_CONFIG);
 
-        # register Application context
-        $di->add(['context', Context::class]);
+        # cogs principle service container 
+        $di->singleton(['container', Forge::class],
+            function () use ($di) { return $di; });
 
-        # register the Paths class
-        $di->add(['collection', Collection::class]);
+        # illuminate/container service container 
+        $di->singleton(['ioc', Container::class],
+            function () { return Forge::getInstance()->service('getInstance'); });
+
+        # register Application context
+        $di->singleton(['context', Context::class],
+            function () use ($di) { return new Context($di); });
         
+        # register cogs principle event dispatcher
         $di->singleton(['events', EventsDispatcher::class,],
-            function () use ($di)
-            {
-                return new EventsDispatcher($di);
-            }
-        );
-        
-        $di->add(['paths', Paths::class]);
+            function () use ($di) { return new EventsDispatcher($di); });
+
 
         $this->provides[] = [
             Collection::class,

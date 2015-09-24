@@ -6,8 +6,8 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use Og\Support\Arr;
 use Og\Interfaces\CollectionInterface;
+use Og\Support\Arr;
 
 abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Countable, \IteratorAggregate
 {
