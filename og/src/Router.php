@@ -10,6 +10,8 @@ use FastRoute\Dispatcher;
 use FastRoute\routeCollector;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Zend\Stratigility\Http\Request;
+use Zend\Stratigility\Http\Response;
 
 class Router
 {
@@ -31,7 +33,8 @@ class Router
                 {
                     $path = APP . "http/routes.php";
                     include $path;
-                }, [
+                },
+                [
                     'routeParser' => 'FastRoute\\RouteParser\\Std',
                     'dataGenerator' => 'FastRoute\\DataGenerator\\GroupCountBased',
                     'dispatcher' => 'FastRoute\\Dispatcher\\GroupCountBased',
@@ -47,7 +50,6 @@ class Router
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
-     *
      * @param callable               $next
      *
      * @return ResponseInterface
@@ -70,9 +72,9 @@ class Router
         foreach ($route[2] as $name => $value)
             $request = $request->withAttribute($name, $value);
 
-        $response = self::executeTarget($route[1], $this->arguments, $request, $response);
+        $response = self::executeTarget($route[1], $request, $response, $this->arguments);
 
-        return $next($request, $response);
+        return $response;
     }
 
     /**
@@ -104,15 +106,16 @@ class Router
     /**
      * Execute the target
      *
-     * @param mixed                  $target
-     * @param array                  $extraArguments
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
+     * @param mixed                          $target
+     * @param ServerRequestInterface|Request $request
+     * @param ResponseInterface|Response     $response
+     *
+     * @param array                          $extraArguments
      *
      * @return ResponseInterface
      * @throws \Exception
      */
-    protected static function executeTarget($target, $extraArguments = [], ServerRequestInterface $request, ResponseInterface $response)
+    protected static function executeTarget($target, ServerRequestInterface $request, ResponseInterface $response, $extraArguments = [])
     {
         try
         {
@@ -167,9 +170,7 @@ class Router
         {
             //is a static function
             if (function_exists($target))
-            {
                 return $target;
-            }
 
             //is a class "class_name::method"
             if (strpos($target, '::') === FALSE)
@@ -178,9 +179,7 @@ class Router
                 $method = '__invoke';
             }
             else
-            {
                 list($class, $method) = explode('::', $target, 2);
-            }
 
             if ( ! class_exists($class))
             {
@@ -193,9 +192,7 @@ class Router
         }
 
         if (is_callable($target))
-        {
             return $target;
-        }
 
         throw new \RuntimeException('The route target is not callable');
     }

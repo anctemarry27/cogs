@@ -6,6 +6,7 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
+use Og\Router;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -21,7 +22,8 @@ class RoutingMiddleware extends Middleware
      */
     public function __invoke(Request $request, Response $response, callable $next = NULL)
     {
-        $router = di('router');
+        ///** @var Router $router */
+        //$router = di('router');
         
         $response->getBody()->write("<div>I should be routing by now.</div>");
 

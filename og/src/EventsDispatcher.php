@@ -13,10 +13,11 @@
  * @originator  Taylor Otwell
  */
 
-use Illuminate\Contracts\Events\Dispatcher as IlluminateEventsDispatcherInterface;
+use Illuminate\Contracts\Events\Dispatcher as IlluminateEventsDispatcherContract;
 use Og\Support\Str;
 
-final class EventsDispatcher implements IlluminateEventsDispatcherInterface
+final class EventsDispatcher implements IlluminateEventsDispatcherContract
+
 {
     /**
      * @var Forge

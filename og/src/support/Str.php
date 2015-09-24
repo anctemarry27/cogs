@@ -371,6 +371,31 @@ class Str
     }
 
     /**
+     * Determine if a given string matches a given pattern.
+     *
+     * @param  string $pattern
+     * @param  string $value
+     *
+     * @return bool
+     */
+    public static function is($pattern, $value)
+    {
+        if ($pattern == $value)
+        {
+            return TRUE;
+        }
+
+        $pattern = preg_quote($pattern, '#');
+
+        // Asterisks are translated into zero-or-more regular expression wildcards
+        // to make it convenient to check if the strings starts with the given
+        // pattern such as "library/*", making any string check convenient.
+        $pattern = str_replace('\*', '.*', $pattern) . '\z';
+
+        return (bool) preg_match('#^' . $pattern . '#', $value);
+    }
+    
+    /**
      * @param string $class_name
      * @param string $class_suffix
      *

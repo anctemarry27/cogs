@@ -15,6 +15,7 @@ if ( ! defined('ROOT'))
     define('APP_CONFIG', ROOT . 'config/');
     define('CORE', ROOT . 'og/src/');
     define('SUPPORT', CORE . 'Support/');
+    define('VIEWS', APP . 'http/views/');
 }
 
 return [
