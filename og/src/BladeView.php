@@ -28,14 +28,14 @@ class BladeView extends Context implements ArrayAccess, Renderable
     /** @var CompilerEngine */
     protected $blade_engine;
 
-    /** @var ContainerInterface */
-    protected $forge;
-
-    /** @var  EventsDispatcher */
+    /** @var  Events */
     protected $dispatcher;
 
     /** @var  Environment */
     protected $factory;
+
+    /** @var ContainerInterface */
+    protected $forge;
 
     /** @var Container */
     protected $ioc;
@@ -60,11 +60,15 @@ class BladeView extends Context implements ArrayAccess, Renderable
      */
     public function __construct($container, array $settings = NULL)
     {
-        $this->forge = $container;
-        parent::__construct($this->forge);
+        parent::__construct($container);
 
-        # get the global context
-        $this->context = clone $this->forge->get('context');
+        $this->forge = $container;
+        # settings are located in the `config/views.php` configuration file.
+        $this->settings = $settings ? $settings : config('views.blade');
+
+        # get the global context                                                        
+        //$this->context = clone $this->forge->get('context');
+        $this->collection = (new Context($this->forge, $this->forge->get('context')))->copy();
         //$this->context['clone.test'] = "This is a clone test";
 
         //ddump([
@@ -73,8 +77,6 @@ class BladeView extends Context implements ArrayAccess, Renderable
         //    'test clone' => clone $this->container->get('context')
         //]);
 
-        # settings are located in the `config/views.php` configuration file.
-        $this->settings = $settings ? $settings : config('views.blade');
         $this->template_path = $this->settings['template_paths'];
 
         # Illuminate view requires an illuminate container.
@@ -180,7 +182,7 @@ class BladeView extends Context implements ArrayAccess, Renderable
      */
     public function collectContext($merge_data = [])
     {
-        return (array) $this->context->merge($merge_data)->copy();
+        return (array) $this->merge($merge_data)->copy();
     }
 
     /**
@@ -282,6 +284,6 @@ class BladeView extends Context implements ArrayAccess, Renderable
             $this->forge->add('blade',          function () { return $this->blade_engine; });
             #@formatter:on
 
-        $this->container['blade.factory'] = $this->factory;
+        $this->collection['blade.factory'] = $this->factory;
     }
 }

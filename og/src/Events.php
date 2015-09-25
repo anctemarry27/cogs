@@ -16,7 +16,7 @@
 use Illuminate\Contracts\Events\Dispatcher as IlluminateEventsDispatcherContract;
 use Og\Support\Str;
 
-final class EventsDispatcher implements IlluminateEventsDispatcherContract
+final class Events implements IlluminateEventsDispatcherContract
 
 {
     /**
@@ -364,7 +364,7 @@ final class EventsDispatcher implements IlluminateEventsDispatcherContract
     }
 
     /**
-     * @return null|EventsDispatcher
+     * @return null|Events
      */
     static function getInstance()
     {

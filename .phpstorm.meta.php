@@ -24,14 +24,17 @@
             "context" instanceof Og\Context,
             Og/Context::class instanceof Og\Context,
             
-            "events" instanceof Og\EventsDispatcher,
-            Og\EventsDispatcher::class instanceof Og\EventsDispatcher,
+            "events" instanceof Og\Events,
+            Og\Events::class instanceof Og\Events,
             
             "ioc" instanceof Illuminate\Container\Container,
             Illuminate\Container\Container::class instanceof Illuminate\Container\Container,
             
             "paths" instanceof Og\Paths,
             Og\Paths::class instanceof Og\Paths,
+            
+            "router" instanceof Og\Router,
+            Og\Router::class instanceof Og\Router,
             
             "server" instanceof Zend\Diactoros\Server,
             Zend\Diactoros\Server::class instanceof Zend\Diactoros\Server,
@@ -61,14 +64,17 @@
             "context" instanceof Og\Context,
             Og/Context::class instanceof Og\Context,
             
-            "events" instanceof Og\EventsDispatcher,
-            Og\EventsDispatcher::class instanceof Og\EventsDispatcher,
+            "events" instanceof Og\Events,
+            Og\Events::class instanceof Og\Events,
             
             "ioc" instanceof Illuminate\Container\Container,
             Illuminate\Container\Container::class instanceof Illuminate\Container\Container,
             
             "paths" instanceof Og\Paths,
             Og\Paths::class instanceof Og\Paths,
+            
+            "router" instanceof Og\Router,
+            Og\Router::class instanceof Og\Router,
             
             "server" instanceof Zend\Diactoros\Server,
             Zend\Diactoros\Server::class instanceof Zend\Diactoros\Server,
@@ -98,14 +104,17 @@
             "context" instanceof Og\Context,
             Og/Context::class instanceof Og\Context,
             
-            "events" instanceof Og\EventsDispatcher,
-            Og\EventsDispatcher::class instanceof Og\EventsDispatcher,
+            "events" instanceof Og\Events,
+            Og\Events::class instanceof Og\Events,
             
             "ioc" instanceof Illuminate\Container\Container,
             Illuminate\Container\Container::class instanceof Illuminate\Container\Container,
             
             "paths" instanceof Og\Paths,
             Og\Paths::class instanceof Og\Paths,
+            
+            "router" instanceof Og\Router,
+            Og\Router::class instanceof Og\Router,
             
             "server" instanceof Zend\Diactoros\Server,
             Zend\Diactoros\Server::class instanceof Zend\Diactoros\Server,
@@ -135,14 +144,17 @@
             "context" instanceof Og\Context,
             Og/Context::class instanceof Og\Context,
             
-            "events" instanceof Og\EventsDispatcher,
-            Og\EventsDispatcher::class instanceof Og\EventsDispatcher,
+            "events" instanceof Og\Events,
+            Og\Events::class instanceof Og\Events,
             
             "ioc" instanceof Illuminate\Container\Container,
             Illuminate\Container\Container::class instanceof Illuminate\Container\Container,
             
             "paths" instanceof Og\Paths,
             Og\Paths::class instanceof Og\Paths,
+            
+            "router" instanceof Og\Router,
+            Og\Router::class instanceof Og\Router,
             
             "server" instanceof Zend\Diactoros\Server,
             Zend\Diactoros\Server::class instanceof Zend\Diactoros\Server,

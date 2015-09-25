@@ -16,12 +16,12 @@
      */
     class EventsTest extends \PHPUnit_Framework_TestCase
     {
-        /** @var EventsDispatcher */
+        /** @var Events */
         private $events;
 
         public function setUp()
         {
-            $this->events = Forge::make(EventsDispatcher::class);
+            $this->events = Forge::make(Events::class);
         }
 
         public function test_CollectionEvent()
@@ -74,7 +74,7 @@
             /** @var Collection $collection */
             $collection = new Collection;
 
-            /** @var EventsDispatcher $events */
+            /** @var Events $events */
             $events = $di['events'];
             $events->subscribe(Collection::class);
 

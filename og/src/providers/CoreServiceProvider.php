@@ -10,7 +10,7 @@ use Og\Abstracts\ServiceProvider;
 use Og\Collection;
 use Og\Config;
 use Og\Context;
-use Og\EventsDispatcher;
+use Og\Events;
 use Og\Forge;
 use Og\Paths;
 
@@ -25,13 +25,13 @@ class CoreServiceProvider extends ServiceProvider
         $di->add(['collection', Collection::class]);
         $di->add(['paths', Paths::class]);
 
-        # Core Configuration
-        $di->instance(['config', Config::class], new Config);
-        config()->importFolder(APP_CONFIG);
-
         # cogs principle service container 
         $di->singleton(['container', Forge::class],
             function () use ($di) { return $di; });
+
+        # Core Configuration
+        $di->instance(['config', Config::class], new Config);
+        config()->importFolder(APP_CONFIG);
 
         # illuminate/container service container 
         $di->singleton(['ioc', Container::class],
@@ -42,14 +42,14 @@ class CoreServiceProvider extends ServiceProvider
             function () use ($di) { return new Context($di); });
         
         # register cogs principle event dispatcher
-        $di->singleton(['events', EventsDispatcher::class,],
-            function () use ($di) { return new EventsDispatcher($di); });
+        $di->singleton(['events', Events::class],
+            function () use ($di) { return new Events($di); });
 
 
         $this->provides[] = [
             Collection::class,
             Context::class,
-            EventsDispatcher::class,
+            Events::class,
             Paths::class,
         ];
     }

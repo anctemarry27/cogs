@@ -6,11 +6,12 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
+use Og\Abstracts\ImmutableCollection;
 use Og\Support\Str;
 
-class Config extends Collection
+class Config extends ImmutableCollection implements \ArrayAccess, \JsonSerializable
 {
-    
+
     /**
      * @param array $import
      */

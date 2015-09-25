@@ -9,10 +9,10 @@
 use Og\Interfaces\CollectionInterface;
 use Og\Support\Arr;
 
-abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Countable, \IteratorAggregate
+abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \JsonSerializable, \IteratorAggregate
 {
     /** @var array */
-    protected $container = [];
+    protected $collection = [];
 
     /**
      * Dynamically retrieve the value of an attribute.
@@ -27,6 +27,43 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Cou
     }
 
     /**
+     * Dynamically set the value of an attribute.
+     *
+     * @param  string $key
+     * @param  mixed  $value
+     *
+     * @return void
+     */
+    function __set($key, $value)
+    {
+        $this->collection[$key] = $value;
+    }
+
+    /**
+     * Dynamically check if an attribute is set.
+     *
+     * @param  string $key
+     *
+     * @return bool
+     */
+    function __isset($key)
+    {
+        return isset($this->collection[$key]);
+    }
+
+    /**
+     * Dynamically unset an attribute.
+     *
+     * @param  string $key
+     *
+     * @return void
+     */
+    function __unset($key)
+    {
+        unset($this->collection[$key]);
+    }
+
+    /**
      * Returns TRUE is there are any stored properties.
      *
      * @return bool
@@ -35,6 +72,12 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Cou
     {
         return $this->count() > 0;
     }
+
+    /*    
+     * Get the instance as an array.
+     *
+     * @return array
+     */
 
     /**
      * Using the provided arrays.php helper, delete elements that
@@ -79,7 +122,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Cou
      */
     function get($query, $default = NULL)
     {
-        return Arr::query($query, $this->container, $default);
+        return Arr::query($query, $this->collection, $default);
     }
 
     /**
@@ -91,7 +134,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Cou
      */
     function has($key)
     {
-        return ! is_null(Arr::query($key, $this->container));
+        return ! is_null(Arr::query($key, $this->collection));
     }
 
     /**
@@ -109,7 +152,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Cou
         if ( ! Arr::is_assoc($symbols))
             $symbols = Arr::transform_array_hash($symbols);
 
-        $this->container = array_merge($this->container, $symbols);
+        $this->collection = array_merge($this->collection, $symbols);
 
         return $this;
     }
@@ -145,7 +188,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Cou
     {
         Arr::is_assoc($name)
             ? $this->merge($name)
-            : $this->container[$name] = $value;
+            : $this->collection[$name] = $value;
     }
 
     /**
@@ -178,7 +221,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Cou
     {
         $copy = [];
 
-        return array_merge_recursive($copy, $this->container);
+        return array_merge_recursive($copy, $this->collection);
     }
 
     /**
@@ -188,7 +231,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Cou
      */
     function count()
     {
-        return count($this->container, COUNT_NORMAL);
+        return count($this->collection, COUNT_NORMAL);
     }
 
     /**
@@ -200,7 +243,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Cou
      */
     function each(callable $callback)
     {
-        array_map($callback, array_keys($this->container), array_values($this->container));
+        array_map($callback, array_keys($this->collection), array_values($this->collection));
 
         return $this;
     }
@@ -210,7 +253,17 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Cou
      */
     function getIterator()
     {
-        return new \ArrayIterator($this->container);
+        return new \ArrayIterator($this->collection);
+    }
+
+    /**
+     * Convert the object into something JSON serializable.
+     *
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->collection;
     }
 
     /**
@@ -223,7 +276,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Cou
      */
     function locate($key, $default = NULL)
     {
-        return Arr::deep_query($this->container, $key, $default);
+        return Arr::deep_query($this->collection, $key, $default);
     }
 
     /**
@@ -270,7 +323,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Cou
      */
     function offsetUnset($offset)
     {
-        Arr::forget($offset, $this->container);
+        Arr::forget($offset, $this->collection);
     }
 
     /**
@@ -278,7 +331,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Cou
      */
     function replace(array $new_contents)
     {
-        $this->container = [];
+        $this->collection = [];
         foreach ($new_contents as $key => $value)
             $this->merge($new_contents);
     }
@@ -290,7 +343,27 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Cou
      */
     function size()
     {
-        return sizeof($this->container);
+        return sizeof($this->collection);
+    }
+
+    /**
+     * @return array
+     */
+    function toArray()
+    {
+        return $this->collection;
+    }
+
+    /**
+     * Convert the object to its JSON representation.
+     *
+     * @param  int $options
+     *
+     * @return string
+     */
+    function toJson($options = 0)
+    {
+        return json_encode($this->collection, $options);
     }
 
     /**
@@ -303,7 +376,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Cou
     protected function normalize($value_set)
     {
         if ($value_set instanceof BaseCollection)
-            $value_set = $value_set->container;
+            $value_set = $value_set->collection;
 
         elseif (is_object($value_set))
             $value_set = (array) get_object_vars($value_set);

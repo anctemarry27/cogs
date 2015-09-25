@@ -7,6 +7,7 @@
  */
 
 use Og\Exceptions\CollectionMutabilityError;
+use Og\Exceptions\ContextMutabilityError;
 use Og\Support\Arr;
 
 abstract class ImmutableCollection extends BaseCollection
@@ -17,6 +18,17 @@ abstract class ImmutableCollection extends BaseCollection
      * @var array
      */
     protected $read_only = [];
+
+    /**
+     * @param string $key
+     * @param mixed  $value
+     *
+     * @return $this|null|ImmutableCollection|void
+     */
+    function __set($key, $value)
+    {
+        return $this->set($key, $value);
+    }
 
     /**
      * append adds a new key::value to an existing key.
@@ -44,11 +56,12 @@ abstract class ImmutableCollection extends BaseCollection
      * @param $value
      *
      * @return $this|null
+     * @throws ContextMutabilityError
      */
     function set($key, $value)
     {
         if ( ! $this->mutable($key))
-            return NULL;
+            throw new ContextMutabilityError("Index `$key` is immutable.");
 
         # attempt writing the value to the key
         if (is_string($key))
@@ -111,25 +124,6 @@ abstract class ImmutableCollection extends BaseCollection
     }
 
     /**
-     * @param string $key
-     *
-     * @return null
-     */
-    protected function mutable($key)
-    {
-        # extract all of the key segments (if any)
-        $path = explode('.', $key);
-
-        # first - validate that the key|value is writable
-        foreach ($path as $candidate)
-            // don't set a value if the element is read-only
-            if (array_key_exists($candidate, $this->read_only))
-                throw new CollectionMutabilityError($key);
-
-        return TRUE;
-    }
-
-    /**
      * Remove values from an array that match entries marked as immutable in the collection.
      *
      * @param $vars
@@ -149,11 +143,30 @@ abstract class ImmutableCollection extends BaseCollection
     }
 
     /**
+     * @param string $key
+     *
+     * @return null
+     */
+    protected function mutable($key)
+    {
+        # extract all of the key segments (if any)
+        $path = explode('.', $key);
+
+        # first - validate that the key|value is writable
+        foreach ($path as $candidate)
+            // don't set a value if the element is read-only
+            if (array_key_exists($candidate, $this->read_only))
+                throw new CollectionMutabilityError($key);
+
+        return TRUE;
+    }
+
+    /**
      * @param bool|TRUE $force
      */
     private function lock_all($force = FALSE)
     {
-        foreach ($this->container as $abstract => $value)
+        foreach ($this->collection as $abstract => $value)
             $this->read_only[$abstract] = ! $force;
     }
 

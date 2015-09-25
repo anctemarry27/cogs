@@ -24,7 +24,9 @@ class BladeViewTest extends \PHPUnit_Framework_TestCase
 
         # simple render test
         $expected = file_get_contents(ROOT . 'tests/templates/test_BladeView_simple.html');
-        $this->assertEquals($expected, $bv->render('simple', ['content' => 'This is a test of the Blade template engine.']),
+        $bv['content'] = 'This is a test of the Blade template engine.';
+        
+        $this->assertEquals($expected, $bv->render('simple'),
             'BladeView should render text that matches the contents of: '. ROOT . 'tests/templates/blade_test_01.html');
     }
 

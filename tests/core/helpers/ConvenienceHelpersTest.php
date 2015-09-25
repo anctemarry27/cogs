@@ -28,8 +28,8 @@ class HelpersTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(path() instanceof Paths);
         $this->assertTrue(path() instanceof Paths);
 
-        $this->assertTrue(events() instanceof EventsDispatcher);
-        $this->assertTrue(events() instanceof EventsDispatcher);
+        $this->assertTrue(events() instanceof Events);
+        $this->assertTrue(events() instanceof Events);
 
         //$this->assertTrue(router() instanceof Router);
         //$this->assertTrue(router() instanceof Router);

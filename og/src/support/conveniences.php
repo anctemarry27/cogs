@@ -38,21 +38,6 @@ if ( ! function_exists('config'))
     }
 }
 
-if ( ! function_exists('e'))
-{
-    /**
-     * Escape HTML entities in a string.
-     *
-     * @param  string $value
-     *
-     * @return string
-     */
-    function e($value)
-    {
-        return htmlentities($value, ENT_QUOTES, 'UTF-8', FALSE);
-    }
-}
-
 if ( ! function_exists('di'))
 {
     /**
@@ -69,10 +54,25 @@ if ( ! function_exists('di'))
     }
 }
 
+if ( ! function_exists('e'))
+{
+    /**
+     * Escape HTML entities in a string.
+     *
+     * @param  string $value
+     *
+     * @return string
+     */
+    function e($value)
+    {
+        return htmlentities($value, ENT_QUOTES, 'UTF-8', FALSE);
+    }
+}
+
 if ( ! function_exists('events'))
 {
     /**
-     * @return \Og\EventsDispatcher
+     * @return \Og\Events
      */
     function events()
     {

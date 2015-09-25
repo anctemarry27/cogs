@@ -26,7 +26,7 @@
         {
             # this should fail with a LogicException because the Context has already
             # been instantiated.
-            new Context(Forge::getInstance(), new EventsDispatcher(Forge::getInstance()));
+            new Context(Forge::getInstance(), new Events(Forge::getInstance()));
         }
 
         public function setUp()

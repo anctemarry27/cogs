@@ -7,7 +7,7 @@
  */
 
 use ArrayAccess;
-use Og\Exceptions\ContextMutabilityError;
+use Og\Abstracts\ImmutableCollection;
 use Og\Interfaces\ContainerInterface;
 
 /**
@@ -16,31 +16,26 @@ use Og\Interfaces\ContainerInterface;
  * Usage in the framework requires that there be only ONE Context,
  * which means that the context should ALWAYS be resolved from the DI.
  */
-class Context extends Collection implements ArrayAccess
+class Context extends ImmutableCollection implements ArrayAccess
 {
+    protected $collection;
+
+    /**
+     * @var null|array|Context
+     */
+    private $context;
+
     /** @var Forge */
     private $di;
 
     /**
      * @param Forge|ContainerInterface $di
+     * @param array|Context            $context
      */
-    function __construct(Forge $di)
+    function __construct(ContainerInterface $di, $context = [])
     {
-        parent::__construct();
         $this->di = $di;
-    }
-
-    /**
-     * Set a value if mutable.
-     *
-     * @param $key
-     * @param $value
-     *
-     * @throws ContextMutabilityError
-     */
-    function __set($key, $value)
-    {
-        $this->offsetSet($key, $value);
+        $this->collection = $context instanceof Context ? $context->copy() : $context;
     }
 
 }

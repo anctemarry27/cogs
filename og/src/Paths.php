@@ -9,7 +9,7 @@
 use ArrayAccess;
 use Og\Support\Str;
 
-final class Paths extends Config implements ArrayAccess
+final class Paths extends Collection implements ArrayAccess
 {
     /**
      * Adds a new path to the collection.
