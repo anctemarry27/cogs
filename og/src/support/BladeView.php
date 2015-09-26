@@ -1,4 +1,4 @@
-<?php namespace Og;
+<?php namespace Og\Support;
 
 /**
  * @package Og
@@ -17,10 +17,15 @@ use Illuminate\View\Engines\PhpEngine;
 use Illuminate\View\Factory as Environment;
 use Illuminate\View\FileViewFinder;
 use Illuminate\View\View as IlluminateView;
+use Og\Context;
+use Og\Events;
+use Og\Forge;
 use Og\Interfaces\ContainerInterface;
 use Og\Interfaces\Renderable;
+use Og\Interfaces\ViewInterface;
+use Og\Views;
 
-class BladeView extends Context implements ArrayAccess, Renderable
+class BladeView extends Views implements ViewInterface, ArrayAccess, Renderable
 {
     /** @var Compiler */
     protected $blade_compiler;
@@ -124,7 +129,7 @@ class BladeView extends Context implements ArrayAccess, Renderable
         $view_settings = &config('views.blade');
 
         # for merging
-        $work_path = [VIEWS . $path];
+        $work_path = [\VIEWS . $path];
 
         # get a copy of the app settings for merging
         $settings = config()->copy(); # $this->app->settings;
@@ -232,7 +237,7 @@ class BladeView extends Context implements ArrayAccess, Renderable
      *
      * @return void
      */
-    public function registerEngineResolver()
+    protected function registerEngineResolver()
     {
         $this->forge->add('view.engine.resolver', function ()
         {
@@ -271,7 +276,7 @@ class BladeView extends Context implements ArrayAccess, Renderable
      *
      * @return void
      */
-    protected function register_dependencies()
+    public function register_dependencies()
     {
         # register the resolver engines
         $this->registerEngineResolver();

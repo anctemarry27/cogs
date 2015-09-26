@@ -5,7 +5,9 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-namespace Og;
+namespace Og\Support;
+
+use Og\Forge;
 
 class BladeViewTest extends \PHPUnit_Framework_TestCase
 {
