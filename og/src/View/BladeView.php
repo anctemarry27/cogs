@@ -18,23 +18,16 @@ use Illuminate\View\Factory as Environment;
 use Illuminate\View\FileViewFinder;
 use Illuminate\View\View as IlluminateView;
 use Og\Context;
-use Og\Events;
 use Og\Forge;
-use Og\Interfaces\ContainerInterface;
 
 class BladeView extends AbstractView implements ViewInterface, ArrayAccess, Renderable
 {
-    /** @var ContainerInterface|Forge - the forge, mainly */
-    protected $di;
 
     /** @var Compiler - the Blade compiler */
     private $blade_compiler;
 
     /** @var CompilerEngine - the blade compiler engine */
     private $blade_engine;
-
-    /** @var  Events - the COGS event dispatcher */
-    private $dispatcher;
 
     /** @var  Environment - the Blade factory/environment */
     private $factory;
@@ -44,9 +37,6 @@ class BladeView extends AbstractView implements ViewInterface, ArrayAccess, Rend
 
     /** @var array $settings - a subset of the global Config 'views.blade' settings */
     private $settings;
-
-    /** @var array - a list of paths to search for the template file */
-    private $template_paths = [];
 
     /** @var FileViewFinder - the Blade view finder */
     private $view_finder;
@@ -66,7 +56,7 @@ class BladeView extends AbstractView implements ViewInterface, ArrayAccess, Rend
         $this->settings = $settings ? $settings : $this->di->make('config')['views.blade'];
 
         # assign the local collection from the global context
-        /** @var Context $copy_global_context */
+        /** @var Context $global_context */
         $global_context = $this->di['context'];
         $this->collection = $global_context->copy();
 
@@ -79,7 +69,7 @@ class BladeView extends AbstractView implements ViewInterface, ArrayAccess, Rend
         $this->ioc = $this->di->service('getInstance');
 
         # assign the COGS illuminate-compatible event handler to BladeView
-        $this->dispatcher = $this->di->get('events');
+        $this->events = $this->di->get('events');
 
         # construct the blade factory and register classes
         $this->build_blade_factory();
@@ -242,7 +232,7 @@ class BladeView extends AbstractView implements ViewInterface, ArrayAccess, Rend
         $this->factory = new Environment (
             $this->ioc->make('view.engine.resolver'),
             $this->view_finder,
-            $this->dispatcher
+            $this->events
         );
 
         $this->factory->setContainer($this->ioc);

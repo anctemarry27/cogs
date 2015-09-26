@@ -9,9 +9,20 @@
 use ArrayAccess;
 use Illuminate\Container\Container;
 use Og\Context;
+use Og\Events;
+use Og\Forge;
+use Og\Interfaces\ContainerInterface;
 
 abstract class AbstractView extends Context implements ViewInterface, ArrayAccess, Renderable
 {
+    /** @var ContainerInterface|Forge - the forge, mainly */
+    protected $di;
+
+    /** @var Events - the COGS event dispatcher */
+    protected $events;
+
+    /** @var array - a list of paths to search for the template file */
+    protected $template_paths = [];
 
     /**
      * Append or Prepend (default) a path to the BladeView template_paths setting.
