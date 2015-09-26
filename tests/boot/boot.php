@@ -15,8 +15,10 @@ define('Og\COLLECT_FUNCTIONS_AND_CLASSES', FALSE);
 
 date_default_timezone_set('America/Vancouver');
 
+include TEST_PATH . 'boot/conveniences.php';
+include TEST_PATH . 'boot/messages.php';
 include TEST_PATH . 'boot/paths.php';
-include SUPPORT . 'conveniences.php';
+
 include TEST_PATH . 'vendor/autoload.php';
 
 # load environment
@@ -36,7 +38,7 @@ if (getenv('DEBUG') !== 'false')
 
 # core debug utilities
 # note that debug requires that the environment has been loaded
-include SUPPORT . 'debug.php';
+include BOOT . 'debug.php';
 
 $di = new Forge;
 

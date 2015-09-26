@@ -4,19 +4,27 @@
  * @version 0.1.0
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
-namespace Og\Interfaces;
 
+namespace Og;
+
+use ArrayAccess;
 use Illuminate\Container\Container;
+use Og\Views\Renderable;
+use Og\Views\ViewInterface;
 
-interface ViewInterface
+abstract class Views extends Context implements ViewInterface, ArrayAccess, Renderable
 {
+
     /**
      * Append or Prepend (default) a path to the BladeView template_paths setting.
      *
      * @param string $path    : path to append to the template_path setting
      * @param bool   $prepend : TRUE to push the new path on the top, FALSE to append
      */
-    public function addViewPath($path, $prepend = TRUE);
+    public function addViewPath($path, $prepend = TRUE)
+    {
+        // TODO: Implement add_template_path() method.
+    }
 
     /**
      * Collect content from the shared View Context (etc.)
@@ -25,19 +33,28 @@ interface ViewInterface
      *
      * @return mixed
      */
-    public function collectContext($merge_data = []);
+    public function collectContext($merge_data = [])
+    {
+        // TODO: Implement collectContext() method.
+    }
 
     /**
      * @return Container
      */
-    public function getContainer();
+    public function getContainer()
+    {
+        // TODO: Implement getContainer() method.
+    }
 
     /**
      * @param string $template
      *
      * @return bool
      */
-    public function hasView($template);
+    public function hasView($template)
+    {
+        // TODO: Implement has_view() method.
+    }
 
     /**
      * Renders a Blade template with passed and stored symbol data.
@@ -47,12 +64,18 @@ interface ViewInterface
      *
      * @return string
      */
-    public function render($view, $data = []);
+    public function render($view, $data = [])
+    {
+        // TODO: Implement render() method.
+    }
 
     /**
      * Register shared dependencies.
      *
      * @return void
      */
-    public function registerDependencies();
+    public function registerDependencies()
+    {
+        // TODO: Implement register_dependencies() method.
+    }
 }

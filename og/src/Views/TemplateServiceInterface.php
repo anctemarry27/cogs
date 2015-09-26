@@ -1,4 +1,4 @@
-<?php namespace Og\Interfaces;
+<?php namespace Og\Views;
 
 /**
  * @package Og

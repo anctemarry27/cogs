@@ -6,7 +6,6 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use Og\Application;
 use Og\Forge;
 use Zend\Diactoros\Response\RedirectResponse;
 use Zend\Stratigility\Http\Request;
@@ -18,11 +17,12 @@ if ( ! function_exists('app'))
      *
      * @return mixed|Forge
      */
-    function app($abstract = null)
+    function app($abstract = NULL)
     {
         return $abstract ? Forge::make($abstract) : Forge::getInstance();
     }
 }
+else throw new Exception('Cannot exclusively define COGS global app() function.');
 
 if ( ! function_exists('config'))
 {

@@ -9,8 +9,10 @@
 use Dotenv\Dotenv;
 use Tracy\Debugger;
 
+include 'conveniences.php';
+include 'messages.php';
 include 'paths.php';
-include SUPPORT . 'conveniences.php';
+
 include VENDOR . 'autoload.php';
 
 # load environment
@@ -28,7 +30,7 @@ if (getenv('DEBUG') !== 'false')
     Debugger::$showLocation = TRUE;
     # core debug utilities
     # note that debug requires that the environment has been loaded
-    include SUPPORT . 'debug.php';
+    include 'debug.php';
 }
 
 # Core Configuration

@@ -1,4 +1,4 @@
-<?php namespace Og\Support;
+<?php namespace Og\Views;
 
 /**
  * @package Og
@@ -21,8 +21,6 @@ use Og\Context;
 use Og\Events;
 use Og\Forge;
 use Og\Interfaces\ContainerInterface;
-use Og\Interfaces\Renderable;
-use Og\Interfaces\ViewInterface;
 use Og\Views;
 
 class BladeView extends Views implements ViewInterface, ArrayAccess, Renderable
