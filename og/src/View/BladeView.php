@@ -33,9 +33,6 @@ class BladeView extends AbstractView implements ViewInterface, ArrayAccess, Rend
     /** @var CompilerEngine - the blade compiler engine */
     private $blade_engine;
 
-    /** @var Context - the local Context object */
-    private $context;
-
     /** @var  Events - the COGS event dispatcher */
     private $dispatcher;
 
@@ -104,7 +101,7 @@ class BladeView extends AbstractView implements ViewInterface, ArrayAccess, Rend
      */
     public function __call($method, $arguments)
     {
-        $this->context[$method] = count($arguments) > 0 ? $arguments[0] : TRUE;
+        $this[$method] = count($arguments) > 0 ? $arguments[0] : TRUE;
 
         return $this;
     }
