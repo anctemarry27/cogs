@@ -14,11 +14,13 @@ use Zend\Stratigility\Http\Request;
 if ( ! function_exists('app'))
 {
     /**
+     * @param null $abstract
+     *
      * @return Application
      */
-    function app()
+    function app($abstract = null)
     {
-        return Forge::make('app');
+        return $abstract ? Forge::make($abstract) : Forge::make('app');
     }
 }
 

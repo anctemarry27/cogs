@@ -45,10 +45,9 @@ class FileViewFinder implements ViewFinderInterface
     /**
      * Create a new file view loader instance.
      *
-     * @param  \Illuminate\Filesystem\Filesystem  $files
-     * @param  array  $paths
-     * @param  array  $extensions
-     * @return void
+     * @param  \Illuminate\Filesystem\Filesystem $files
+     * @param  array                             $paths
+     * @param  array                             $extensions
      */
     public function __construct(Filesystem $files, array $paths, array $extensions = null)
     {

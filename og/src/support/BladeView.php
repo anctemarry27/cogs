@@ -124,21 +124,16 @@ class BladeView extends Views implements ViewInterface, ArrayAccess, Renderable
      */
     public function addViewPath($path, $prepend = TRUE)
     {
-        if ($prepend)
-        {
-            # prepend the path to the current paths
-            array_unshift($this->template_paths, $path);
+        $prepend_or_append = $prepend ? 'array_unshift' : 'array_push';
+        $prepend_or_append($this->template_paths, $path);
 
-            # we need to reconstruct the FileViewFinder 
-            $this->view_finder = new FileViewFinder(new Filesystem, $this->template_paths);
-            $this->di->add('view.finder', function () { return $this->view_finder; });
-        }
-        else
-        {
-            array_push($this->template_paths, $path);
-            $this->view_finder->addLocation($path);
-        }
+        # as far as I can tell, we need to reconstruct the FileViewFinder 
+        $this->view_finder = new FileViewFinder(new Filesystem, $this->template_paths);
+        
+        # also, re-register the view finder. The IOC will handle any update events
+        $this->di->add('view.finder', function () { return $this->view_finder; });
 
+        # fluent
         return $this;
     }
 
