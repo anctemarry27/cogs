@@ -2,8 +2,8 @@
 
 namespace Illuminate\View\Compilers;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
+use Og\Support\Arr;
+use Og\Support\Str;
 
 class BladeCompiler extends Compiler implements CompilerInterface
 {
@@ -267,9 +267,9 @@ class BladeCompiler extends Compiler implements CompilerInterface
     {
         $callback = function ($match) {
             if (method_exists($this, $method = 'compile'.ucfirst($match[1]))) {
-                $match[0] = $this->$method(Arr::get($match, 3));
+                $match[0] = $this->$method(Arr::get(3,$match));
             } elseif (isset($this->customDirectives[$match[1]])) {
-                $match[0] = call_user_func($this->customDirectives[$match[1]], Arr::get($match, 3));
+                $match[0] = call_user_func($this->customDirectives[$match[1]], Arr::get(3,$match));
             }
 
             return isset($match[3]) ? $match[0] : $match[0].$match[2];

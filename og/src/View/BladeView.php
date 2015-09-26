@@ -7,7 +7,6 @@
  */
 
 use ArrayAccess;
-use Illuminate\Container\Container as Container;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\View\Compilers\BladeCompiler;
 use Illuminate\View\Compilers\Compiler;
@@ -31,9 +30,6 @@ class BladeView extends AbstractView implements ViewInterface, ArrayAccess, Rend
 
     /** @var  Environment - the Blade factory/environment */
     private $factory;
-
-    /** @var Container - the illuminate/container/container */
-    private $ioc;
 
     /** @var array $settings - a subset of the global Config 'views.blade' settings */
     private $settings;
@@ -76,27 +72,6 @@ class BladeView extends AbstractView implements ViewInterface, ArrayAccess, Rend
     }
 
     /**
-     * Implements a value-as-method syntax.
-     * ie: context->{thing}('is this') where 'thing' exists in the context.
-     *
-     * This funky hint-of-templates syntax implements the following:
-     *
-     *      blade_view->{'thing'} = 'string'
-     *      blade_view->{'thing'}('string')[->...]
-     *
-     * @param  string $method
-     * @param  array  $arguments
-     *
-     * @return $this
-     */
-    public function __call($method, $arguments)
-    {
-        $this[$method] = count($arguments) > 0 ? $arguments[0] : TRUE;
-
-        return $this;
-    }
-
-    /**
      * Append or Prepend (default) a path to the BladeView template_paths setting.
      *
      * @param string $path    : path to append to the template_path setting
@@ -106,8 +81,7 @@ class BladeView extends AbstractView implements ViewInterface, ArrayAccess, Rend
      */
     public function addViewPath($path, $prepend = TRUE)
     {
-        $prepend_or_append = $prepend ? 'array_unshift' : 'array_push';
-        $prepend_or_append($this->template_paths, $path);
+        parent::addViewPath($path, $prepend);
 
         # as far as I can tell, we need to reconstruct the FileViewFinder 
         $this->view_finder = new FileViewFinder(new Filesystem, $this->template_paths);
@@ -117,26 +91,6 @@ class BladeView extends AbstractView implements ViewInterface, ArrayAccess, Rend
 
         # fluent
         return $this;
-    }
-
-    /**
-     * Collect content from the shared View Context (etc.)
-     *
-     * @param array $merge_data
-     *
-     * @return mixed
-     */
-    public function collectContext($merge_data = [])
-    {
-        return (array) $this->merge($merge_data)->copy();
-    }
-
-    /**
-     * @return Container
-     */
-    public function getContainer()
-    {
-        return $this->ioc;
     }
 
     /**
@@ -202,7 +156,7 @@ class BladeView extends AbstractView implements ViewInterface, ArrayAccess, Rend
         $view = $this->view_finder->find($view);
 
         # collect data from the context and other places 
-        $data = $this->collectContext($data);
+        $data = parent::collectContext($data);
 
         # create an illuminate view from stored factory and blade engine
         $blade_view = new IlluminateView($this->factory, $this->blade_engine, NULL, $view, (array) $data);
