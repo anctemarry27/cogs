@@ -4,27 +4,19 @@
  * @version 0.1.0
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
+namespace Og\View;
 
-namespace Og;
-
-use ArrayAccess;
 use Illuminate\Container\Container;
-use Og\Views\Renderable;
-use Og\Views\ViewInterface;
 
-abstract class Views extends Context implements ViewInterface, ArrayAccess, Renderable
+interface ViewInterface
 {
-
     /**
      * Append or Prepend (default) a path to the BladeView template_paths setting.
      *
      * @param string $path    : path to append to the template_path setting
      * @param bool   $prepend : TRUE to push the new path on the top, FALSE to append
      */
-    public function addViewPath($path, $prepend = TRUE)
-    {
-        // TODO: Implement add_template_path() method.
-    }
+    public function addViewPath($path, $prepend = TRUE);
 
     /**
      * Collect content from the shared View Context (etc.)
@@ -33,28 +25,19 @@ abstract class Views extends Context implements ViewInterface, ArrayAccess, Rend
      *
      * @return mixed
      */
-    public function collectContext($merge_data = [])
-    {
-        // TODO: Implement collectContext() method.
-    }
+    public function collectContext($merge_data = []);
 
     /**
      * @return Container
      */
-    public function getContainer()
-    {
-        // TODO: Implement getContainer() method.
-    }
+    public function getContainer();
 
     /**
      * @param string $template
      *
      * @return bool
      */
-    public function hasView($template)
-    {
-        // TODO: Implement has_view() method.
-    }
+    public function hasView($template);
 
     /**
      * Renders a Blade template with passed and stored symbol data.
@@ -64,18 +47,12 @@ abstract class Views extends Context implements ViewInterface, ArrayAccess, Rend
      *
      * @return string
      */
-    public function render($view, $data = [])
-    {
-        // TODO: Implement render() method.
-    }
+    public function render($view, $data = []);
 
     /**
      * Register shared dependencies.
      *
      * @return void
      */
-    public function registerDependencies()
-    {
-        // TODO: Implement register_dependencies() method.
-    }
+    public function registerDependencies();
 }

@@ -1,4 +1,4 @@
-<?php namespace Og\Views;
+<?php namespace Og\View;
 
 /**
  * @package Og
@@ -6,7 +6,7 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-interface TemplateServiceInterface
+interface ViewService
 {
 
     /**

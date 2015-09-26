@@ -5,7 +5,7 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-namespace Og\Views;
+namespace Og\View;
 
 interface Renderable
 {
