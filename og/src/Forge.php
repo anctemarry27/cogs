@@ -81,6 +81,7 @@ final class Forge implements ContainerInterface, ArrayAccess
     function __clone()      { throw new ForgeNotPermittedError('Cloning the DI is not permitted.'); }
     function __set_state()  { throw new ForgeNotPermittedError('Setting the DI state is not permitted.'); }
     function __sleep()      { throw new ForgeNotPermittedError('Putting the DI to sleep is not permitted.'); }
+    function __toString()   { return get_class($this); }
     function __wakeup()     { throw new ForgeNotPermittedError('Waking the DI is not permitted.'); }
     /*@formatter:on */
 

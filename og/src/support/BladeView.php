@@ -61,8 +61,6 @@ class BladeView extends Views implements ViewInterface, ArrayAccess, Renderable
      * Construct a compatible environment for Blade template rendering
      *
      * @param array|NULL $settings
-     *
-     * @internal param Forge $container
      */
     public function __construct(array $settings = NULL)
     {

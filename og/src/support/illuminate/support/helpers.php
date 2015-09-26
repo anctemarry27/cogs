@@ -18,24 +18,24 @@ if ( ! function_exists('action'))
 	}
 }
 
-if ( ! function_exists('app'))
-{
-	/**
-	 * Get the root Facade application instance.
-	 *
-	 * @param  string  $make
-	 * @return mixed
-	 */
-	function app($make = null)
-	{
-		if ( ! is_null($make))
-		{
-			return app()->make($make);
-		}
-
-		return Illuminate\Support\Facades\Facade::getFacadeApplication();
-	}
-}
+//if ( ! function_exists('app'))
+//{
+//	/**
+//	 * Get the root Facade application instance.
+//	 *
+//	 * @param  string  $make
+//	 * @return mixed
+//	 */
+//	function app($make = null)
+//	{
+//		if ( ! is_null($make))
+//		{
+//			return app()->make($make);
+//		}
+//
+//		return Illuminate\Support\Facades\Facade::getFacadeApplication();
+//	}
+//}
 
 if ( ! function_exists('app_path'))
 {

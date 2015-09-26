@@ -16,11 +16,11 @@ if ( ! function_exists('app'))
     /**
      * @param null $abstract
      *
-     * @return Application
+     * @return mixed|Forge
      */
     function app($abstract = null)
     {
-        return $abstract ? Forge::make($abstract) : Forge::make('app');
+        return $abstract ? Forge::make($abstract) : Forge::getInstance();
     }
 }
 

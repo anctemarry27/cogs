@@ -58,6 +58,14 @@ final class Application
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return get_class($this);
+    }
+
+    /**
      * @return Application
      */
     public function getInstance()

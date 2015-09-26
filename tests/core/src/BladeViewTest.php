@@ -34,6 +34,7 @@ class BladeViewTest extends \PHPUnit_Framework_TestCase
         $this->bv->addViewPath(VIEWS . 'test_append_path', FALSE);
         $paths = $this->bv->getViewPaths();
         $this->assertEquals(VIEWS . 'test_append_path', end($paths));
+        
     }
 
     public function test_00_BladeView_hasView()
