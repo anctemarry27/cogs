@@ -27,35 +27,35 @@ use Og\Views;
 
 class BladeView extends Views implements ViewInterface, ArrayAccess, Renderable
 {
-    /** @var Compiler - the Blade compiler */
-    protected $blade_compiler;
-
-    /** @var CompilerEngine - the blade compiler engine */
-    protected $blade_engine;
-
     /** @var ContainerInterface|Forge - the forge, mainly */
     protected $di;
 
-    /** @var  Events - the COGS event dispatcher */
-    protected $dispatcher;
+    /** @var Compiler - the Blade compiler */
+    private $blade_compiler;
 
-    /** @var  Environment - the Blade factory/environment */
-    protected $factory;
-
-    /** @var Container - the illuminate/container/container */
-    protected $ioc;
-
-    /** @var array $settings - a subset of the global Config 'views.blade' settings */
-    protected $settings;
-
-    /** @var array - a list of paths to search for the template file */
-    protected $template_paths = [];
-
-    /** @var FileViewFinder - the Blade view finder */
-    protected $view_finder;
+    /** @var CompilerEngine - the blade compiler engine */
+    private $blade_engine;
 
     /** @var Context - the local Context object */
     private $context;
+
+    /** @var  Events - the COGS event dispatcher */
+    private $dispatcher;
+
+    /** @var  Environment - the Blade factory/environment */
+    private $factory;
+
+    /** @var Container - the illuminate/container/container */
+    private $ioc;
+
+    /** @var array $settings - a subset of the global Config 'views.blade' settings */
+    private $settings;
+
+    /** @var array - a list of paths to search for the template file */
+    private $template_paths = [];
+
+    /** @var FileViewFinder - the Blade view finder */
+    private $view_finder;
 
     /**
      * Construct a compatible environment for Blade template rendering
@@ -129,7 +129,7 @@ class BladeView extends Views implements ViewInterface, ArrayAccess, Renderable
 
         # as far as I can tell, we need to reconstruct the FileViewFinder 
         $this->view_finder = new FileViewFinder(new Filesystem, $this->template_paths);
-        
+
         # also, re-register the view finder. The IOC will handle any update events
         $this->di->add('view.finder', function () { return $this->view_finder; });
 
@@ -155,6 +155,16 @@ class BladeView extends Views implements ViewInterface, ArrayAccess, Renderable
     public function getContainer()
     {
         return $this->ioc;
+    }
+
+    /**
+     * get the array of paths from the BladeView view finder.
+     *
+     * @return array
+     */
+    public function getViewPaths()
+    {
+        return $this->view_finder->getPaths();
     }
 
     /**
@@ -217,16 +227,6 @@ class BladeView extends Views implements ViewInterface, ArrayAccess, Renderable
 
         # render and return the result
         return $blade_view->render();
-    }
-
-    /**
-     * get the array of paths from the BladeView view finder.
-     *
-     * @return array
-     */
-    public function getViewPaths()
-    {
-        return $this->view_finder->getPaths();
     }
 
     /**
