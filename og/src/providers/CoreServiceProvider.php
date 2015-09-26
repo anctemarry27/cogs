@@ -29,9 +29,10 @@ class CoreServiceProvider extends ServiceProvider
         $di->singleton(['container', Forge::class],
             function () use ($di) { return $di; });
 
-        # Core Configuration
-        $di->instance(['config', Config::class], new Config);
-        config()->importFolder(APP_CONFIG);
+        //# Core Configuration
+        //$di->singleton(['config', Config::class], 
+        //    function () { return new Config; });
+        //config()->importFolder(APP_CONFIG);
 
         # illuminate/container service container 
         $di->singleton(['ioc', Container::class],
@@ -40,11 +41,10 @@ class CoreServiceProvider extends ServiceProvider
         # register Application context
         $di->singleton(['context', Context::class],
             function () use ($di) { return new Context($di); });
-        
+
         # register cogs principle event dispatcher
         $di->singleton(['events', Events::class],
             function () use ($di) { return new Events($di); });
-
 
         $this->provides[] = [
             Collection::class,

@@ -42,6 +42,6 @@ $di = new Forge;
 
 # Core Configuration
 $di->singleton(['config', Config::class], new Config);
-config()->importFolder(APP_CONFIG);
+$di->make('config')->importFolder(APP_CONFIG);
 
 new Application($di);

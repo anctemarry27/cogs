@@ -16,7 +16,7 @@ interface ViewInterface
      * @param string $path    : path to append to the template_path setting
      * @param bool   $prepend : TRUE to push the new path on the top, FALSE to append
      */
-    public function add_template_path($path, $prepend = TRUE);
+    public function addViewPath($path, $prepend = TRUE);
 
     /**
      * Collect content from the shared View Context (etc.)
@@ -37,7 +37,7 @@ interface ViewInterface
      *
      * @return bool
      */
-    public function has_view($template);
+    public function hasView($template);
 
     /**
      * Renders a Blade template with passed and stored symbol data.
@@ -54,5 +54,5 @@ interface ViewInterface
      *
      * @return void
      */
-    public function register_dependencies();
+    public function registerDependencies();
 }

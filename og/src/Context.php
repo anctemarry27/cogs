@@ -20,11 +20,6 @@ class Context extends ImmutableCollection implements ArrayAccess
 {
     protected $collection;
 
-    /**
-     * @var null|array|Context
-     */
-    private $context;
-
     /** @var Forge */
     private $di;
 

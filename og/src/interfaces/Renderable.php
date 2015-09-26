@@ -14,7 +14,7 @@ interface Renderable
      *
      * @return bool
      */
-    public function has_view($template);
+    public function hasView($template);
 
     /**
      * @param string $template

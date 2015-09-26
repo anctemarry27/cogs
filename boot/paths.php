@@ -26,4 +26,5 @@ return [
     'core' => CORE,
     'http' => APP . "http/",
     'support' => SUPPORT,
+    'views' => VIEWS,
 ];

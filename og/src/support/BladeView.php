@@ -27,70 +27,67 @@ use Og\Views;
 
 class BladeView extends Views implements ViewInterface, ArrayAccess, Renderable
 {
-    /** @var Compiler */
+    /** @var Compiler - the Blade compiler */
     protected $blade_compiler;
 
-    /** @var CompilerEngine */
+    /** @var CompilerEngine - the blade compiler engine */
     protected $blade_engine;
 
-    /** @var  Events */
+    /** @var ContainerInterface|Forge - the forge, mainly */
+    protected $di;
+
+    /** @var  Events - the COGS event dispatcher */
     protected $dispatcher;
 
-    /** @var  Environment */
+    /** @var  Environment - the Blade factory/environment */
     protected $factory;
 
-    /** @var ContainerInterface */
-    protected $forge;
-
-    /** @var Container */
+    /** @var Container - the illuminate/container/container */
     protected $ioc;
 
-    /** @var array $settings */
+    /** @var array $settings - a subset of the global Config 'views.blade' settings */
     protected $settings;
 
-    /** @var array */
-    protected $template_path = [];
+    /** @var array - a list of paths to search for the template file */
+    protected $template_paths = [];
 
-    /** @var FileViewFinder */
+    /** @var FileViewFinder - the Blade view finder */
     protected $view_finder;
 
-    /** @var Context */
+    /** @var Context - the local Context object */
     private $context;
 
     /**
      * Construct a compatible environment for Blade template rendering
      *
-     * @param Forge      $container
      * @param array|NULL $settings
+     *
+     * @internal param Forge $container
      */
-    public function __construct($container, array $settings = NULL)
+    public function __construct(array $settings = NULL)
     {
-        parent::__construct($container);
+        # use the framework forge/dependency injector
+        $this->di = Forge::getInstance();
+        parent::__construct($this->di);
 
-        $this->forge = $container;
         # settings are located in the `config/views.php` configuration file.
-        $this->settings = $settings ? $settings : config('views.blade');
+        $this->settings = $settings ? $settings : $this->di->make('config')['views.blade'];
 
-        # get the global context                                                        
-        //$this->context = clone $this->forge->get('context');
-        $this->collection = (new Context($this->forge, $this->forge->get('context')))->copy();
-        //$this->context['clone.test'] = "This is a clone test";
+        # assign the local collection from the global context
+        /** @var Context $copy_global_context */
+        $global_context = $this->di['context'];
+        $this->collection = $global_context->copy();
 
-        //ddump([
-        //    'local clone' => $this->context,
-        //    'global' => $this->container->get('context'),
-        //    'test clone' => clone $this->container->get('context')
-        //]);
-
-        $this->template_path = $this->settings['template_paths'];
+        # obtain the core template paths from `view.blade` settings 
+        $this->template_paths = $this->settings['template_paths'];
 
         # Illuminate view requires an illuminate container.
-        # Fortunately, we've registered a illuminate container 
-        # when loading application providers.
-        $this->ioc = $this->forge->service('getInstance');
+        # note that forge->service serves as a controlled gateway to
+        #      the encapsulated illuminate/container/container. 
+        $this->ioc = $this->di->service('getInstance');
 
-        # instantiate an illuminate event dispatcher
-        $this->dispatcher = $this->forge->get('events');
+        # assign the COGS illuminate-compatible event handler to BladeView
+        $this->dispatcher = $this->di->get('events');
 
         # construct the blade factory and register classes
         $this->build_blade_factory();
@@ -122,60 +119,27 @@ class BladeView extends Views implements ViewInterface, ArrayAccess, Renderable
      *
      * @param string $path    : path to append to the template_path setting
      * @param bool   $prepend : TRUE to push the new path on the top, FALSE to append
+     *
+     * @return $this|void
      */
-    public function add_template_path($path, $prepend = TRUE)
+    public function addViewPath($path, $prepend = TRUE)
     {
-        # grab a copy of the Blade template_paths configuration
-        $view_settings = &config('views.blade');
-
-        # for merging
-        $work_path = [\VIEWS . $path];
-
-        # get a copy of the app settings for merging
-        $settings = config()->copy(); # $this->app->settings;
-
-        # more often than not, prepend-ing will be the norm.
         if ($prepend)
         {
-            # overwrite the modified blade template settings
-            array_push($settings['views']['blade']['template_paths'], $work_path[0]);
+            # prepend the path to the current paths
+            array_unshift($this->template_paths, $path);
+
+            # we need to reconstruct the FileViewFinder 
+            $this->view_finder = new FileViewFinder(new Filesystem, $this->template_paths);
+            $this->di->add('view.finder', function () { return $this->view_finder; });
         }
-        # otherwise, append the path
         else
         {
-            # overwrite the modified blade template settings
-            $settings['views']['blade']['template_paths'] = array_merge($view_settings['template_paths'], $work_path);
+            array_push($this->template_paths, $path);
+            $this->view_finder->addLocation($path);
         }
 
-        # commit the change to the container
-        config()->replace($settings);
-    }
-
-    /**
-     * Construct the Blade factory and intermediate objects.
-     *
-     *  Laravel Blade Templating is embedded into illuminate/view and therefore requires
-     *  the Container, Events and Filesystem components are present. Requiring
-     *  illuminate/view should be enough.
-     *
-     * @return void
-     */
-    public function build_blade_factory()
-    {
-        $this->register_dependencies();
-
-        $this->build_view_engines();
-
-        # build the factory
-
-        /** @noinspection PhpParamsInspection */
-        $this->factory = new Environment (
-            $this->ioc['view.engine.resolver'],
-            $this->view_finder,
-            $this->dispatcher
-        );
-
-        $this->factory->setContainer($this->ioc);
+        return $this;
     }
 
     /**
@@ -203,10 +167,38 @@ class BladeView extends Views implements ViewInterface, ArrayAccess, Renderable
      *
      * @return bool
      */
-    public function has_view($template)
+    public function hasView($template)
     {
-        expose(['has_view' => $template]);
-        // TODO: Implement has_view() method.
+        try
+        {
+            $this->view_finder->find($template);
+        }
+        catch (\InvalidArgumentException $e)
+        {
+            return FALSE;
+        }
+
+        return TRUE;
+    }
+
+    /**
+     * Register shared dependencies.
+     *
+     * @return void
+     */
+    public function registerDependencies()
+    {
+        # register the resolver engines
+        $this->register_engine_resolver();
+
+        #@formatter:off
+        $this->di->add('files',          function () { return new Filesystem; });
+        $this->di->add('view.finder',    function () { return $this->view_finder; });
+        $this->di->add('blade.compiler', function () { return $this->blade_compiler; });
+        $this->di->add('blade',          function () { return $this->blade_engine; });
+        #@formatter:on
+
+        $this->collection['blade.factory'] = $this->factory;
     }
 
     /**
@@ -233,25 +225,40 @@ class BladeView extends Views implements ViewInterface, ArrayAccess, Renderable
     }
 
     /**
-     * Register the engine resolver instance.
+     * get the array of paths from the BladeView view finder.
+     *
+     * @return array
+     */
+    public function getViewPaths()
+    {
+        return $this->view_finder->getPaths();
+    }
+
+    /**
+     * Construct the Blade factory and intermediate objects.
+     *
+     *  Laravel Blade Templating is embedded into illuminate/view and therefore requires
+     *  the Container, Events and Filesystem components are present. Requiring
+     *  illuminate/view should be enough.
      *
      * @return void
      */
-    protected function registerEngineResolver()
+    private function build_blade_factory()
     {
-        $this->forge->add('view.engine.resolver', function ()
-        {
-            $resolver = new EngineResolver;
+        $this->registerDependencies();
 
-            $resolver->register('php', function () { return new PhpEngine; });
-            $resolver->register('blade', function ()
-            {
-                /** @noinspection PhpParamsInspection */
-                return new CompilerEngine($this->forge['blade.compiler'], $this->forge['files']);
-            });
+        $this->build_view_engines();
 
-            return $resolver;
-        });
+        # build the factory
+
+        /** @noinspection PhpParamsInspection */
+        $this->factory = new Environment (
+            $this->ioc->make('view.engine.resolver'),
+            $this->view_finder,
+            $this->dispatcher
+        );
+
+        $this->factory->setContainer($this->ioc);
     }
 
     /**
@@ -259,10 +266,10 @@ class BladeView extends Views implements ViewInterface, ArrayAccess, Renderable
      *
      * @return void
      */
-    protected function build_view_engines()
+    private function build_view_engines()
     {
         # create the view finder with the template path array
-        $this->view_finder = new FileViewFinder(new Filesystem, $this->template_path);
+        $this->view_finder = new FileViewFinder(new Filesystem, $this->template_paths);
 
         # create the Blade compiler using Filesystem and cache directory
         $this->blade_compiler = new BladeCompiler(new Filesystem, $this->settings['cache']);
@@ -272,23 +279,24 @@ class BladeView extends Views implements ViewInterface, ArrayAccess, Renderable
     }
 
     /**
-     * Register shared dependencies.
+     * Register the engine resolver instance.
      *
      * @return void
      */
-    public function register_dependencies()
+    private function register_engine_resolver()
     {
-        # register the resolver engines
-        $this->registerEngineResolver();
+        $this->di->add('view.engine.resolver', function ()
+        {
+            $resolver = new EngineResolver;
 
-        #@formatter:off
-            $this->forge->add('files',          function () { return new Filesystem; });
-            //$this->di->add('events',         function () { return new Dispatcher($this->ioc); });
-            $this->forge->add('view.finder',    function () { return $this->view_finder; });
-            $this->forge->add('blade.compiler', function () { return $this->blade_compiler; });
-            $this->forge->add('blade',          function () { return $this->blade_engine; });
-            #@formatter:on
+            $resolver->register('php', function () { return new PhpEngine; });
+            $resolver->register('blade', function ()
+            {
+                /** @noinspection PhpParamsInspection - Quieten PhpStorm type complaint */
+                return new CompilerEngine($this->di['blade.compiler'], $this->di['files']);
+            });
 
-        $this->collection['blade.factory'] = $this->factory;
+            return $resolver;
+        });
     }
 }

@@ -21,7 +21,7 @@ abstract class Views extends Context implements ViewInterface, ArrayAccess, Rend
      * @param string $path    : path to append to the template_path setting
      * @param bool   $prepend : TRUE to push the new path on the top, FALSE to append
      */
-    public function add_template_path($path, $prepend = TRUE)
+    public function addViewPath($path, $prepend = TRUE)
     {
         // TODO: Implement add_template_path() method.
     }
@@ -51,7 +51,7 @@ abstract class Views extends Context implements ViewInterface, ArrayAccess, Rend
      *
      * @return bool
      */
-    public function has_view($template)
+    public function hasView($template)
     {
         // TODO: Implement has_view() method.
     }
@@ -74,7 +74,7 @@ abstract class Views extends Context implements ViewInterface, ArrayAccess, Rend
      *
      * @return void
      */
-    public function register_dependencies()
+    public function registerDependencies()
     {
         // TODO: Implement register_dependencies() method.
     }
