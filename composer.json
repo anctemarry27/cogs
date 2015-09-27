@@ -30,15 +30,12 @@
         "tracy/tracy"           : "^2.4@dev"
     },
     "autoload"         : {
-        "classmap": [
-            "db",
-            "tests"
-        ],
+        "classmap": [ "db", "tests" ],
         "psr-4"   : {
             "Illuminate\\"       : "og/src/Support/illuminate",
             "Illuminate\\View\\" : "og/src/Views/illuminate/view",
             "Og\\"               : "og/src",
-            "Og\\App\\"          : "app",
+            "App\\"              : "app",
             "Og\\Support\\"      : "og/src/Support",
             "Og\\Support\\Cogs\\": "og/src/Support/cogs",
             "Og\\Tests\\"        : "tests"

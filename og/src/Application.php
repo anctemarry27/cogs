@@ -5,8 +5,8 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use Og\App\Middleware\HelloWorldMiddleware;
-use Og\App\Middleware\Middleware;
+use App\Middleware\HelloWorldMiddleware;
+use App\Middleware\Middleware;
 use Og\Interfaces\ContainerInterface;
 use Og\Interfaces\MiddlewareInterface;
 use Og\Providers\CoreServiceProvider;

@@ -1,4 +1,4 @@
-<?php namespace Og\App\Middleware;
+<?php namespace App\Middleware;
 
 /**
  * @package Og

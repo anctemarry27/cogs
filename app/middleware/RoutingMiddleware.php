@@ -1,4 +1,4 @@
-<?php namespace Og\App\Middleware;
+<?php namespace App\Middleware;
 
 /**
  * @package Og
@@ -6,7 +6,6 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use Og\Router;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -24,7 +23,7 @@ class RoutingMiddleware extends Middleware
     {
         ///** @var Router $router */
         //$router = di('router');
-        
+
         $response->getBody()->write("<div>I should be routing by now.</div>");
 
         return parent::__invoke($request, $response, $next);
