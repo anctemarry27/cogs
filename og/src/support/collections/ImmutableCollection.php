@@ -1,10 +1,10 @@
-<?php namespace Og\Abstracts;
+<?php namespace Og\Support\Collections;
 
 /**
  * @package Og
  * @version 0.1.0
  * @author  Greg Truesdell <odd.greg@gmail.com>
- */
+ */                                     
 
 use Og\Exceptions\CollectionMutabilityError;
 use Og\Exceptions\ContextMutabilityError;

@@ -7,6 +7,8 @@
 
     namespace Og;
 
+    use Og\Support\Collections\Collection;
+
     /**
      * Test the framework core classes
      * 

@@ -1,4 +1,4 @@
-<?php namespace Og\Abstracts;
+<?php namespace Og\Support\Collections;
 
 /**
  * @package Og
@@ -6,7 +6,6 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use Og\Interfaces\CollectionInterface;
 use Og\Support\Arr;
 
 abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \JsonSerializable, \IteratorAggregate
@@ -17,7 +16,15 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
     public function __construct($collection = NULL)
     {
         /** @var BaseCollection collection */
-        $this->collection = $collection instanceof BaseCollection ? $collection->copy() : $collection;
+        $this->collection = $collection instanceof BaseCollection
+            # copy collection values
+            ? $collection->copy()
+            # but if an array...
+            : is_array($collection)
+                # return the array
+                ? $collection
+                # else return an empty array
+                : [];
     }
 
     /**

@@ -7,7 +7,7 @@
  */
 
 use ArrayAccess;
-use Og\Abstracts\ImmutableCollection;
+use Og\Support\Collections\ImmutableCollection;
 use Og\Interfaces\ContainerInterface;
 
 /**
@@ -29,8 +29,9 @@ class Context extends ImmutableCollection implements ArrayAccess
      */
     function __construct(ContainerInterface $di, $context = [])
     {
+        parent::__construct($context instanceof Context ? $context->copy() : $context);
         $this->di = $di;
-        $this->collection = $context instanceof Context ? $context->copy() : $context;
+        //$this->collection = $context instanceof Context ? $context->copy() : $context;
     }
 
 }

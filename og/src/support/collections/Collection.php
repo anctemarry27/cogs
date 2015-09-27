@@ -1,4 +1,4 @@
-<?php namespace Og;
+<?php namespace Og\Support\Collections;
 
 /**
  * @package Og
@@ -6,7 +6,6 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use Og\Abstracts\ImmutableCollection;
 use Og\Support\Arr;
 use Symfony\Component\Yaml\Yaml;
 
@@ -24,6 +23,7 @@ class Collection Extends ImmutableCollection
      */
     function __construct()
     {
+        parent::__construct([]);
         $this->yaml = new Yaml;
     }
 

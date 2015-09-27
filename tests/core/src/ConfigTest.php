@@ -7,6 +7,7 @@
 
     namespace Og;
 
+    use Og\Support\Collections\Collection;
     use Symfony\Component\Yaml\Yaml;
 
     /**
