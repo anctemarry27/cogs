@@ -8,7 +8,7 @@
 
     use Illuminate\Container\Container as IlluminateContainer;
     use Og\Forge;
-    use Og\TestServiceProvider;
+    use Og\Providers\TestServiceProvider;
 
     /**
      * Test the framework core classes
@@ -50,7 +50,7 @@
             $this->assertEquals('I am a function.', $this->di['function']);
 
             $this->di->add('spanks', new TestServiceProvider($this->di));
-            $this->assertTrue($this->di->get('spanks') instanceof \Og\TestServiceProvider);
+            $this->assertTrue($this->di->get('spanks') instanceof \Og\Providers\TestServiceProvider);
         }
 
         public function test03_remove()

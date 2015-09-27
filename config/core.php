@@ -7,7 +7,7 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use Og\Support\Providers\RoutingServiceProvider;
+use Og\Providers\RoutingServiceProvider;
 
 return [
     # Reserved for the framework.

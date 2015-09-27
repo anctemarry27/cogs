@@ -1,4 +1,4 @@
-<?php namespace Og\Support\Providers;
+<?php namespace Og\Providers;
 
 /**
  * @package Radium Codex
@@ -6,7 +6,6 @@
  */
 
 use Og\Router;
-use Og\Abstracts\ServiceProvider;
 
 class RoutingServiceProvider extends ServiceProvider
 {

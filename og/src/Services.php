@@ -6,7 +6,7 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use Og\Abstracts\ServiceProvider;
+use Og\Providers\ServiceProvider;
 use Og\Interfaces\ContainerInterface;
 use Og\Interfaces\ServiceManagerInterface;
 

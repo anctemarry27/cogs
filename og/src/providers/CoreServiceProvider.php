@@ -6,13 +6,11 @@
  */
 
 use Illuminate\Container\Container;
-use Og\Abstracts\ServiceProvider;
-use Og\Collection;
-use Og\Config;
 use Og\Context;
 use Og\Events;
 use Og\Forge;
 use Og\Paths;
+use Og\Support\Collections\Collection;
 
 class CoreServiceProvider extends ServiceProvider
 {
