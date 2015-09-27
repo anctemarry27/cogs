@@ -10,7 +10,7 @@ use Og\Context;
 use Og\Events;
 use Og\Forge;
 use Og\Paths;
-use Og\Support\Collections\Collection;
+use Og\Support\Cogs\Collection;
 
 class CoreServiceProvider extends ServiceProvider
 {

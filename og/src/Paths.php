@@ -7,7 +7,7 @@
  */
 
 use ArrayAccess;
-use Og\Support\Collections\Collection;
+use Og\Support\Cogs\Collections\Collection;
 use Og\Support\Str;
 
 final class Paths extends Collection implements ArrayAccess

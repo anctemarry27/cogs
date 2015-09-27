@@ -9,10 +9,7 @@ use Og\Router;
 
 class RoutingServiceProvider extends ServiceProvider
 {
-    public function boot()
-    {
-
-    }
+    public function boot() { }
 
     /**
      * Use the register method to register items with the container via the
@@ -24,12 +21,7 @@ class RoutingServiceProvider extends ServiceProvider
     public function register()
     {
         $di = $this->container;
-
         $di->singleton(['router', Router::class], function () { return new Router; });
-
-        $this->provides[] = [
-            Router::class,
-        ];
-
+        $this->provides[] = [Router::class,];
     }
 }

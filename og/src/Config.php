@@ -6,7 +6,7 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use Og\Support\Collections\ImmutableCollection;
+use Og\Support\Cogs\Collections\ImmutableCollection;
 use Og\Support\Str;
 
 class Config extends ImmutableCollection implements \ArrayAccess, \JsonSerializable

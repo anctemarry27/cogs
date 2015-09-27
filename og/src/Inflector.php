@@ -7,12 +7,9 @@
  */
 
 use Og\Interfaces\ContainerInterface;
-use Og\Traits\WithContainer;
 
 class Inflector
 {
-    use WithContainer;
-
     /**
      * @var array
      */

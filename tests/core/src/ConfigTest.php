@@ -1,13 +1,12 @@
-<?php
-    /**
+<?php namespace Og;
+
+/**
      * @package Og
      * @version 0.1.0
      * @author  Greg Truesdell <odd.greg@gmail.com>
      */
 
-    namespace Og;
-
-    use Og\Support\Collections\Collection;
+    use Og\Support\Cogs\Collections\Collection;
     use Symfony\Component\Yaml\Yaml;
 
     /**

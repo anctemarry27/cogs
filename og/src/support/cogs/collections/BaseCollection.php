@@ -1,4 +1,4 @@
-<?php namespace Og\Support\Collections;
+<?php namespace Og\Support\Cogs\Collections;
 
 /**
  * @package Og
