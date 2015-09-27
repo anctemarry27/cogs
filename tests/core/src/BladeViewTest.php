@@ -1,11 +1,10 @@
-<?php
+<?php namespace Og\Views;
+
 /**
  * @package Og
  * @version 0.1.0
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
-
-namespace Og\View;
 
 class BladeViewTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,6 +25,13 @@ class BladeViewTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    public function test_00_BladeView_hasView()
+    {
+        $this->assertFalse($this->bv->hasView('nonexistent'));
+        $this->assertTrue($this->bv->hasView('simple'));
+
+    }
+
     public function test_00_BladeView_paths()
     {
         $this->bv->addViewPath(VIEWS . 'test_prepend_path');
@@ -34,13 +40,6 @@ class BladeViewTest extends \PHPUnit_Framework_TestCase
         $this->bv->addViewPath(VIEWS . 'test_append_path', FALSE);
         $paths = $this->bv->getViewPaths();
         $this->assertEquals(VIEWS . 'test_append_path', end($paths));
-        
-    }
-
-    public function test_00_BladeView_hasView()
-    {
-        $this->assertFalse($this->bv->hasView('nonexistent'));
-        $this->assertTrue($this->bv->hasView('simple'));
 
     }
 
@@ -49,7 +48,7 @@ class BladeViewTest extends \PHPUnit_Framework_TestCase
         # simple render test
         $expected = file_get_contents(ROOT . 'tests/templates/test_BladeView_simple.html');
         $this->bv['content'] = 'This is a test of the Blade template engine.';
-        
+
         $this->assertTrue($this->bv->hasView('simple'));
         $this->assertEquals($expected, $this->bv->render('simple'),
             'BladeView should render text that matches the contents of: ' . ROOT . 'tests/templates/blade_test_01.html');
