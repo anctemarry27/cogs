@@ -23,8 +23,7 @@ class FilesystemAdapter implements FilesystemContract, CloudFilesystemContract
     /**
      * Create a new filesystem adapter instance.
      *
-     * @param  \League\Flysystem\FilesystemInterface  $driver
-     * @return void
+     * @param  \League\Flysystem\FilesystemInterface $driver
      */
     public function __construct(FilesystemInterface $driver)
     {
@@ -102,7 +101,7 @@ class FilesystemAdapter implements FilesystemContract, CloudFilesystemContract
      */
     public function setVisibility($path, $visibility)
     {
-        return $this->driver->setVisibility($path, $this->parseVisibility($visibility));
+        $this->driver->setVisibility($path, $this->parseVisibility($visibility));
     }
 
     /**
@@ -319,7 +318,8 @@ class FilesystemAdapter implements FilesystemContract, CloudFilesystemContract
     protected function parseVisibility($visibility)
     {
         if (is_null($visibility)) {
-            return;
+            return null;
+            //return;
         }
 
         switch ($visibility) {

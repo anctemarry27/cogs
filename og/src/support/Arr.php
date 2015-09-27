@@ -1,13 +1,60 @@
 <?php namespace Og\Support;
 
+use Og\Collection;
+
 /**
  * @package Og
  * @version 0.1.0
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
-
 class Arr
 {
+    /**
+     * Build a new array using a callback.
+     *
+     * @param  array    $array
+     * @param  callable $callback
+     *
+     * @return array
+     */
+    public static function build($array, callable $callback)
+    {
+        $results = [];
+
+        foreach ($array as $key => $value)
+        {
+            list($innerKey, $innerValue) = call_user_func($callback, $key, $value);
+
+            $results[$innerKey] = $innerValue;
+        }
+
+        return $results;
+    }
+
+    /**
+     * Collapse an array of arrays into a single array.
+     *
+     * @param  array|\ArrayAccess $array
+     *
+     * @return array
+     */
+    public static function collapse($array)
+    {
+        $results = [];
+
+        foreach ($array as $values)
+        {
+            if ($values instanceof Collection)
+            {
+                $values = $values->copy();
+            }
+
+            $results = array_merge($results, $values);
+        }
+
+        return $results;
+    }
+
     /**
      * Creates a copy of the array parameter with a numeric index.
      * ie: ['apple','orange','banana'] becomes [0]=>'apple', [1]=>'orange', [2]=>'banana'.
@@ -137,6 +184,45 @@ class Arr
     }
 
     /**
+     * Divide an array into two arrays. One with keys and the other with values.
+     *
+     * @param  array $array
+     *
+     * @return array
+     */
+    public static function divide($array)
+    {
+        return [array_keys($array), array_values($array)];
+    }
+
+    /**
+     * Flatten a multi-dimensional associative array with dots.
+     *
+     * @param  array  $array
+     * @param  string $prepend
+     *
+     * @return array
+     */
+    public static function dot($array, $prepend = '')
+    {
+        $results = [];
+
+        foreach ($array as $key => $value)
+        {
+            if (is_array($value))
+            {
+                $results = array_merge($results, static::dot($value, $prepend . $key . '.'));
+            }
+            else
+            {
+                $results[$prepend . $key] = $value;
+            }
+        }
+
+        return $results;
+    }
+
+    /**
      * Get all of the given array except for a specified array of items.
      *
      * @param  array|string $keys
@@ -213,6 +299,44 @@ class Arr
         }
 
         return $obj;
+    }
+
+    /**
+     * Return the first element in an array passing a given truth test.
+     *
+     * @param  array    $array
+     * @param  callable $callback
+     * @param  mixed    $default
+     *
+     * @return mixed
+     */
+    public static function first($array, callable $callback, $default = NULL)
+    {
+        foreach ($array as $key => $value)
+        {
+            if (call_user_func($callback, $key, $value))
+            {
+                return $value;
+            }
+        }
+
+        return value($default);
+    }
+
+    /**
+     * Flatten a multi-dimensional array into a single level.
+     *
+     * @param  array $array
+     *
+     * @return array
+     */
+    public static function flatten($array)
+    {
+        $return = [];
+
+        array_walk_recursive($array, function ($x) use (&$return) { $return[] = $x; });
+
+        return $return;
     }
 
     /**
@@ -338,6 +462,39 @@ class Arr
     }
 
     /**
+     * Check if an item exists in an array using "dot" notation.
+     *
+     * @param  array  $array
+     * @param  string $key
+     *
+     * @return bool
+     */
+    public static function has($array, $key)
+    {
+        if (empty($array) || is_null($key))
+        {
+            return FALSE;
+        }
+
+        if (array_key_exists($key, $array))
+        {
+            return TRUE;
+        }
+
+        foreach (explode('.', $key) as $segment)
+        {
+            if ( ! is_array($array) || ! array_key_exists($segment, $array))
+            {
+                return FALSE;
+            }
+
+            $array = $array[$segment];
+        }
+
+        return TRUE;
+    }
+
+    /**
      * Insert an key/value pair before a given key in an array.
      *
      * @param array  $originalKey   - the key into the working array
@@ -366,6 +523,18 @@ class Arr
     }
 
     /**
+     * Type-checked pseudonym for is_assoc().   
+     *
+     * @param  array $array
+     *
+     * @return bool
+     */
+    public static function isAssoc(array $array)
+    {
+        return static::is_assoc($array);
+    }
+
+    /**
      * Determines if an array is an associative array.<br>
      * ie:<br>
      * <ul>
@@ -381,14 +550,22 @@ class Arr
      */
     static function is_assoc($array)
     {
-        if (is_array($array))
-        {
-            return (bool) ! (array_values($array) === $array);
-        }
-        else
-        {
-            return FALSE;
-        }
+        return is_array($array) ? (bool) ! (array_values($array) === $array) : FALSE;
+
+    }
+
+    /**
+     * Return the last element in an array passing a given truth test.
+     *
+     * @param  array    $array
+     * @param  callable $callback
+     * @param  mixed    $default
+     *
+     * @return mixed
+     */
+    public static function last($array, callable $callback, $default = NULL)
+    {
+        return static::first(array_reverse($array), $callback, $default);
     }
 
     /**
@@ -476,6 +653,19 @@ class Arr
     static function object_to_array($object)
     {
         return (array) $object;
+    }
+
+    /**
+     * Get a subset of the items from the given array.
+     *
+     * @param  array        $array
+     * @param  array|string $keys
+     *
+     * @return array
+     */
+    public static function only($array, $keys)
+    {
+        return array_intersect_key($array, array_flip((array) $keys));
     }
 
     /**

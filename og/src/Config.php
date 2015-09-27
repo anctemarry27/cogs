@@ -45,11 +45,13 @@ class Config extends ImmutableCollection implements \ArrayAccess, \JsonSerializa
     }
 
     /**
+     * @param array $array
+     *
      * @return static
      */
-    function make()
+    function make(array $array = [])
     {
-        return new static;
+        return new static($array);
     }
 
     /**
