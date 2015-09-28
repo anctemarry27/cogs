@@ -9,22 +9,25 @@
 if ( ! defined('ROOT'))
 {
     define('ROOT', dirname(__DIR__) . '/');
+
     define('APP', ROOT . 'app/');
-    define('BOOT', ROOT . 'boot/');
-    define('VENDOR', ROOT . 'vendor/');
     define('APP_CONFIG', ROOT . 'config/');
+    define('BOOT', ROOT . 'boot/');
     define('CORE', ROOT . 'og/src/');
-    define('SUPPORT', CORE . 'Support/');
+    define('HTTP', APP . 'http/');
+    define('VENDOR', ROOT . 'vendor/');
     define('VIEWS', APP . 'http/views/');
+    define('SUPPORT', CORE . 'Support/');
 }
 
 return [
-    'root' => ROOT,
+    'app' => APP,
     'boot' => BOOT,
-    'vendor' => VENDOR,
     'config' => APP_CONFIG,
     'core' => CORE,
-    'http' => APP . "http/",
-    'support' => SUPPORT,
+    'http' => HTTP,
+    'root' => ROOT,
+    'vendor' => VENDOR,
     'views' => VIEWS,
+    'support' => SUPPORT,
 ];

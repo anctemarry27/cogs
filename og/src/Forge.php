@@ -336,10 +336,10 @@ final class Forge implements ContainerInterface, ArrayAccess
      *
      * @return mixed|null
      */
-    function service($method, $parameters = NULL)
+    function service($method = '', $parameters = NULL)
     {
         # override encapsulated getInstance() method
-        if ($method === 'getInstance')
+        if ($method === 'getInstance' or $method === '')
             return static::$container;
 
         return empty($parameters)

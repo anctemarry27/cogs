@@ -160,7 +160,7 @@ final class Application
         # load application routes
         //include APP . "http/routes.php";
 
-        # crate and register the server, request and response
+        # create and register the server, request and response
         static::$server = $server = Server::createServer(static::$middleware, $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
 
         # register the server

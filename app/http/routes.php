@@ -5,20 +5,13 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 use FastRoute\RouteCollector;
-use Zend\Stratigility\Http\Request;
-use Zend\Stratigility\Http\Response;
+use Zend\Diactoros\Response;
 
 /** @var routeCollector $routes */
 
-
 $routes->addRoute(['GET', 'POST'], '/test/{name}',
-    function (Request $request, Response $response)
+    function ($name)
     {
-        $name = $request->getAttribute('name');
-
-        $response->getBody()->write("Test Route [$name]");
-
-        return $response;
-    });
-
-
+        return "Test Route [$name]";
+    }
+);
