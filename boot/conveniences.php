@@ -10,6 +10,28 @@ use Og\Forge;
 use Zend\Diactoros\Response\RedirectResponse;
 use Zend\Stratigility\Http\Request;
 
+if (PHP_VERSION_ID >= 70000)
+{
+    //include "service_container.php";
+}
+
+if ( ! function_exists('Og\di'))
+{
+    /**
+     * @param $alias
+     *
+     * @return Forge|object
+     */
+    function di($alias = '')
+    {
+        static $di;
+        $di = $di ?: Forge::getInstance();
+
+        return empty($alias) ? $di : $di[$alias];
+    }
+}
+else throw new Exception('Cannot exclusively define COGS global app() function.');
+
 if ( ! function_exists('app'))
 {
     /**
@@ -22,7 +44,6 @@ if ( ! function_exists('app'))
         return $abstract ? Forge::make($abstract) : Forge::getInstance();
     }
 }
-else throw new Exception('Cannot exclusively define COGS global app() function.');
 
 if ( ! function_exists('config'))
 {
@@ -37,22 +58,6 @@ if ( ! function_exists('config'))
         $config = $config ?: di('config');
 
         return empty($key) ? $config : $config[$key];
-    }
-}
-
-if ( ! function_exists('di'))
-{
-    /**
-     * @param $alias
-     *
-     * @return Forge|object
-     */
-    function di($alias = '')
-    {
-        static $di;
-        $di = $di ?: Forge::getInstance();
-
-        return empty($alias) ? $di : $di[$alias];
     }
 }
 

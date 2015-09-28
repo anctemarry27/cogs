@@ -33,7 +33,7 @@ class RoutingTest extends \PHPUnit_Framework_TestCase
     {
         $this->request = (new ServerRequest)->withMethod('GET')->withUri(new Uri('/test/greg'));
         $this->response = new Response();
-        $this->routing = new Routing(Forge::getInstance(), $this->request, $this->response);
+        $this->routing = new Routing($this->request, $this->response);
     }
 
     public function test_Routing()

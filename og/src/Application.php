@@ -7,8 +7,6 @@
 
 use App\Middleware\HelloWorldMiddleware;
 use App\Middleware\Middleware;
-use Og\Interfaces\ContainerInterface;
-use Og\Interfaces\MiddlewareInterface;
 use Og\Providers\CoreServiceProvider;
 use Zend\Diactoros\Server;
 use Zend\Stratigility\Http\Request;
@@ -38,17 +36,14 @@ final class Application
 
     /**
      * Application constructor.
-     *
-     * @param Forge|ContainerInterface $forge
-     * @param MiddlewareInterface      $middleware
      */
-    public function __construct(ContainerInterface $forge = NULL, MiddlewareInterface $middleware = NULL)
+    public function __construct()
     {
         if ( ! static::$instance)
         {
-            static::$di = $forge ? $forge : Forge::getInstance();
+            static::$di = Forge::getInstance();
             static::$instance = $this;
-            static::$middleware = $middleware ? $middleware : new Middleware;
+            static::$middleware = new Middleware;
             static::$services = static::$di->getServices();
 
             $this->initialize();
@@ -70,7 +65,7 @@ final class Application
      */
     public function getInstance()
     {
-        return static::$instance ?: new static(static::$di);
+        return static::$instance ?: new static;
     }
 
     /**
@@ -149,7 +144,7 @@ final class Application
         static::$services->registerServiceProviders();
 
         # listen for the Middleware call
-        di('events')->on(static::NOTIFY_MIDDLEWARE, [$this, 'spyMiddleware']);
+        static::$di->make('events')->on(static::NOTIFY_MIDDLEWARE, [$this, 'spyMiddleware']);
     }
 
     /**
@@ -157,9 +152,6 @@ final class Application
      */
     private function initialize_http()
     {
-        # load application routes
-        //include APP . "http/routes.php";
-
         # create and register the server, request and response
         static::$server = $server = Server::createServer(static::$middleware, $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
 
@@ -167,16 +159,20 @@ final class Application
         static::$di->singleton(['server', Server::class], $server);
 
         # register request and response
-        static::$di->add(['request', Request::class,], function () use ($server)
-        {
-            return new Request($server->{'request'});
-        });
+        static::$di->add(['request', Request::class,],
+            function () use ($server)
+            {
+                return new Request($server->{'request'});
+            }
+        );
 
         # register the response
-        static::$di->add(['response', Response::class,], function () use ($server)
-        {
-            return new Response($server->{'response'});
-        });
+        static::$di->add(['response', Response::class,],
+            function () use ($server)
+            {
+                return new Response($server->{'response'});
+            }
+        );
     }
 
 }

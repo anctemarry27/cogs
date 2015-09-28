@@ -16,9 +16,9 @@ abstract class ServiceProvider
     /** @var array */
     protected $provides = [];
 
-    public function __construct(Forge $container)
+    public function __construct()
     {
-        $this->container = $container;
+        $this->container = di();
     }
 
     /**

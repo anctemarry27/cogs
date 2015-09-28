@@ -31,14 +31,13 @@ abstract class AbstractView extends Context implements ViewInterface, ArrayAcces
     /**
      * AbstractView constructor.
      *
-     * @param ContainerInterface $di
-     * @param array              $settings
+     * @param array $settings
      *
      */
-    public function __construct(ContainerInterface $di, $settings = [])
+    public function __construct($settings = [])
     {
         $this->di = Forge::getInstance();
-        parent::__construct($this->di, $settings);
+        parent::__construct($settings);
     }
 
     /**

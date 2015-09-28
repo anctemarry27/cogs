@@ -58,12 +58,10 @@ final class Events implements IlluminateEventsDispatcherContract
     /**
      *  There can be only one Og\Event Dispatcher.
      *  There can be many Emitters, however.
-     *
-     * @param Forge $container
      */
-    function __construct(Forge $container)
+    function __construct()
     {
-        $this->di = $container;
+        $this->di = di();
 
         if (static::$instance)
             return static::$instance;

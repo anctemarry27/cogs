@@ -36,14 +36,13 @@ class Routing
     /**
      * Routing constructor.
      *
-     * @param ContainerInterface $di
      * @param RequestInterface   $request
      * @param Response           $response
      */
-    public function __construct(ContainerInterface $di, RequestInterface $request, Response $response)
+    public function __construct(RequestInterface $request, Response $response)
     {
         # assign the dependency/service container
-        $this->di = $di;
+        $this->di = Forge::getInstance();
 
         # construct the Uri Parser
         $this->url_parser = new UriParser();

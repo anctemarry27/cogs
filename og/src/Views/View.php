@@ -16,6 +16,6 @@ class View extends AbstractView implements ViewInterface, Renderable, ArrayAcces
      */
     public function __construct()
     {
-        parent::__construct(Forge::getInstance());
+        parent::__construct();
     }
 }
