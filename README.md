@@ -27,18 +27,21 @@ event messages, effectively arbitrating concerns over where or what generated or
 - When processing is complete, `Action and Control` queues a `Processing Complete` event message.
 - The `Rendering and Reporting Dispatcher` consumes `completion`, `rendering` and `reporting` event messages.
 
-### Installation
+### Installation and Testing
 
 ```
-> git clone https://github.com/OddGreg/og-framework.git project
+> git clone https://github.com/OddGreg/cogs.git project
 > cd project
 > composer install
+> cd og/Support
+> composer install
+> cd ../..
 ```
 
 Edit the `.env` file to set your environment variables. Optionally, run the tests:
 
 ```
-> phpunit --coverage-text --coverage-html <storage location of HTML coverage reports> 
+> phpunit 
 ```
 
 ### Contribute
