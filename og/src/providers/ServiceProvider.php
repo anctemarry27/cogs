@@ -22,11 +22,9 @@ abstract class ServiceProvider
     }
 
     /**
-     * Inspired by the Laravel ServiceProvider API, this method is called
-     * After all service providers have been registered. This method allows
-     * for initializing properties, methods and objects that may not exist
-     * at the time the provider is registered but is required for correct
-     * operation.
+     * This method allows for initializing properties, methods and objects
+     * that may not exist at the time the provider is registered but is required
+     * for correct operation.
      *
      * @return void
      */
@@ -36,21 +34,13 @@ abstract class ServiceProvider
     }
 
     /**
-     * Returns a boolean if checking whether this provider provides a specific
-     * service or returns an array of provided services if no argument passed.
-     *
      * @param  string $alias
      *
      * @return boolean|array
      */
     public function provides($alias = NULL)
     {
-        if ( ! is_null($alias))
-        {
-            return (in_array($alias, $this->provides));
-        }
-
-        return FALSE;
+        return $alias ? array_key_exists($alias, $this->provides) : FALSE;
     }
 
     /**

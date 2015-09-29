@@ -7,21 +7,23 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
+use Og\Providers\CoreServiceProvider;
 use Og\Providers\RoutingServiceProvider;
 
 return [
     # Reserved for the framework.
     'meta' => [
         'name' => 'Og: A PHP Micro-Framework',
-        'version' => '0.0.1@Alpha',
+        'version' => '0.1.0@dev',
         'description' => '4th Generation Implementation of the Radium Framework',
     ],
     #
-    # Providers are entered into the DIC as <abstract> and <class_name>.
-    # i.e.: 'events' => 'Og\Events' is entered as 'events' and as 'Og\Events'.
+    #  Service Providers
     #
+    #  Note that order is significant.
     'providers' => [
-        //CoreServiceProvider::class,
+        //SessionServiceProvider::class,
+        CoreServiceProvider::class,
         RoutingServiceProvider::class,
     ],
     #

@@ -7,17 +7,12 @@
  */
 
 use FastRoute\Dispatcher;
-use Og\Routing;
 use Og\Support\Cogs\Collections\Input;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 class RoutingMiddleware extends Middleware
 {
-
-    /** @var Routing */
-    private $routing;
-
     /**
      * @param Request       $request
      * @param Response      $response
@@ -28,15 +23,14 @@ class RoutingMiddleware extends Middleware
     public function __invoke(Request $request, Response $response, callable $next = NULL)
     {
 
-        //ddump(compact('request','response'));
         # grab the original request if not already
-        $request = method_exists($request, 'getOriginalRequest') ? $request->getOriginalRequest() : $request;
+        //$request = method_exists($request, 'getOriginalRequest') ? $request->getOriginalRequest() : $request;
 
-        $this->routing = new Routing($request, $response);
-        $this->routing->makeRoutes(HTTP . "routes.php");
+        //$this->routing = new Routing($request, $response);
+        //$this->routing->make(HTTP . "routes.php");
 
-        $route = $this->routing->dispatch();
-        //$route = $this->routing->dispatch($request->getMethod(), $request->getUri()->getPath());
+        # obtain the routing object created by RoutingServiceProvider
+        $route = $this->di->make('routing')->match();
 
         # status will be in the following:
         #   NOT_FOUND = 0;
@@ -65,9 +59,6 @@ class RoutingMiddleware extends Middleware
 
         # get the request parameters
         $route[2] = is_array($route[2]) ? $route[2] : [$route[2]];
-
-        # append the request to the parameters
-        //$params = sizeof($route[2]) > 0 ? [$route[2], $request, $response] : [$request, $response];
 
         # assign dependencies to the di
         $this->di->add(['ServerRequestInterface', Request::class], $request);

@@ -45,17 +45,20 @@ class Routing
     }
 
     /**
+     * Look for a route that matches the request.
+     * 
      * @param $http_method
      * @param $uri
      *
      * @return array
      */
-    public function dispatch($http_method = NULL, $uri = NULL)
+    public function match($http_method = NULL, $uri = NULL)
     {
-        // Fetch method and URI from somewhere
+        # Fetch method and uri from injected request object
         $http_method = $http_method ?: $this->request->getMethod();
         $uri = $uri ?: $this->request->getUri()->getPath();
 
+        # parse the request and return a status array
         $routeInfo = $this->dispatcher->dispatch($http_method, $uri);
 
         return $routeInfo;
@@ -71,7 +74,7 @@ class Routing
      *
      * @return $this
      */
-    public function makeRoutes($route_filename = NULL)
+    public function make($route_filename = NULL)
     {
         # the file that defines routes
         $this->route_filename = $route_filename ? $route_filename : HTTP . "routes.php";

@@ -5,42 +5,28 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use FastRoute\RouteCollector;
-use function FastRoute\simpleDispatcher;
-use Og\Router;
+use Og\Routing;
+use Zend\Diactoros\Response;
+use Zend\Diactoros\ServerRequestFactory;
+use Zend\Stratigility\Http\Request as HttpRequest;
+use Zend\Stratigility\Http\Response as HttpResponse;
 
 class RoutingServiceProvider extends ServiceProvider
 {
-    public function boot() { }
-
-    /**
-     * Use the register method to register items with the container via the
-     * protected `$this->di` property or the `getContainer` method
-     * from trait `WithContainer`.
-     *
-     * @return void
-     */
     public function register()
     {
-        $di = $this->container;
-        $di->singleton(['router', Router::class], function () 
+        $this->container->singleton(['routing', Routing::class], function ()
         {
-            simpleDispatcher(
-                function (routeCollector $routes)
-                {
-                    $path = APP . "http/routes.php";
-                    include $path;
-                },
-                [
-                    'routeParser' => 'FastRoute\\RouteParser\\Std',
-                    'dataGenerator' => 'FastRoute\\DataGenerator\\GroupCountBased',
-                    'dispatcher' => 'FastRoute\\Dispatcher\\GroupCountBased',
-                ]
-            );    
+            $routing = new Routing(
+                new HttpRequest(ServerRequestFactory::fromGlobals()),
+                new HttpResponse(new Response)
+            );
             
-            return new Router; 
-        
+            $routing->make(HTTP . "routes.php");
+
+            return $routing;
         });
-        $this->provides[] = [Router::class,];
+
+        $this->provides += [Routing::class,];
     }
 }

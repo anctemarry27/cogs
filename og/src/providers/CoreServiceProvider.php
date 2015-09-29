@@ -11,7 +11,6 @@ use Og\Events;
 use Og\Forge;
 use Og\Interfaces\ContainerInterface;
 use Og\Paths;
-use Og\Support\Cogs\Collections\Collection;
 
 class CoreServiceProvider extends ServiceProvider
 {
@@ -21,7 +20,7 @@ class CoreServiceProvider extends ServiceProvider
         $di = $this->container;
 
         # register collections and paths
-        $di->add(['collection', Collection::class]);
+        # $di->add(['collection', Collection::class]);
         $di->add(['paths', Paths::class]);
 
         # cogs principle service container 
@@ -37,11 +36,6 @@ class CoreServiceProvider extends ServiceProvider
         # register cogs principle event dispatcher
         $di->singleton(['events', Events::class], new Events);
 
-        $this->provides[] = [
-            Collection::class,
-            Context::class,
-            Events::class,
-            Paths::class,
-        ];
+        $this->provides += [Context::class, Events::class, Paths::class,];
     }
 }

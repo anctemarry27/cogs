@@ -5,9 +5,9 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use App\Middleware\HelloWorldMiddleware;
 use App\Middleware\Middleware;
 use Og\Providers\CoreServiceProvider;
+use Og\Providers\SessionServiceProvider;
 use Zend\Diactoros\Server;
 use Zend\Stratigility\Http\Request;
 use Zend\Stratigility\Http\Response;
@@ -135,6 +135,7 @@ final class Application
         static::$di->singleton(['app', Application::class], $this);
 
         # register core services
+        static::$services->addAndRegister(SessionServiceProvider::class);
         static::$services->addAndRegister(CoreServiceProvider::class);
 
         # assign the application context

@@ -26,8 +26,8 @@
 
             ### remove_namespace($class_name, $class_suffix = NULL)
 
-            $this->assertEquals('Router', Str::remove_namespace(\Og\Router::class));
-            $this->assertEquals('Router', Str::remove_namespace(\Og\Router::class, 'Radium'));
+            $this->assertEquals('Routing', Str::remove_namespace(\Og\Routing::class));
+            $this->assertEquals('Routing', Str::remove_namespace(\Og\Routing::class, 'Og'));
 
             ### name_from_class($class_name, $suffix_to_remove = 'Controller')
 

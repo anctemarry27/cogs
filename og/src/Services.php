@@ -6,9 +6,9 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use Og\Providers\ServiceProvider;
 use Og\Interfaces\ContainerInterface;
 use Og\Interfaces\ServiceManagerInterface;
+use Og\Providers\ServiceProvider;
 
 class Services implements ServiceManagerInterface
 {
@@ -69,17 +69,49 @@ class Services implements ServiceManagerInterface
     {
         if ( ! $this->booted)
         {
-            foreach ($this->providers as $provider => &$is)
+            foreach ($this->providers as $provider => $is)
             {
-                if ( ! $is['registered'])
+                if ( ! $this->isRegistered($provider))
                     $this->registerServiceProvider($provider);
 
-                if ($is['registered'] and ! $is['booted'])
+                if (! $this->isBooted($provider))
                     $this->di->make($provider)->boot();
             }
 
             $this->booted = TRUE;
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function getProviders()
+    {
+        return $this->providers;
+    }
+
+    /**
+     * @param $service_name
+     *
+     * @return bool
+     */
+    function isBooted($service_name)
+    {
+        return array_key_exists($service_name, $this->providers)
+            ? $this->providers[$service_name]['booted']
+            : FALSE;
+    }
+
+    /**
+     * @param $service_name
+     *
+     * @return bool
+     */
+    function isRegistered($service_name)
+    {
+        return array_key_exists($service_name, $this->providers)
+            ? $this->providers[$service_name]['registered']
+            : FALSE;
     }
 
     /**
@@ -90,7 +122,7 @@ class Services implements ServiceManagerInterface
         if ( ! $this->configured)
         {
             $this->configured = TRUE;
-            $providers = config('core.providers');
+            $providers = $this->di['config']->get('core.providers');
 
             foreach ((array) $providers as $provider)
                 $this->add($provider);
@@ -110,7 +142,7 @@ class Services implements ServiceManagerInterface
             $this->loadConfiguration();
         }
 
-        if (array_key_exists($provider, $this->providers) and ! $this->providers[$provider]['registered'])
+        if (array_key_exists($provider, $this->providers) and ! $this->isRegistered($provider))
         {
             /** @var ServiceProvider $new_service */
             $new_service = new $provider($this->di);
@@ -128,19 +160,11 @@ class Services implements ServiceManagerInterface
     {
         foreach ($this->providers as $service => $is)
         {
-            if ( ! $is['registered'])
+            if ( ! $this->isRegistered($service))
                 $this->registerServiceProvider($service);
         }
 
         return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getProviders()
-    {
-        return $this->providers;
     }
 
 }

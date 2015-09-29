@@ -14,6 +14,8 @@ include 'messages.php';
 include 'paths.php';
 
 include VENDOR . 'autoload.php';
+include SUPPORT . 'lib/autoload.php';
+
 
 # load environment
 if (file_exists(ROOT . '.env'))

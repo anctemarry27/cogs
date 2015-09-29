@@ -1,3 +1,5 @@
+/og/src/Support/lib/
+/og/src/Support/composer.lock
 /tests/cache
 /vendor/
 /local/
