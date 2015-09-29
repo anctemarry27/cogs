@@ -1,16 +1,14 @@
 <?php namespace App\Http\Controllers;
 
-use Og\Events;
-use Og\Interfaces\ContainerInterface;
-use Og\Support\Cogs\Collections\Input;
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
-
 /**
  * @package Og
  * @version 0.1.0
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
+
+use Og\Support\Cogs\Collections\Input;
+use Psr\Http\Message\ResponseInterface as Response;
+
 class HomeController extends Controller
 {
     /**

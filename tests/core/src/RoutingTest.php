@@ -7,6 +7,7 @@
  */
 use App\Http\Controllers\Controller;
 use FastRoute\Dispatcher;
+use Og\Support\Cogs\Collections\Input;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
@@ -57,12 +58,11 @@ class RoutingTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($status === Dispatcher::FOUND);
         $this->assertTrue($params === ['name' => 'greg']);
 
-        # append the request to the parameters
-        $params += [$this->response];
-
-        $result = call_user_func_array($target, $params);
-        $this->assertEquals("Test Route [greg]", $result);
-
+        # simulate routing middleware for this test case
+        $result = call_user_func_array($target, [new Input($route[2]), new Response()]);
+        
+        $this->assertEquals("Test Route [greg]", $result,
+            'Test route should return `Test Route [greg]`.');
     }
 
 }
