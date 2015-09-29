@@ -7,16 +7,15 @@
  */
 
 use FastRoute\routeCollector as Collector;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\RequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
-use Riimu\Kit\UrlParser\UriParser;
 
 class Routing
 {
     /** @var \FastRoute\Dispatcher */
-    private $dispatcher = NULL;
+    private $dispatcher;
 
-    /** @var RequestInterface */
+    /** @var Request */
     private $request;
 
     /** @var Response */
@@ -25,51 +24,24 @@ class Routing
     /** @var null|string */
     private $route_filename;
 
-    /** @var UriParser */
-    private $url_parser;
-
     /**
      * Routing constructor.
      *
-     * @param RequestInterface $request
-     * @param Response         $response
+     * @param Request  $request
+     * @param Response $response
      */
-    public function __construct(RequestInterface $request, Response $response)
+    public function __construct(Request $request, Response $response)
     {
-        # construct the Uri Parser
-        $this->url_parser = new UriParser();
-
-        # assign request and response
         $this->request = $request;
         $this->response = $response;
     }
 
     /**
-     * Look for a route that matches the request.
-     * 
-     * @param $http_method
-     * @param $uri
-     *
-     * @return array
-     */
-    public function match($http_method = NULL, $uri = NULL)
-    {
-        # Fetch method and uri from injected request object
-        $http_method = $http_method ?: $this->request->getMethod();
-        $uri = $uri ?: $this->request->getUri()->getPath();
-
-        # parse the request and return a status array
-        $routeInfo = $this->dispatcher->dispatch($http_method, $uri);
-
-        return $routeInfo;
-    }
-
-    /**
      * makeRoutes creates the dispatcher and parses the supplied route file
      * (a PHP executable) based on the standard settings.
-     *                                                   
+     *
      * Encapsulates FastRoute.
-     * 
+     *
      * @param null $route_filename
      *
      * @return $this
@@ -89,8 +61,28 @@ class Routing
                 'routeCollector' => 'FastRoute\\RouteCollector',
             ]
         );
-        
+
         return $this;
+    }
+
+    /**
+     * Look for a route that matches the request.
+     *
+     * @param $http_method
+     * @param $uri
+     *
+     * @return array
+     */
+    public function match($http_method = NULL, $uri = NULL)
+    {
+        # Fetch method and uri from injected request object
+        $http_method = $http_method ?: $this->request->getMethod();
+        $uri = $uri ?: $this->request->getUri()->getPath();
+
+        # parse the request and return a status array
+        $routeInfo = $this->dispatcher->dispatch($http_method, $uri);
+
+        return $routeInfo;
     }
 
 }
