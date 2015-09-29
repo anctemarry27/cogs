@@ -18,8 +18,10 @@ interface MiddlewareInterface
     /**
      * Queue a Middleware service attached to a path.
      *
+     * @param $abstract
      * @param $path
-     * @param $concrete
+     *
+     * @return
      */
-    public function addPath($path, $concrete);
+    public function addPath($abstract, $path);
 }

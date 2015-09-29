@@ -11,8 +11,6 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Riimu\Kit\UrlParser\UriParser;
 
-//use Zend\Diactoros\Response;
-
 class Routing
 {
     /** @var \FastRoute\Dispatcher */
@@ -64,7 +62,14 @@ class Routing
     }
 
     /**
+     * makeRoutes creates the dispatcher and parses the supplied route file
+     * (a PHP executable) based on the standard settings.
+     *                                                   
+     * Encapsulates FastRoute.
+     * 
      * @param null $route_filename
+     *
+     * @return $this
      */
     public function makeRoutes($route_filename = NULL)
     {
@@ -81,6 +86,8 @@ class Routing
                 'routeCollector' => 'FastRoute\\RouteCollector',
             ]
         );
+        
+        return $this;
     }
 
 }

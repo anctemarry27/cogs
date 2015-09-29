@@ -7,6 +7,7 @@
  */
 
 use Og\Application;
+use Og\Interfaces\ContainerInterface;
 use Og\Interfaces\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -14,6 +15,15 @@ use Zend\Stratigility\MiddlewarePipe;
 
 class Middleware extends MiddlewarePipe implements MiddlewareInterface
 {
+    /** @var ContainerInterface */
+    protected $di;
+
+    public function __construct(ContainerInterface $di)
+    {
+        parent::__construct();
+        $this->di = $di;
+    }
+
     /**
      * @param Request       $request
      * @param Response      $response
@@ -33,17 +43,36 @@ class Middleware extends MiddlewarePipe implements MiddlewareInterface
      */
     public function add($abstract)
     {
-        //$abstract = __NAMESPACE__ . "\\$abstract";
-        $this->pipe(new $abstract);
+        # if no namespace is evident then inject the Middleware namespace.
+        $abstract = $this->decorate_namespace($abstract);
+
+        $this->pipe(new $abstract($this->di));
     }
 
     /**
+     * @param $abstract
      * @param $path
-     * @param $concrete
      */
-    public function addPath($path, $concrete)
+    public function addPath($abstract, $path)
     {
-        $this->pipe($path, $concrete);
+        # if no namespace is evident then inject the Middleware namespace.
+        $abstract = $this->decorate_namespace($abstract);
+
+        $this->pipe($path, new $abstract($this->di));
+    }
+
+    /**
+     * @param $abstract
+     *
+     * @return string
+     */
+    private function decorate_namespace($abstract)
+    {
+        # get the segments so we can check for a namespace
+        $segments = explode('\\', $abstract);
+
+        # if no namespace is evident then inject the Middleware namespace.
+        return count($segments) == 1 ? __NAMESPACE__ . "\\$abstract" : $abstract;
     }
 
 }

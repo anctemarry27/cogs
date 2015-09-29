@@ -47,16 +47,16 @@ class RoutingMiddleware extends Middleware
         switch ($status)
         {
             case Dispatcher::NOT_FOUND:
+                #@TODO ... 404 Not Found
                 $response->getBody()
                          ->write("<span style='color:maroon'><b>404 Error</b></span> - <i>Page not found.</i>");
 
                 return $response->withStatus(404);
-                # ... 404 Not Found
                 break;
 
             case Dispatcher::METHOD_NOT_ALLOWED:
                 # $allowedMethods = $routeInfo[1];
-                #  ... 405 Method Not Allowed
+                # @TODO ... 405 Method Not Allowed
                 break;
         }
 
@@ -70,17 +70,16 @@ class RoutingMiddleware extends Middleware
         //$params = sizeof($route[2]) > 0 ? [$route[2], $request, $response] : [$request, $response];
 
         # assign dependencies to the di
-        di()->add(['ServerRequestInterface', Request::class], $request);
-        di()->add(['ResponseInterface', Response::class], $response);
-        di()->add(Input::class, new Input($route[2]));
+        $this->di->add(['ServerRequestInterface', Request::class], $request);
+        $this->di->add(['ResponseInterface', Response::class], $response);
+        $this->di->add(Input::class, new Input($route[2]));
 
-        if (di()->call($target, $route[2]))
-        {
+        # call the route with dependency injection
+        if ($this->di->call($target, $route[2]))
+            # the target returned a valid response, so link it
             return parent::__invoke($request, $response, $next);
-        }
         else
-        {
-            return $request;
-        }
+            # otherwise, return the response and short-circuit the middleware
+            return $response;
     }
 }

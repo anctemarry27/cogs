@@ -5,7 +5,6 @@
  * @version 0.1.0
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
-use App\Http\Controllers\Controller;
 use FastRoute\Dispatcher;
 use Og\Support\Cogs\Collections\Input;
 use Zend\Diactoros\Request;
@@ -39,8 +38,10 @@ class RoutingTest extends \PHPUnit_Framework_TestCase
 
     public function test_Routing()
     {
-        $this->routing->makeRoutes();
-        $route = $this->routing->dispatch();
+        //$this->routing->makeRoutes();
+        $route = $this->routing
+            ->makeRoutes(TEST_PATH . '/tests/core/app/routes.php')
+            ->dispatch();
 
         # status will be in the following:
         #   NOT_FOUND = 0;
@@ -60,7 +61,7 @@ class RoutingTest extends \PHPUnit_Framework_TestCase
 
         # simulate routing middleware for this test case
         $result = call_user_func_array($target, [new Input($route[2]), new Response()]);
-        
+
         $this->assertEquals("Test Route [greg]", $result,
             'Test route should return `Test Route [greg]`.');
     }

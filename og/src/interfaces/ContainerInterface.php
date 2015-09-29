@@ -19,14 +19,16 @@ interface ContainerInterface
     function add($abstract, $concrete = NULL);
 
     /**
-     * Invoke
+     * Call the given Closure / class@method and inject its dependencies.
      *
-     * @param  string $alias
-     * @param  array  $args
+     * Note: Uses the illuminate/container `call` method.
+     *
+     * @param  callable|string $callback
+     * @param  array           $args
      *
      * @return mixed
      */
-    public function call($alias, array $args = []);
+    public function call($callback, array $args = []);
 
     /**
      * Get an item from the container

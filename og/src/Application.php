@@ -43,7 +43,7 @@ final class Application
         {
             static::$di = Forge::getInstance();
             static::$instance = $this;
-            static::$middleware = new Middleware;
+            static::$middleware = new Middleware(static::$di);
             static::$services = static::$di->getServices();
 
             $this->initialize();
@@ -84,11 +84,11 @@ final class Application
         # boot providers, etc.
         $this->boot();
 
-        static::$middleware->add('App\Middleware\AuthMiddleware');
-        static::$middleware->add('App\Middleware\RoutingMiddleware');
-        static::$middleware->addPath("/hello", new HelloWorldMiddleware);
-        static::$middleware->add('App\Middleware\EndOfLineMiddleware');
-        static::$middleware->add('App\Middleware\ElapsedTimeMiddleware');
+        static::$middleware->add('AuthMiddleware');
+        static::$middleware->add('RoutingMiddleware');
+        static::$middleware->addPath('HelloWorldMiddleware', "/hello");
+        static::$middleware->add('EndOfLineMiddleware');
+        static::$middleware->add('ElapsedTimeMiddleware');
 
         static::$server->listen();
     }

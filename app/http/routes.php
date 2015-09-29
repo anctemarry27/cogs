@@ -24,11 +24,9 @@ const APP_NAMESPACE = 'App\Http\Controllers\\';
 $routes->addRoute(['GET', 'POST'], '/',
     function (ContainerInterface $di, Request $request, Response $response)
     {
-        ddump(func_get_args());
-
         /** @var Response $response */
 
-        return $response->getBody()->write('Home Route, Baby!');
+        return $response->getBody()->write('Root Route, Baby!');
     }
 );
 
