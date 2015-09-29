@@ -33,7 +33,7 @@ class Middleware extends MiddlewarePipe implements MiddlewareInterface
      */
     public function add($abstract)
     {
-        $abstract = __NAMESPACE__ . "\\$abstract";
+        //$abstract = __NAMESPACE__ . "\\$abstract";
         $this->pipe(new $abstract);
     }
 

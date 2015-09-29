@@ -9,6 +9,7 @@ use Illuminate\Container\Container;
 use Og\Context;
 use Og\Events;
 use Og\Forge;
+use Og\Interfaces\ContainerInterface;
 use Og\Paths;
 use Og\Support\Cogs\Collections\Collection;
 
@@ -24,7 +25,7 @@ class CoreServiceProvider extends ServiceProvider
         $di->add(['paths', Paths::class]);
 
         # cogs principle service container 
-        $di->singleton(['container', Forge::class], new Forge);
+        $di->singleton([ContainerInterface::class, Forge::class], new Forge);
 
         # illuminate/container service container 
         $di->singleton(['ioc', Container::class],

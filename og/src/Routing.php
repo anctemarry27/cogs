@@ -7,17 +7,14 @@
  */
 
 use FastRoute\routeCollector as Collector;
-use Og\Interfaces\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface as Response;
 use Riimu\Kit\UrlParser\UriParser;
-use function FastRoute\simpleDispatcher as Dispatcher;
-use Zend\Diactoros\Response;
+
+//use Zend\Diactoros\Response;
 
 class Routing
 {
-    /** @var ContainerInterface|Forge */
-    private $di;
-
     /** @var \FastRoute\Dispatcher */
     private $dispatcher = NULL;
 
@@ -28,7 +25,7 @@ class Routing
     private $response;
 
     /** @var null|string */
-    private $route_filename = HTTP . "routes.php";
+    private $route_filename;
 
     /** @var UriParser */
     private $url_parser;
@@ -36,21 +33,17 @@ class Routing
     /**
      * Routing constructor.
      *
-     * @param RequestInterface   $request
-     * @param Response           $response
+     * @param RequestInterface $request
+     * @param Response         $response
      */
     public function __construct(RequestInterface $request, Response $response)
     {
-        # assign the dependency/service container
-        $this->di = Forge::getInstance();
-
         # construct the Uri Parser
         $this->url_parser = new UriParser();
 
         # assign request and response
         $this->request = $request;
         $this->response = $response;
-
     }
 
     /**
@@ -61,33 +54,11 @@ class Routing
      */
     public function dispatch($http_method = NULL, $uri = NULL)
     {
-        ///** @var Request $request */
-        //$request = $this->di['request'];
-
         // Fetch method and URI from somewhere
         $http_method = $http_method ?: $this->request->getMethod();
         $uri = $uri ?: $this->request->getUri()->getPath();
 
         $routeInfo = $this->dispatcher->dispatch($http_method, $uri);
-        //switch ($routeInfo[0])
-        //{
-        //    case \FastRoute\Dispatcher::NOT_FOUND:
-        //        # ... 404 Not Found
-        //        break;
-        //
-        //    case \FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
-        //        # $allowedMethods = $routeInfo[1];
-        //        #  ... 405 Method Not Allowed
-        //        break;
-        //
-        //    case \FastRoute\Dispatcher::FOUND:
-        //
-        //        return $routeInfo;
-        //        # $handler = $routeInfo[1];
-        //        # $vars = $routeInfo[2];
-        //        #  ... call $handler with $vars
-        //        break;
-        //}
 
         return $routeInfo;
     }
@@ -98,10 +69,10 @@ class Routing
     public function makeRoutes($route_filename = NULL)
     {
         # the file that defines routes
-        $this->route_filename = $route_filename ?: $this->route_filename;
+        $this->route_filename = $route_filename ? $route_filename : HTTP . "routes.php";
 
         # generate the route dispatcher and load routes
-        $this->dispatcher = Dispatcher(
+        $this->dispatcher = \FastRoute\simpleDispatcher(
             function (Collector $routes) { include $this->route_filename; },
             [
                 'routeParser' => 'FastRoute\\RouteParser\\Std',

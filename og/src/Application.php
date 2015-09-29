@@ -84,11 +84,11 @@ final class Application
         # boot providers, etc.
         $this->boot();
 
-        static::$middleware->add('AuthMiddleware');
-        static::$middleware->add('RoutingMiddleware');
+        static::$middleware->add('App\Middleware\AuthMiddleware');
+        static::$middleware->add('App\Middleware\RoutingMiddleware');
         static::$middleware->addPath("/hello", new HelloWorldMiddleware);
-        static::$middleware->add('EndOfLineMiddleware');
-        static::$middleware->add('ElapsedTimeMiddleware');
+        static::$middleware->add('App\Middleware\EndOfLineMiddleware');
+        static::$middleware->add('App\Middleware\ElapsedTimeMiddleware');
 
         static::$server->listen();
     }

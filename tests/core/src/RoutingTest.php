@@ -5,12 +5,12 @@
  * @version 0.1.0
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
+use App\Http\Controllers\Controller;
 use FastRoute\Dispatcher;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Uri;
-use Zend\Stratigility\Http\Response as HttpResponse;
 
 /**
  * Test the framework core classes
@@ -23,7 +23,7 @@ class RoutingTest extends \PHPUnit_Framework_TestCase
     /** @var Request */
     private $request;
 
-    /** @var HttpResponse */
+    /** @var Response */
     private $response;
 
     /** @var Routing */
@@ -58,10 +58,11 @@ class RoutingTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($params === ['name' => 'greg']);
 
         # append the request to the parameters
-        $params += [$this->request];
+        $params += [$this->response];
 
         $result = call_user_func_array($target, $params);
         $this->assertEquals("Test Route [greg]", $result);
+
     }
 
 }
