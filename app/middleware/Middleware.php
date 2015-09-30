@@ -7,6 +7,7 @@
  */
 
 use Og\Application;
+use Og\Forge;
 use Og\Interfaces\ContainerInterface;
 use Og\Interfaces\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -15,7 +16,7 @@ use Zend\Stratigility\MiddlewarePipe;
 
 class Middleware extends MiddlewarePipe implements MiddlewareInterface
 {
-    /** @var ContainerInterface */
+    /** @var ContainerInterface|Forge */
     protected $di;
 
     public function __construct(ContainerInterface $di)

@@ -28,7 +28,7 @@ class CoreServiceProvider extends ServiceProvider
 
         # illuminate/container service container 
         $di->singleton(['ioc', Container::class],
-            function () { return Forge::getInstance()->service('getInstance'); });
+            function () { return Forge::getInstance()->container(); });
 
         # register Application context
         $di->singleton(['context', Context::class], new Context);

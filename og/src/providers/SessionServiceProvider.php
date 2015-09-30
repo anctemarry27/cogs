@@ -17,14 +17,13 @@ class SessionServiceProvider extends ServiceProvider
         /** @var Forge $di */
         $di = $this->container;
 
+        # configure the session
         $session_factory = new SessionFactory;
         $session = $session_factory->newInstance($_COOKIE);
-
-        $session->setName('cogs');
-        $session->start();
+        $session->setName($di->get('config')->get('core.session_name'));
 
         # fail if the session start fails
-        if ( ! $session->isStarted())
+        if ( ! $session->start())
             throw new \LogicException('Cannot continue: unable to start a new session.');
 
         # remember the session

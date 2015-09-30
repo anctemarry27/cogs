@@ -18,6 +18,10 @@ return [
         'description' => '4th Generation Implementation of the Radium Framework',
     ],
     #
+    #  The framework session name
+    #
+    'session_name' => 'COGS',
+    #
     #  Service Providers
     #
     #  Note that order is significant.

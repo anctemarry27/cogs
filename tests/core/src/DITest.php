@@ -66,7 +66,7 @@
         {
             $di = $this->di;
 
-            $this->assertTrue($di->service('getInstance') instanceof IlluminateContainer);
+            $this->assertTrue($di->container('getInstance') instanceof IlluminateContainer);
             $this->assertTrue(di('ioc') instanceof IlluminateContainer);
             $this->assertTrue(di('di') instanceof Forge);
             $this->assertTrue(di('Og\Forge') instanceof Forge);
@@ -100,8 +100,8 @@
             $this->assertEquals($di, di());
             $this->assertEquals(Forge::getInstance(), di());
 
-            $this->assertTrue($di->service('getInstance') instanceof Illuminate\Container\Container);
-            $this->assertTrue(array_key_exists('Og\Forge', $di->service('getBindings')));
+            $this->assertTrue($di->container('getInstance') instanceof Illuminate\Container\Container);
+            $this->assertTrue(array_key_exists('Og\Forge', $di->container('getBindings')));
         }
 
         /**

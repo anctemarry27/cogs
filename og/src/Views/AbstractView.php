@@ -7,7 +7,7 @@
  */
 
 use ArrayAccess;
-use Illuminate\Container\Container;
+use Illuminate\Container\Container as IlluminateContainer;
 use Og\Context;
 use Og\Events;
 use Og\Forge;
@@ -22,8 +22,8 @@ abstract class AbstractView extends Context implements ViewInterface, ArrayAcces
     /** @var Events - the COGS event dispatcher */
     protected $events;
 
-    /** @var Container - the illuminate/container/container */
-    protected $ioc;
+    /** @var IlluminateContainer - the illuminate/container/container */
+    protected $illuminate_container;
 
     /** @var array - a list of paths to search for the template file */
     protected $template_paths = [];
@@ -90,11 +90,11 @@ abstract class AbstractView extends Context implements ViewInterface, ArrayAcces
     }
 
     /**
-     * @return Container
+     * @return IlluminateContainer
      */
     public function getContainer()
     {
-        return $this->ioc;
+        return $this->illuminate_container;
     }
 
     /**
@@ -127,7 +127,7 @@ abstract class AbstractView extends Context implements ViewInterface, ArrayAcces
      */
     public function registerDependencies()
     {
-        // TODO: Implement register_dependencies() method.
+        // Implement or do not implement. There is no `try`.
     }
 
     /**
@@ -138,8 +138,5 @@ abstract class AbstractView extends Context implements ViewInterface, ArrayAcces
      *
      * @return string
      */
-    public function render($view, $data = [])
-    {
-        // TODO: Implement render() method.
-    }
+    abstract public function render($view, $data = []);
 }

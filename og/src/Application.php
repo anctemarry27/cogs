@@ -61,7 +61,7 @@ final class Application
     }
 
     /**
-     * @return Application
+     * @return static
      */
     public function getInstance()
     {
@@ -73,7 +73,7 @@ final class Application
      */
     public function getMiddleware()
     {
-        return self::$middleware;
+        return static::$middleware;
     }
 
     /**
@@ -91,6 +91,8 @@ final class Application
         static::$middleware->add('ElapsedTimeMiddleware');
 
         static::$server->listen();
+        
+        ddump(static::$di->get('response'));
     }
 
     /**

@@ -17,11 +17,15 @@ use Illuminate\View\Factory as Environment;
 use Illuminate\View\FileViewFinder;
 use Illuminate\View\View as IlluminateView;
 use Og\Context;
-use Og\Forge;
 
+/**
+ * @note:
+ *      No attempt has been made to make this class portable.
+ *      It is tightly bound to the COGS framework.
+ *      That may change in the future.
+ */
 class BladeView extends AbstractView implements ViewInterface, ArrayAccess, Renderable
 {
-
     /** @var Compiler - the Blade compiler */
     private $blade_compiler;
 
@@ -38,31 +42,31 @@ class BladeView extends AbstractView implements ViewInterface, ArrayAccess, Rend
     private $view_finder;
 
     /**
-     * Construct a compatible environment for Blade template rendering
+     * Construct a compatible environment for Blade template rendering by
+     * connecting to COGS resources and the illuminate/container/container.
      *
      * @param array|NULL $settings
      */
     public function __construct(array $settings = NULL)
     {
-        # use the framework forge/dependency injector
-        $this->di = Forge::getInstance();
-        parent::__construct($this->di);
-
         # settings are located in the `config/views.php` configuration file.
-        $this->settings = $settings ? $settings : $this->di->make('config')['views.blade'];
+        $this->settings = $settings ? $settings : $this->di->get('config')['views.blade'];
 
-        # assign the local collection from the global context
+        # construct with decorated settings
+        parent::__construct($this->settings);
+        
+        # assign the blade symbol collection from the global context
         /** @var Context $global_context */
-        $global_context = $this->di['context'];
+        $global_context = $this->di->get('context');
         $this->collection = $global_context->copy();
 
-        # obtain the core template paths from `view.blade` settings 
+        # obtain the core template paths from `view.blade.template_paths` settings 
         $this->template_paths = $this->settings['template_paths'];
 
-        # Illuminate view requires an illuminate container.
+        # Illuminate View requires an illuminate container.
         # note that forge->service serves as a controlled gateway to
         #      the encapsulated illuminate/container/container. 
-        $this->ioc = $this->di->service('getInstance');
+        $this->illuminate_container = $this->di->container();
 
         # assign the COGS illuminate-compatible event handler to BladeView
         $this->events = $this->di->get('events');
@@ -184,12 +188,12 @@ class BladeView extends AbstractView implements ViewInterface, ArrayAccess, Rend
 
         /** @noinspection PhpParamsInspection */
         $this->factory = new Environment (
-            $this->ioc->make('view.engine.resolver'),
+            $this->illuminate_container->make('view.engine.resolver'),
             $this->view_finder,
             $this->events
         );
 
-        $this->factory->setContainer($this->ioc);
+        $this->factory->setContainer($this->illuminate_container);
     }
 
     /**

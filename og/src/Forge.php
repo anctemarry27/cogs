@@ -14,16 +14,17 @@ use Og\Interfaces\ContainerInterface;
 
 /**
  * The Forge class is a Service Container and Dependency Injector/Inverter.
- * Forge depends on the Illuminate\Container\Container. It implements two internal interfaces:
- *      ContainerInterface - the COGS Forge interface
+ * Forge depends on the Illuminate\Container\Container. It implements
+ * ContainerInterface - the COGS Forge interface. This provides for encapsulation
+ * of other DI solutions.
  *
  * @note   Forge does _not_ encapsulate the league container but rather inherits from the same interface.
- * @author Taylor Otwell and others (illuminate), Phil Bennett and others (league), Greg Truesdell (DI)
+ * @author Taylor Otwell and others (illuminate), Greg Truesdell (forge)
  *
- * @method void     alias($abstract, $alias)
- * @method mixed    build($class)
- * @method array    tagged($tag)
- * @method null     tag($abstracts, $tags)
+ * @ method void     alias($abstract, $alias)
+ * @ method mixed    build($class)
+ * @ method array    tagged($tag)
+ * @ method null     tag($abstracts, $tags)
  *
  * @see    [\illuminate\container\container](https://github.com/illuminate/container)
  */
@@ -69,7 +70,7 @@ final class Forge implements ContainerInterface, ArrayAccess
     function __call($method, $arguments = NULL)
     {
         if ($method and method_exists(static::$container, $method))
-            return $this->service($method, $arguments);
+            return $this->container($method, $arguments);
         else
             throw new \BadMethodCallException("The `$method` method is not associated with DI or its service container.");
     }
@@ -334,9 +335,9 @@ final class Forge implements ContainerInterface, ArrayAccess
      * @param string $method
      * @param array  $parameters
      *
-     * @return mixed|null
+     * @return IlluminateContainer|mixed|null
      */
-    function service($method = '', $parameters = NULL)
+    function container($method = '', $parameters = NULL)
     {
         # override encapsulated getInstance() method
         if ($method === 'getInstance' or $method === '')
@@ -372,7 +373,7 @@ final class Forge implements ContainerInterface, ArrayAccess
     {
         $this->singleton(['di', Forge::class], $this->getInstance());
         static::$container->instance(['container', ContainerInterface::class], $this->getInstance());
-        static::$container->instance(['ioc', IlluminateContainer::class], $this->service('getInstance'));
+        static::$container->instance(['ioc', IlluminateContainer::class], $this->container('getInstance'));
     }
 
 }

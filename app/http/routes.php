@@ -12,17 +12,17 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 use FastRoute\RouteCollector;
-use Og\Interfaces\ContainerInterface;
+use Og\Interfaces\ContainerInterface as Container;
 use Og\Support\Cogs\Collections\Input;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-const APP_NAMESPACE = 'App\Http\Controllers\\';
+const APP_NAMESPACE = "App\\Http\\Controllers\\";
 
 /** @var routeCollector $routes */
 
 $routes->addRoute(['GET', 'POST'], '/',
-    function (ContainerInterface $di, Request $request, Response $response)
+    function (Container $di, Request $request, Response $response)
     {
         /** @var Response $response */
 

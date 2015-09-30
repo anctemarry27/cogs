@@ -17,6 +17,7 @@ if ( ! defined('ROOT'))
     define('HTTP', APP . 'http/');
     define('VENDOR', ROOT . 'vendor/');
     define('VIEWS', APP . 'http/views/');
+    define('STORAGE', ROOT . 'local/storage/');
     define('SUPPORT', CORE . 'Support/');
 }
 
@@ -29,5 +30,6 @@ return [
     'root' => ROOT,
     'vendor' => VENDOR,
     'views' => VIEWS,
+    'storage' => STORAGE,
     'support' => SUPPORT,
 ];
