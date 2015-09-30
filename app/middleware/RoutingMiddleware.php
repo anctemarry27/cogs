@@ -81,8 +81,8 @@ class RoutingMiddleware extends Middleware
         # This is required so that the container can inject them
         # into the action method.
         # 
-        $this->di->add(['ServerRequestInterface', Request::class], $request);
-        $this->di->add(['ResponseInterface', Response::class], $response);
+        $this->di->add(['ServerRequest', Request::class], $request);
+        $this->di->add(['Response', Response::class], $response);
         $this->di->add(Input::class, new Input($parameters));
 
         # call the route with dependency injection

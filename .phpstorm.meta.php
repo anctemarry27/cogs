@@ -33,8 +33,8 @@
             "paths" instanceof Og\Paths,
             Og\Paths::class instanceof Og\Paths,
             
-            "router" instanceof Og\Router,
-            Og\Router::class instanceof Og\Router,
+            "routing" instanceof Og\Routing,
+            Og\Routing::class instanceof Og\Routing,
             
             "session" instanceof Aura\Session\Session,
             Aura\Session\Session::class instanceof Aura\Session\Session,
@@ -77,8 +77,8 @@
             "paths" instanceof Og\Paths,
             Og\Paths::class instanceof Og\Paths,
             
-            "router" instanceof Og\Router,
-            Og\Router::class instanceof Og\Router,
+            "routing" instanceof Og\Routing,
+            Og\Routing::class instanceof Og\Routing,
             
             "session" instanceof Aura\Session\Session,
             Aura\Session\Session::class instanceof Aura\Session\Session,
@@ -120,8 +120,8 @@
             "paths" instanceof Og\Paths,
             Og\Paths::class instanceof Og\Paths,
             
-            "router" instanceof Og\Router,
-            Og\Router::class instanceof Og\Router,
+            "routing" instanceof Og\Routing,
+            Og\Routing::class instanceof Og\Routing,
             
             "server" instanceof Zend\Diactoros\Server,
             Zend\Diactoros\Server::class instanceof Zend\Diactoros\Server,

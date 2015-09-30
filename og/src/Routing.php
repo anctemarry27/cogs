@@ -37,6 +37,45 @@ class Routing
     }
 
     /**
+     * @param Response $response
+     *
+     * @return string
+     */
+    public function responseToString(Response $response)
+    {
+        # the body contains the stream
+        $response_body = $response->getBody();  
+        
+        # use the current stream cursor as a length or remainder.
+        $stream_len = $response_body->tell();
+        
+        # if the stream is empty then return an empty string.
+        if ($stream_len < 1) 
+            return '';
+            
+        $response_body->rewind();
+
+        # return the string contents of the stream.
+        return $response_body->getContents();
+    }
+
+    /**
+     * @return Request
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
+     * @return Response
+     */
+    public function getResponse()
+    {
+        return $this->response;
+    }
+
+    /**
      * makeRoutes creates the dispatcher and parses the supplied route file
      * (a PHP executable) based on the standard settings.
      *

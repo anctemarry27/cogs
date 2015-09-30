@@ -34,9 +34,15 @@ class Middleware extends MiddlewarePipe implements MiddlewareInterface
      */
     public function __invoke(Request $request, Response $response, callable $next = NULL)
     {
+        # TODO: Middleware Pre-Hook?
+        
+        # call the app middleware before event
         $this->di->make('events')->fire(Application::NOTIFY_MIDDLEWARE, [$this, $request, $response]);
 
+        # call parent middleware
         return parent::__invoke($request, $response, $next);
+        
+        # TODO: Middleware Post-Hook?
     }
 
     /**
