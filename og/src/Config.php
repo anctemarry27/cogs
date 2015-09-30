@@ -33,53 +33,6 @@ class Config extends ImmutableCollection implements \ArrayAccess, \JsonSerializa
     }
 
     /**
-     * Merge config files in the CONFIG path.
-     *
-     * @param $base_path
-     *
-     * @return array|mixed
-     */
-    function importFolder($base_path)
-    {
-        $this->import($base_path);
-    }
-
-    /**
-     * @param array $array
-     *
-     * @return static
-     */
-    function make(array $array = [])
-    {
-        return new static($array);
-    }
-
-    /**
-     * Glob a set of file names from a normalized path.
-     *
-     * @param $base_path
-     *
-     * @return array
-     */
-    private function files_from_path($base_path)
-    {
-        $base_path = Str::normalize_path($base_path);
-        $files = glob($base_path . "*.php");
-
-        return $files;
-    }
-
-    /**
-     * Imports config files found in the specified directory.
-     *
-     * @param $base_path - the base path of the folder that contains config files.
-     */
-    private function import($base_path)
-    {
-        $this->import_files($this->files_from_path($base_path));
-    }
-
-    /**
      * Import configuration data from a set of files.
      *
      * @param $files
@@ -116,5 +69,52 @@ class Config extends ImmutableCollection implements \ArrayAccess, \JsonSerializa
                 $this->set($config_key, $import);
             }
         }
+    }
+
+    /**
+     * Merge config files in the CONFIG path.
+     *
+     * @param $base_path
+     *
+     * @return array|mixed
+     */
+    function importFolder($base_path)
+    {
+        $this->import($base_path);
+    }
+
+    /**
+     * Imports config files found in the specified directory.
+     *
+     * @param $base_path - the base path of the folder that contains config files.
+     */
+    private function import($base_path)
+    {
+        $this->import_files($this->files_from_path($base_path));
+    }
+
+    /**
+     * Glob a set of file names from a normalized path.
+     *
+     * @param $base_path
+     *
+     * @return array
+     */
+    private function files_from_path($base_path)
+    {
+        $base_path = Str::normalize_path($base_path);
+        $files = glob($base_path . "*.php");
+
+        return $files;
+    }
+
+    /**
+     * @param array $array
+     *
+     * @return static
+     */
+    function make(array $array = [])
+    {
+        return new static($array);
     }
 }

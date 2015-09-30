@@ -22,14 +22,14 @@ if ( ! defined('ROOT'))
 }
 
 return [
-    'app' => APP,
-    'boot' => BOOT,
-    'config' => APP_CONFIG,
-    'core' => CORE,
-    'http' => HTTP,
-    'root' => ROOT,
-    'vendor' => VENDOR,
-    'views' => VIEWS,
+    'app'     => APP,
+    'boot'    => BOOT,
+    'config'  => APP_CONFIG,
+    'core'    => CORE,
+    'http'    => HTTP,
+    'root'    => ROOT,
     'storage' => STORAGE,
     'support' => SUPPORT,
+    'vendor'  => VENDOR,
+    'views'   => VIEWS,
 ];

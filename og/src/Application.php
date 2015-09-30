@@ -9,8 +9,6 @@ use App\Middleware\Middleware;
 use Og\Providers\CoreServiceProvider;
 use Og\Providers\SessionServiceProvider;
 use Zend\Diactoros\Server;
-use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\ServerRequestFactory;
 use Zend\Stratigility\Http\Request;
 use Zend\Stratigility\Http\Response;
 
@@ -73,7 +71,9 @@ final class Application
         $this->services->registerServiceProviders();
 
         # listen for the Middleware call
-        $this->di->make('events')->on(static::NOTIFY_MIDDLEWARE, [$this, 'spyMiddleware']);
+        /** @var Events $events */
+        $events = $this->di->make('events');
+        $events->on(static::NOTIFY_MIDDLEWARE, [$this, 'spyMiddleware']);
     }
 
     /**
@@ -116,11 +116,11 @@ final class Application
 
         $this->server->listen();
 
-        $response = di()->has('Response') 
-            ? di('Response') 
-            : new Response(new \Zend\Diactoros\Response);   
-        
-        ddump(di('routing')->responseToString($response));
+        $response = di()->has('Response')
+            ? di('Response')
+            : Routing::makeResponse('Not Found');
+
+        ddump(di('routing')->bodyToString($response));
     }
 
     /**

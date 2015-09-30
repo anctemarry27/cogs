@@ -22,7 +22,7 @@ class RoutingServiceProvider extends ServiceProvider
                 new HttpResponse(new Response)
             );
             
-            $routing->make(HTTP . "routes.php");
+            $routing->makeDispatcher(HTTP . "routes.php");
 
             return $routing;
         });

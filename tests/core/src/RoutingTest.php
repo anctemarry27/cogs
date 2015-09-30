@@ -40,7 +40,7 @@ class RoutingTest extends \PHPUnit_Framework_TestCase
     {
         //$this->routing->makeRoutes();
         $route = $this->routing
-            ->make(TEST_PATH . '/tests/core/app/routes.php')
+            ->makeDispatcher(TEST_PATH . '/tests/core/app/routes.php')
             ->match();
 
         # status will be in the following:
