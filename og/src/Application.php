@@ -118,9 +118,9 @@ final class Application
 
         $response = di()->has('Response')
             ? di('Response')
-            : Routing::makeResponse('Not Found');
+            : Routing::makeHttpResponse('Not Found',200);
 
-        ddump(di('routing')->bodyToString($response));
+        expose(di('routing')->bodyToString($response));
     }
 
     /**
