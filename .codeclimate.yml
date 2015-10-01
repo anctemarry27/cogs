@@ -4,15 +4,13 @@ languages:
   JavaScript: true
   PHP: true
   Python: false
-
 ratings:
     paths:
-        - "app/*"
-        - "og/src/*"
-        - "tests/*"
-     
+    - "app/*"
+    - "og/src/*"
+    - "tests/*"
 exclude_paths:
-    - "og/src/support/illuminate/*"
-    - "og/src/support/lib/*"
-    - "og/src/views/illuminate/*"
-    - .phpstorm.meta.php
+- "og/src/support/illuminate/**/*"
+- "og/src/support/lib/**/*"
+- "og/src/views/illuminate/**/*"
+- ".phpstorm.meta.php"

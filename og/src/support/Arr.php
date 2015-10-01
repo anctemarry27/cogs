@@ -1,6 +1,6 @@
 <?php namespace Og\Support;
 
-use Og\Collection;
+use Og\Support\Cogs\Collections\Collection;
 
 /**
  * @package Og
@@ -65,11 +65,11 @@ class Arr
      */
     static function convert_list_to_indexed_array($array)
     {
-        $i = 0;
+        $index = 0;
         $work = [];
         foreach ($array as $key => $field)
         {
-            $work[$i++] = $field;
+            $work[$index++] = $field;
         }
 
         return $work;
@@ -158,6 +158,8 @@ class Arr
 
     /**
      * Flatten a multi-dimensional associative array with dots.
+     * 
+     * @note: pseudonym for static::dot(...);
      *
      * @param  array  $array
      * @param  string $prepend
@@ -166,21 +168,7 @@ class Arr
      */
     static function dict($array, $prepend = '')
     {
-        $results = [];
-
-        foreach ($array as $key => $value)
-        {
-            if (is_array($value))
-            {
-                $results = array_merge($results, self::dict($value, $prepend . $key . '.'));
-            }
-            else
-            {
-                $results[$prepend . $key] = $value;
-            }
-        }
-
-        return $results;
+        return static::dot($array, $prepend);
     }
 
     /**
@@ -801,10 +789,10 @@ class Arr
 
         foreach ($array as $tuple)
         {
-            $ra = explode(':', $tuple);
+            $explode = explode(':', $tuple);
 
-            $key = trim($ra[0]);
-            $value = trim($ra[1]);
+            $key = trim($explode[0]);
+            $value = trim($explode[1]);
 
             $result[$key] = is_numeric($value) ? intval($value) : $value;
         }
