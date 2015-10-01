@@ -1,14 +1,14 @@
 # Save as .codeclimate.yml (note leading .) in project root directory
 languages:
-  Ruby: false
-  JavaScript: true
-  PHP: true
-  Python: false
+    Ruby: false
+    JavaScript: true
+    PHP: true
+    Python: false
 ratings:
     paths:
-    - "app/*"
-    - "og/src/*"
-    - "tests/*"
+    - "app/**"
+    - "og/src/**"
+    - "tests/**"
 exclude_paths:
 - "og/src/support/illuminate/**/*"
 - "og/src/support/lib/**/*"
