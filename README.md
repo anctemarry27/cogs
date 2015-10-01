@@ -1,5 +1,6 @@
 ![cogs](http://radium-codex.info/og-framework/cogs.png)
 ## A personal PHP application framework
+[![Code Climate](https://codeclimate.com/github/OddGreg/cogs/badges/gpa.svg)](https://codeclimate.com/github/OddGreg/cogs)
 [![Build Status](https://travis-ci.org/OddGreg/og-framework.svg?branch=master)](https://travis-ci.org/OddGreg/og-framework)
 [![Coverage Status](https://coveralls.io/repos/OddGreg/og-framework/badge.svg?branch=master&service=github)](https://coveralls.io/github/OddGreg/og-framework?branch=master)
 
