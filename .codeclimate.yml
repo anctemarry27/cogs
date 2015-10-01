@@ -7,11 +7,12 @@ languages:
 
 ratings:
     paths:
-        - "app/**/*"
-        - "og/src/**/*"
-        - "tests/**/*"
+        - "app/*"
+        - "og/src/*"
+        - "tests/*"
      
 exclude_paths:
-    - "og/src/support/illuminate/**/*"
-    - "og/src/support/lib/**/*"
+    - "og/src/support/illuminate/*"
+    - "og/src/support/lib/*"
+    - "og/src/views/illuminate/*"
     - .phpstorm.meta.php
