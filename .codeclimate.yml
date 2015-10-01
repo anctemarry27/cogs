@@ -10,6 +10,6 @@ ratings:
     - og/src/**/*
      
 exclude_paths:
-    - og/src/Support/illuminate/**/*
-    - og/src/Support/lib/**/*
+    - og/src/support/illuminate/**/*
+    - og/src/support/lib/**/*
     - .phpstorm.meta.php
