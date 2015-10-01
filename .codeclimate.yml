@@ -4,7 +4,12 @@ languages:
   JavaScript: true
   PHP: true
   Python: false
-# exclude_paths:
-    - "og/src/Support/illuminate/"
-    - "og/src/Support/lib/
-    - ".phpstorm.meta.php"
+
+ratings:
+    - app/**
+    - og/src/**/*
+     
+exclude_paths:
+    - og/src/Support/illuminate/**/*
+    - og/src/Support/lib/**/*
+    - .phpstorm.meta.php
