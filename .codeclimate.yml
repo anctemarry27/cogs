@@ -7,4 +7,4 @@ languages:
 # exclude_paths:
     - "og/src/Support/illuminate/"
     - "og/src/Support/lib/
-    
+    - ".phpstorm.meta.php"
