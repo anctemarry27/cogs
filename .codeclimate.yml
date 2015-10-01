@@ -6,10 +6,12 @@ languages:
   Python: false
 
 ratings:
-    - app/**
-    - og/src/**/*
+    paths:
+    - "app/**/*"
+    - "og/src/**/*"
+    - "tests/**/*"
      
 exclude_paths:
-    - og/src/support/illuminate/**/*
-    - og/src/support/lib/**/*
-    - .phpstorm.meta.php
+- "og/src/support/illuminate/**/*"
+- "og/src/support/lib/**/*"
+- .phpstorm.meta.php
