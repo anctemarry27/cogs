@@ -10,6 +10,7 @@ use Og\Support\Arr;
 
 abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \JsonSerializable, \IteratorAggregate
 {
+    # add extended capabilities through a trait
     use ArrayUtilities;
 
     /** @var array */
@@ -379,4 +380,3 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
     }
 
 }
-

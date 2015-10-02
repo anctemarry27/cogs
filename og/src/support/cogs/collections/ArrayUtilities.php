@@ -8,9 +8,15 @@
 
 use Og\Support\Arr;
 
+/**
+ * trait ArrayUtilities
+ *
+ * Mainly used to extend BaseContainer but useful for adding
+ * array-based utility methods to a class.
+ *
+ */
 trait ArrayUtilities
 {
-
     /** @var array */
     protected $storage = [];
 
@@ -93,30 +99,6 @@ trait ArrayUtilities
     }
 
     /**
-     * Do something with each base entry in the collection.
-     *
-     * @param callable $callback
-     *
-     * @return $this
-     */
-    function mapEach(callable $callback)
-    {
-        array_map($callback, array_keys($this->storage), array_values($this->storage));
-
-        return $this;
-    }
-
-    /**
-     * Get the keys of the collection items.
-     *
-     * @return static
-     */
-    public function keys()
-    {
-        return new static(array_keys($this->storage));
-    }
-    
-    /**
      * Execute a callback over each item.
      *
      * @param  callable $callback
@@ -188,6 +170,30 @@ trait ArrayUtilities
     public function jsonSerialize()
     {
         return $this->storage;
+    }
+
+    /**
+     * Get the keys of the collection items.
+     *
+     * @return static
+     */
+    public function keys()
+    {
+        return new static(array_keys($this->storage));
+    }
+
+    /**
+     * Do something with each base entry in the collection.
+     *
+     * @param callable $callback
+     *
+     * @return $this
+     */
+    function mapEach(callable $callback)
+    {
+        array_map($callback, array_keys($this->storage), array_values($this->storage));
+
+        return $this;
     }
 
     /**

@@ -7,6 +7,7 @@
  */
 
 use Og\Support\Cogs\Collections\Input;
+use Og\Support\Str;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -60,10 +61,7 @@ class RoutingMiddleware extends Middleware
             {
                 # @TODO ... 404 Not Found
                 #
-                $response->getBody()
-                         ->write("<span style='color:maroon'><b>404 Error</b></span> - <i>Page not found.</i>");
-
-                return $response->withStatus(404);
+                return $this->set_error($response, 404);
                 break;
             }
             case static::METHOD_NOT_ALLOWED:
@@ -72,18 +70,13 @@ class RoutingMiddleware extends Middleware
                 # $action will be an array of valid methods.
                 # @TODO ... 405 Method Not Allowed
                 #
+                return $this->set_error($response, 405);
                 break;
             }
         }
 
-        #
-        # Register the Routing states into the container.
-        # This is required so that the container can inject them
-        # into the action method.
-        # 
-        $this->di->add(['ServerRequest', Request::class], $request);
-        $this->di->add(['Response', Response::class], $response);
-        $this->di->add(Input::class, new Input($parameters));
+        # register the Request/Response/Input objects with the DI
+        $this->register_http_state($request, $response, $parameters);
 
         # call the route with dependency injection
         if ($this->di->call($action, $parameters))
@@ -92,5 +85,37 @@ class RoutingMiddleware extends Middleware
         else
             # otherwise, return the response and short-circuit the middleware
             return $response;
+    }
+
+    /**
+     * @param Response $response
+     *
+     * @return Response
+     */
+    private function set_error(Response $response, $code)
+    {
+        $error_message = Str::http_code($code);
+
+        $response->getBody()
+                 ->write("<span style='color:maroon'><b>$code Error</b></span> - <i>$error_message.</i>");
+
+        return $response->withStatus($code);
+    }
+
+    /**
+     * @param Request  $request
+     * @param Response $response
+     * @param          $parameters
+     */
+    private function register_http_state(Request $request, Response $response, $parameters)
+    {
+        #
+        # Register the Routing states into the container.
+        # This is required so that the container can inject them
+        # into the action method.
+        # 
+        $this->di->add(['ServerRequest', Request::class], $request);
+        $this->di->add(['Response', Response::class], $response);
+        $this->di->add(Input::class, new Input($parameters));
     }
 }
