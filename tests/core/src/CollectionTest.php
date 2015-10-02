@@ -59,11 +59,11 @@ class CollectionTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(static::$collection->get('set'), ['test' => 'set test']);
 
         $this->assertEquals(NULL, static::$collection->set(999, 'set test'));
-        $this->assertEquals('default', static::$collection->locate('does-not-exist', 'default'));
+        $this->assertEquals('default', static::$collection->search('does-not-exist', 'default'));
 
-        $this->assertEquals(['test' => 'set test'], static::$collection->locate('set', 'default'));
+        $this->assertEquals(['test' => 'set test'], static::$collection->search('set', 'default'));
 
-        $this->assertEquals(static::$collection->locate('set.test'), 'set test');
+        $this->assertEquals(static::$collection->search('set.test'), 'set test');
         static::$collection->forget('set');
         $this->assertTrue(! static::$collection->has('set'));
 

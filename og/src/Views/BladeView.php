@@ -58,7 +58,7 @@ class BladeView extends AbstractView implements ViewInterface, ArrayAccess, Rend
         # assign the blade symbol collection from the global context
         /** @var Context $global_context */
         $global_context = $this->di->get('context');
-        $this->collection = $global_context->copy();
+        $this->storage = $global_context->copy();
 
         # obtain the core template paths from `view.blade.template_paths` settings 
         $this->template_paths = $this->settings['template_paths'];
@@ -143,7 +143,7 @@ class BladeView extends AbstractView implements ViewInterface, ArrayAccess, Rend
         $this->di->add('blade',          function () { return $this->blade_engine; });
         #@formatter:on
 
-        $this->collection['blade.factory'] = $this->factory;
+        $this->storage['blade.factory'] = $this->factory;
     }
 
     /**

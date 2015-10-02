@@ -17,7 +17,7 @@ use Og\Support\Cogs\Collections\ImmutableCollection;
  */
 class Context extends ImmutableCollection implements ArrayAccess
 {
-    protected $collection;
+    protected $storage;
 
     /** @var Forge */
     private $di;

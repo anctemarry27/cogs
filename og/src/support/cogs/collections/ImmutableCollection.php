@@ -68,7 +68,7 @@ abstract class ImmutableCollection extends BaseCollection
         {
             list($key, $value) = Arr::expand_notated($key, $value);
 
-            return $this->locate([$key => $value]);
+            return $this->search([$key => $value]);
         }
 
         return NULL;
@@ -166,7 +166,7 @@ abstract class ImmutableCollection extends BaseCollection
      */
     private function lock_all($force = FALSE)
     {
-        foreach ($this->collection as $abstract => $value)
+        foreach ($this->storage as $abstract => $value)
             $this->read_only[$abstract] = ! $force;
     }
 

@@ -37,7 +37,7 @@ class Collection Extends ImmutableCollection
      */
     function __call($method, $arguments)
     {
-        $this->collection[$method] = count($arguments) > 0 ? $arguments[0] : TRUE;
+        $this->storage[$method] = count($arguments) > 0 ? $arguments[0] : TRUE;
 
         return $this;
     }
@@ -51,7 +51,7 @@ class Collection Extends ImmutableCollection
      */
     function exportJSON($options = 0)
     {
-        return json_encode($this->collection, $options);
+        return json_encode($this->storage, $options);
     }
 
     /**
@@ -61,7 +61,7 @@ class Collection Extends ImmutableCollection
      */
     function exportYAML()
     {
-        return $this->yaml->dump($this->collection);
+        return $this->yaml->dump($this->storage);
     }
 
     /**
@@ -114,7 +114,7 @@ class Collection Extends ImmutableCollection
         if ( ! Arr::is_assoc($symbols))
             $symbols = Arr::transform_array_hash($symbols);
 
-        $this->collection = array_merge($this->collection, $symbols);
+        $this->storage = array_merge($this->storage, $symbols);
 
         return $this;
     }

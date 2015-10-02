@@ -10,13 +10,20 @@ use Og\Support\Arr;
 
 abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \JsonSerializable, \IteratorAggregate
 {
-    /** @var array */
-    protected $collection = [];
+    use ArrayUtilities;
 
+    /** @var array */
+    protected $storage = [];
+
+    /**
+     * BaseCollection constructor.
+     *
+     * @param null $collection
+     */
     public function __construct($collection = NULL)
     {
         /** @var BaseCollection collection */
-        $this->collection = $collection instanceof BaseCollection
+        $this->storage = $collection instanceof BaseCollection
             # copy collection values
             ? $collection->copy()
             # but if an array...
@@ -25,6 +32,18 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
                 ? $collection
                 # else return an empty array
                 : [];
+    }
+
+    /**
+     * Return a copy of the collection contents.
+     *
+     * @return array
+     */
+    function copy()
+    {
+        $copy = [];
+
+        return array_merge_recursive($copy, $this->storage);
     }
 
     /**
@@ -49,7 +68,21 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
      */
     function __set($key, $value)
     {
-        $this->collection[$key] = $value;
+        $this->storage[$key] = $value;
+    }
+
+    /**
+     * Using the provided arrays.php helper, get a value from the collection
+     * by its dot-notated index.
+     *
+     * @param null $query
+     * @param null $default
+     *
+     * @return mixed
+     */
+    function get($query, $default = NULL)
+    {
+        return Arr::query($query, $this->storage, $default);
     }
 
     /**
@@ -61,8 +94,14 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
      */
     function __isset($key)
     {
-        return isset($this->collection[$key]);
+        return isset($this->storage[$key]);
     }
+
+    /*    
+     * Get the instance as an array.
+     *
+     * @return array
+     */
 
     /**
      * Dynamically unset an attribute.
@@ -73,7 +112,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
      */
     function __unset($key)
     {
-        unset($this->collection[$key]);
+        unset($this->storage[$key]);
     }
 
     /**
@@ -83,23 +122,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
      */
     public function all()
     {
-        return $this->collection;
-    }
-
-    /*    
-     * Get the instance as an array.
-     *
-     * @return array
-     */
-
-    /**
-     * Returns TRUE is there are any stored properties.
-     *
-     * @return bool
-     */
-    function any()
-    {
-        return $this->count() > 0;
+        return $this->storage;
     }
 
     /**
@@ -124,167 +147,34 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
     }
 
     /**
-     * Collapse the collection of items into a single array.
+     * TRUE if an indexed value exists.
      *
-     * @return static
-     */
-    public function collapse()
-    {
-        return new static(Arr::collapse($this->collection));
-    }
-
-    /**
-     * Determine if an item exists in the collection.
-     *
-     * @param  mixed $key
-     * @param  mixed $value
+     * @param mixed $key
      *
      * @return bool
      */
-    public function contains($key, $value = NULL)
+    function has($key)
     {
-        if (func_num_args() == 2)
+        return ! is_null(Arr::query($key, $this->storage));
+    }
+
+    /**
+     * @param $key
+     * @param $value
+     *
+     * @return $this|null
+     */
+    function set($key, $value)
+    {
+        # attempt writing the value to the key
+        if (is_string($key))
         {
-            return $this->contains(function ($k, $item) use ($key, $value)
-            {
-                return data_get($item, $key) == $value;
-            });
+            list($key, $value) = Arr::expand_notated($key, $value);
+
+            return $this->search([$key => $value]);
         }
 
-        if ($this->useAsCallable($key))
-        {
-            return ! is_null($this->first($key));
-        }
-
-        return in_array($key, $this->collection);
-    }
-
-    /**
-     * Return a copy of the collection contents.
-     *
-     * @return array
-     */
-    function copy()
-    {
-        $copy = [];
-
-        return array_merge_recursive($copy, $this->collection);
-    }
-
-    /**
-     * Count the number of base properties.
-     *
-     * @return int
-     */
-    function count()
-    {
-        return count($this->collection, COUNT_NORMAL);
-    }
-
-    /**
-     * Using the provided arrays.php helper, delete elements that
-     * match the dot-notation index.
-     *
-     * @param       $dot_path
-     * @param       $target_value
-     */
-    function delete($dot_path, $target_value)
-    {
-        Arr::forget($this->get($dot_path), $target_value);
-    }
-
-    /**
-     * Get the items in the collection that are not present in the given items.
-     *
-     * @param  mixed $array
-     *
-     * @return static
-     */
-    public function diff($array)
-    {
-        return new static(array_diff($this->collection, $array));
-    }
-
-    /**
-     * Execute a callback over each item.
-     *
-     * @param  callable $callback
-     *
-     * @return $this
-     */
-    public function each(callable $callback)
-    {
-        foreach ($this->collection as $key => $item)
-        {
-            if ($callback($item, $key) === FALSE)
-            {
-                break;
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * Create a new collection consisting of every n-th element.
-     *
-     * @param  int $step
-     * @param  int $offset
-     *
-     * @return static
-     */
-    public function every($step, $offset = 0)
-    {
-        $new = [];
-
-        $position = 0;
-
-        foreach ($this->collection as $key => $item)
-        {
-            if ($position % $step === $offset)
-            {
-                $new[] = $item;
-            }
-
-            $position++;
-        }
-
-        return new static($new);
-    }
-
-    /**
-     * Run a filter over each of the items.
-     *
-     * @param  callable|null $callback
-     *
-     * @return static
-     */
-    public function filter(callable $callback = NULL)
-    {
-        if ($callback)
-        {
-            return new static(array_filter($this->collection, $callback));
-        }
-
-        return new static(array_filter($this->collection));
-    }
-
-    /**
-     * Get the first item from the collection.
-     *
-     * @param  callable|null $callback
-     * @param  mixed         $default
-     *
-     * @return mixed
-     */
-    public function first(callable $callback = NULL, $default = NULL)
-    {
-        if (is_null($callback))
-        {
-            return count($this->collection) > 0 ? reset($this->collection) : NULL;
-        }
-
-        return Arr::first($this->collection, $callback, $default);
+        return NULL;
     }
 
     /**
@@ -308,17 +198,33 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
     }
 
     /**
-     * Using the provided arrays.php helper, get a value from the collection
-     * by its dot-notated index.
+     * @param mixed $offset
      *
-     * @param null $query
-     * @param null $default
-     *
-     * @return mixed
+     * @return bool
      */
-    function get($query, $default = NULL)
+    function offsetExists($offset)
     {
-        return Arr::query($query, $this->collection, $default);
+        return $this->has($offset);
+    }
+
+    /**
+     * @param mixed $offset
+     */
+    function offsetUnset($offset)
+    {
+        Arr::forget($offset, $this->storage);
+    }
+
+    /**
+     * Using the provided arrays.php helper, delete elements that
+     * match the dot-notation index.
+     *
+     * @param       $dot_path
+     * @param       $target_value
+     */
+    function delete($dot_path, $target_value)
+    {
+        Arr::forget($this->get($dot_path), $target_value);
     }
 
     /**
@@ -326,52 +232,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
      */
     function getIterator()
     {
-        return new \ArrayIterator($this->collection);
-    }
-
-    /**
-     * TRUE if an indexed value exists.
-     *
-     * @param mixed $key
-     *
-     * @return bool
-     */
-    function has($key)
-    {
-        return ! is_null(Arr::query($key, $this->collection));
-    }
-
-    /**
-     * Convert the object into something JSON serializable.
-     *
-     * @return array
-     */
-    public function jsonSerialize()
-    {
-        return $this->collection;
-    }
-
-    /**
-     * Get the keys of the collection items.
-     *
-     * @return static
-     */
-    public function keys()
-    {
-        return new static(array_keys($this->collection));
-    }
-
-    /**
-     * Locate a value by `$key`, return `$default` if not found.
-     *
-     * @param string|array $key
-     * @param mixed        $default
-     *
-     * @return mixed
-     */
-    function locate($key, $default = NULL)
-    {
-        return Arr::deep_query($this->collection, $key, $default);
+        return new \ArrayIterator($this->storage);
     }
 
     /**
@@ -385,20 +246,6 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
         $new->merge($collection);
 
         return $new;
-    }
-
-    /**
-     * Do something with each base entry in the collection.
-     *
-     * @param callable $callback
-     *
-     * @return $this
-     */
-    function mapEach(callable $callback)
-    {
-        array_map($callback, array_keys($this->collection), array_values($this->collection));
-
-        return $this;
     }
 
     /**
@@ -416,9 +263,27 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
         if ( ! Arr::is_assoc($symbols))
             $symbols = Arr::transform_array_hash($symbols);
 
-        $this->collection = array_merge($this->collection, $symbols);
+        $this->storage = array_merge($this->storage, $symbols);
 
         return $this;
+    }
+
+    /**
+     * Normalize value objects to array.
+     *
+     * @param $value_set
+     *
+     * @return array
+     */
+    protected function normalize($value_set)
+    {
+        if ($value_set instanceof BaseCollection)
+            $value_set = $value_set->storage;
+
+        elseif (is_object($value_set))
+            $value_set = (array) get_object_vars($value_set);
+
+        return $value_set;
     }
 
     /**
@@ -432,13 +297,23 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
     }
 
     /**
-     * @param mixed $offset
+     * Returns TRUE is there are any stored properties.
      *
      * @return bool
      */
-    function offsetExists($offset)
+    function any()
     {
-        return $this->has($offset);
+        return $this->count() > 0;
+    }
+
+    /**
+     * Count the number of base properties.
+     *
+     * @return int
+     */
+    function count()
+    {
+        return count($this->storage, COUNT_NORMAL);
     }
 
     /**
@@ -461,40 +336,13 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
     }
 
     /**
-     * @param mixed $offset
-     */
-    function offsetUnset($offset)
-    {
-        Arr::forget($offset, $this->collection);
-    }
-
-    /**
      * @param array $new_contents
      */
     function replace(array $new_contents)
     {
-        $this->collection = [];
+        $this->storage = [];
         foreach ($new_contents as $key => $value)
             $this->merge($new_contents);
-    }
-
-    /**
-     * @param $key
-     * @param $value
-     *
-     * @return $this|null
-     */
-    function set($key, $value)
-    {
-        # attempt writing the value to the key
-        if (is_string($key))
-        {
-            list($key, $value) = Arr::expand_notated($key, $value);
-
-            return $this->locate([$key => $value]);
-        }
-
-        return NULL;
     }
 
     /**
@@ -504,7 +352,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
      */
     function size()
     {
-        return sizeof($this->collection);
+        return sizeof($this->storage);
     }
 
     /**
@@ -512,37 +360,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
      */
     function toArray()
     {
-        return $this->collection;
-    }
-
-    /**
-     * Convert the object to its JSON representation.
-     *
-     * @param  int $options
-     *
-     * @return string
-     */
-    function toJson($options = 0)
-    {
-        return json_encode($this->collection, $options);
-    }
-
-    /**
-     * Filter items by the given key value pair.
-     *
-     * @param  string $key
-     * @param  mixed  $value
-     * @param  bool   $strict
-     *
-     * @return static
-     */
-    public function where($key, $value, $strict = TRUE)
-    {
-        return $this->filter(function ($item) use ($key, $value, $strict)
-        {
-            return $strict ? data_get($item, $key) === $value
-                : data_get($item, $key) == $value;
-        });
+        return $this->storage;
     }
 
     /**
@@ -557,37 +375,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
     {
         Arr::is_assoc($name)
             ? $this->merge($name)
-            : $this->collection[$name] = $value;
-    }
-
-    /**
-     * Normalize value objects to array.
-     *
-     * @param $value_set
-     *
-     * @return array
-     */
-    protected function normalize($value_set)
-    {
-        if ($value_set instanceof BaseCollection)
-            $value_set = $value_set->collection;
-
-        elseif (is_object($value_set))
-            $value_set = (array) get_object_vars($value_set);
-
-        return $value_set;
-    }
-
-    /**
-     * Determine if the given value is callable, but not a string.
-     *
-     * @param  mixed $value
-     *
-     * @return bool
-     */
-    protected function useAsCallable($value)
-    {
-        return ! is_string($value) && is_callable($value);
+            : $this->storage[$name] = $value;
     }
 
 }

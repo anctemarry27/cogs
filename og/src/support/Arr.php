@@ -100,65 +100,8 @@ class Arr
     }
 
     /**
-     * @param      $array
-     * @param      $key
-     * @param null $default
-     *
-     * @return mixed|null
-     */
-    static function deep_query(&$array, $key, $default = NULL)
-    {
-        # if the value is an associative array, then merge it into the container
-        if (self::is_assoc($key))
-        {
-            if (count($key) > 0)
-            {
-                // Merge given config settings over any previous ones (if $value is array)
-                $array = self::merge_recursive_replace($array, $key);
-            }
-        }
-        elseif (is_string($key))
-        {
-            //$array = $this->container;
-
-            # handle compound indexes
-            if (strpos($key, '.') !== FALSE)
-            {
-                $data_value = $array;
-                $valueParts = explode('.', $key);
-                foreach ($valueParts as $valuePart)
-                {
-                    if (isset($data_value[$valuePart]))
-                    {
-                        $data_value = $data_value[$valuePart];
-                    }
-                }
-            }
-
-            # handle simple indexes
-            else
-            {
-                $data_value = NULL;
-                //if ($this->has($key))
-                if (array_key_exists($key, $array))
-                {
-                    $data_value = $array[$key];
-                }
-                else
-                {
-                    $data_value = value($default);
-                }
-            }
-
-            return $data_value;
-        }
-
-        return NULL;
-    }
-
-    /**
      * Flatten a multi-dimensional associative array with dots.
-     * 
+     *
      * @note: pseudonym for static::dot(...);
      *
      * @param  array  $array
@@ -169,18 +112,6 @@ class Arr
     static function dict($array, $prepend = '')
     {
         return static::dot($array, $prepend);
-    }
-
-    /**
-     * Divide an array into two arrays. One with keys and the other with values.
-     *
-     * @param  array $array
-     *
-     * @return array
-     */
-    public static function divide($array)
-    {
-        return [array_keys($array), array_values($array)];
     }
 
     /**
@@ -208,6 +139,18 @@ class Arr
         }
 
         return $results;
+    }
+
+    /**
+     * Divide an array into two arrays. One with keys and the other with values.
+     *
+     * @param  array $array
+     *
+     * @return array
+     */
+    public static function divide($array)
+    {
+        return [array_keys($array), array_values($array)];
     }
 
     /**
@@ -245,6 +188,25 @@ class Arr
         $value = array_shift($params);
 
         return [$key, $value];
+    }
+
+    /**
+     * @param string $dot_path
+     * @param array  $target_array
+     * @param string $target_value
+     *
+     * @return string
+     */
+    static function from_notation($dot_path, &$target_array, $target_value = NULL)
+    {
+        $result_array = &$target_array;
+
+        foreach (explode('.', $dot_path) as $step)
+        {
+            $result_array = &$result_array[$step];
+        }
+
+        return $target_value ? $result_array = $target_value : $result_array;
     }
 
     /**
@@ -290,28 +252,6 @@ class Arr
     }
 
     /**
-     * Return the first element in an array passing a given truth test.
-     *
-     * @param  array    $array
-     * @param  callable $callback
-     * @param  mixed    $default
-     *
-     * @return mixed
-     */
-    public static function first($array, callable $callback, $default = NULL)
-    {
-        foreach ($array as $key => $value)
-        {
-            if (call_user_func($callback, $key, $value))
-            {
-                return $value;
-            }
-        }
-
-        return value($default);
-    }
-
-    /**
      * Flatten a multi-dimensional array into a single level.
      *
      * @param  array $array
@@ -325,57 +265,6 @@ class Arr
         array_walk_recursive($array, function ($x) use (&$return) { $return[] = $x; });
 
         return $return;
-    }
-
-    /**
-     * Remove one or many array items from a given array using "dot" notation.
-     *
-     * @param  array|string $keys
-     *
-     * @param  array        $array
-     */
-    static function forget($keys, &$array)
-    {
-        $original = &$array;
-
-        foreach ((array) $keys as $key)
-        {
-            $parts = explode('.', $key);
-
-            while (count($parts) > 1)
-            {
-                $part = array_shift($parts);
-
-                if (isset($array[$part]) && is_array($array[$part]))
-                {
-                    $array = &$array[$part];
-                }
-            }
-
-            unset($array[array_shift($parts)]);
-
-            // clean up after each pass
-            $array = &$original;
-        }
-    }
-
-    /**
-     * @param string $dot_path
-     * @param array  $target_array
-     * @param string $target_value
-     *
-     * @return string
-     */
-    static function from_notation($dot_path, &$target_array, $target_value = NULL)
-    {
-        $result_array = &$target_array;
-
-        foreach (explode('.', $dot_path) as $step)
-        {
-            $result_array = &$result_array[$step];
-        }
-
-        return $target_value ? $result_array = $target_value : $result_array;
     }
 
     /**
@@ -396,36 +285,6 @@ class Arr
         }
 
         return NULL;
-    }
-
-    /**
-     * Get an item from an array using "dot" notation.
-     *
-     * @param  string $key
-     * @param  array  $array
-     * @param  mixed  $default
-     *
-     * @return mixed
-     */
-    static function get($key, $array, $default = NULL)
-    {
-        if (is_null($key))
-            return $array;
-
-        if (isset($array[$key]))
-            return $array[$key];
-
-        foreach (explode('.', $key) as $segment)
-        {
-            if ( ! is_array($array) || ! array_key_exists($segment, $array))
-            {
-                return $default;
-            }
-
-            $array = $array[$segment];
-        }
-
-        return $array;
     }
 
     /**
@@ -511,7 +370,7 @@ class Arr
     }
 
     /**
-     * Type-checked pseudonym for is_assoc().   
+     * Type-checked pseudonym for is_assoc().
      *
      * @param  array $array
      *
@@ -520,26 +379,6 @@ class Arr
     public static function isAssoc(array $array)
     {
         return static::is_assoc($array);
-    }
-
-    /**
-     * Determines if an array is an associative array.<br>
-     * ie:<br>
-     * <ul>
-     *    <li>Single dimension array: <pre>array("dog","cat","etc") == FALSE</pre>
-     *    <li>Associative array: <pre>array("animal"=>"dog", "place"=>"123 East") == TRUE</pre>
-     *
-     * @package SupportLoader
-     * @module  arrays
-     *
-     * @param $array - The array to test
-     *
-     * @return bool   - returns TRUE if an associative array
-     */
-    static function is_assoc($array)
-    {
-        return is_array($array) ? (bool) ! (array_values($array) === $array) : FALSE;
-
     }
 
     /**
@@ -554,6 +393,28 @@ class Arr
     public static function last($array, callable $callback, $default = NULL)
     {
         return static::first(array_reverse($array), $callback, $default);
+    }
+
+    /**
+     * Return the first element in an array passing a given truth test.
+     *
+     * @param  array    $array
+     * @param  callable $callback
+     * @param  mixed    $default
+     *
+     * @return mixed
+     */
+    public static function first($array, callable $callback, $default = NULL)
+    {
+        foreach ($array as $key => $value)
+        {
+            if (call_user_func($callback, $key, $value))
+            {
+                return $value;
+            }
+        }
+
+        return value($default);
     }
 
     /**
@@ -577,39 +438,6 @@ class Arr
         }
 
         return NULL;
-    }
-
-    /**
-     * Merges any number of arrays of any dimensions, the later overwriting
-     * previous keys, unless the key is numeric, in which case, duplicated
-     * values will not be added. The arrays to be merged are passed as
-     * arguments to the function.
-     *
-     * @package SupportLoader
-     * @module  arrays
-     *
-     * @param null $key
-     * @param null $value
-     *
-     * @return array - Resulting array, once all have been merged
-     */
-    static function merge_recursive_replace($key, $value)
-    {
-        // Holds all the arrays passed
-        $params = func_get_args();
-
-        // First array is used as the base, everything else overwrites on it
-        $return = array_shift($params);
-
-        // Merge all arrays on the first array
-        foreach ($params as $array)
-            foreach ($array as $key => $value)
-                if (isset($return[$key]) && is_array($value) && is_array($return[$key]))
-                    $return[$key] = Arr::merge_recursive_replace($return[$key], $value);
-                else
-                    $return[$key] = $value;
-
-        return $return;
     }
 
     /**
@@ -706,6 +534,68 @@ class Arr
     }
 
     /**
+     * Get an item from an array using "dot" notation.
+     *
+     * @param  string $key
+     * @param  array  $array
+     * @param  mixed  $default
+     *
+     * @return mixed
+     */
+    static function get($key, $array, $default = NULL)
+    {
+        if (is_null($key))
+            return $array;
+
+        if (isset($array[$key]))
+            return $array[$key];
+
+        foreach (explode('.', $key) as $segment)
+        {
+            if ( ! is_array($array) || ! array_key_exists($segment, $array))
+            {
+                return $default;
+            }
+
+            $array = $array[$segment];
+        }
+
+        return $array;
+    }
+
+    /**
+     * Remove one or many array items from a given array using "dot" notation.
+     *
+     * @param  array|string $keys
+     *
+     * @param  array        $array
+     */
+    static function forget($keys, &$array)
+    {
+        $original = &$array;
+
+        foreach ((array) $keys as $key)
+        {
+            $parts = explode('.', $key);
+
+            while (count($parts) > 1)
+            {
+                $part = array_shift($parts);
+
+                if (isset($array[$part]) && is_array($array[$part]))
+                {
+                    $array = &$array[$part];
+                }
+            }
+
+            unset($array[array_shift($parts)]);
+
+            // clean up after each pass
+            $array = &$original;
+        }
+    }
+
+    /**
      * Retrieves the value of an array element or object property with the given key or property name.
      * If the key does not exist in the array or object, the default value will be returned instead.
      * The key may be specified in a dot format to retrieve the value of a sub-array or the property
@@ -714,19 +604,22 @@ class Arr
      * or `$array->x` is neither an array nor an object, the default value will be returned.
      * Note that if the array already has an element `x.y.z`, then its value will be returned
      * instead of going through the sub-arrays.
-     * Below are some usage examples,
-     * ~~~
-     * // working with array
-     * $username = array_query($_POST, 'username');
-     * // working with object
-     * $username = array_query($user, 'username');
-     * // working with anonymous function
-     * $fullName = array_query($user, static function ($user, $defaultValue) {
+     *
+     * Examples:
+     *
+     *  // working with array
+     *  $username = Arr::query($_POST, 'username');
+     *
+     *  // working with object
+     *  $username = Arr::query($user, 'username');
+     *
+     *  // working with anonymous function
+     *  $fullName = Arr::query($user, static function ($user, $defaultValue) {
      *     return $user->firstName . ' ' . $user->lastName;
-     * });
-     * // using dot format to retrieve the property of embedded object
-     * $street = array_query($users, 'address.street');
-     * ~~~
+     *  });
+     *
+     *  // using dot format to retrieve the property of embedded object
+     *  $street = Arr::query($users, 'address.street');
      *
      * @param string|\Closure $key     key name of the array element, or property name of the object,
      *                                 or an anonymous static function returning the value. The anonymous function
@@ -762,20 +655,6 @@ class Arr
     }
 
     /**
-     * Converts a string of space or tab delimited words as an array.
-     * Multiple whitespace between words is converted to a single space.
-     *
-     * @param        $words
-     * @param string $delimiter
-     *
-     * @return array
-     */
-    static function s_to_a($words, $delimiter = ' ')
-    {
-        return explode($delimiter, preg_replace('/\s+/', ' ', $words));
-    }
-
-    /**
      * Converts a string in the form "<key>:<value," to an associative array.
      *
      * @param $tuples - the formatted string representation of a key/value array.
@@ -798,6 +677,130 @@ class Arr
         }
 
         return $result;
+    }
+
+    /**
+     * Converts a string of space or tab delimited words as an array.
+     * Multiple whitespace between words is converted to a single space.
+     *
+     * @param        $words
+     * @param string $delimiter
+     *
+     * @return array
+     */
+    static function s_to_a($words, $delimiter = ' ')
+    {
+        return explode($delimiter, preg_replace('/\s+/', ' ', $words));
+    }
+
+    /**
+     * @param      $array
+     * @param      $key
+     * @param null $default
+     *
+     * @return mixed|null
+     */
+    static function search(&$array, $key, $default = NULL)
+    {
+        # if the value is an associative array, then merge it into the container
+        if (self::is_assoc($key))
+        {
+            if (count($key) > 0)
+            {
+                // Merge given config settings over any previous ones (if $value is array)
+                $array = self::merge_recursive_replace($array, $key);
+            }
+        }
+        elseif (is_string($key))
+        {
+            //$array = $this->container;
+
+            # handle compound indexes
+            if (strpos($key, '.') !== FALSE)
+            {
+                $data_value = $array;
+                $valueParts = explode('.', $key);
+                foreach ($valueParts as $valuePart)
+                {
+                    if (isset($data_value[$valuePart]))
+                    {
+                        $data_value = $data_value[$valuePart];
+                    }
+                }
+            }
+
+            # handle simple indexes
+            else
+            {
+                $data_value = NULL;
+                //if ($this->has($key))
+                if (array_key_exists($key, $array))
+                {
+                    $data_value = $array[$key];
+                }
+                else
+                {
+                    $data_value = value($default);
+                }
+            }
+
+            return $data_value;
+        }
+
+        return NULL;
+    }
+
+    /**
+     * Determines if an array is an associative array.<br>
+     * ie:<br>
+     * <ul>
+     *    <li>Single dimension array: <pre>array("dog","cat","etc") == FALSE</pre>
+     *    <li>Associative array: <pre>array("animal"=>"dog", "place"=>"123 East") == TRUE</pre>
+     *
+     * @package SupportLoader
+     * @module  arrays
+     *
+     * @param $array - The array to test
+     *
+     * @return bool   - returns TRUE if an associative array
+     */
+    static function is_assoc($array)
+    {
+        return is_array($array) ? (bool) ! (array_values($array) === $array) : FALSE;
+
+    }
+
+    /**
+     * Merges any number of arrays of any dimensions, the later overwriting
+     * previous keys, unless the key is numeric, in which case, duplicated
+     * values will not be added. The arrays to be merged are passed as
+     * arguments to the function.
+     *
+     * @package SupportLoader
+     * @module  arrays
+     *
+     * @param null $key
+     * @param null $value
+     *
+     * @return array - Resulting array, once all have been merged
+     */
+    static function merge_recursive_replace($key, $value)
+    {
+        // Holds all the arrays passed
+        $params = func_get_args();
+
+        // First array is used as the base, everything else overwrites on it
+        $return = array_shift($params);
+
+        // Merge all arrays on the first array
+        foreach ($params as $array)
+            foreach ($array as $key => $value)
+                if (isset($return[$key]) && is_array($value) && is_array($return[$key]))
+                    $return[$key] = Arr::merge_recursive_replace($return[$key], $value);
+                else
+                    $return[$key] = $value;
+
+        return $return;
     }
 
     /**
