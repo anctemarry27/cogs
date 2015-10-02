@@ -382,6 +382,26 @@ class Arr
     }
 
     /**
+     * Determines if an array is an associative array.<br>
+     * ie:<br>
+     * <ul>
+     *    <li>Single dimension array: <pre>array("dog","cat","etc") == FALSE</pre>
+     *    <li>Associative array: <pre>array("animal"=>"dog", "place"=>"123 East") == TRUE</pre>
+     *
+     * @package SupportLoader
+     * @module  arrays
+     *
+     * @param $array - The array to test
+     *
+     * @return bool   - returns TRUE if an associative array
+     */
+    static function is_assoc($array)
+    {
+        return is_array($array) ? (bool) ! (array_values($array) === $array) : FALSE;
+
+    }
+
+    /**
      * Return the last element in an array passing a given truth test.
      *
      * @param  array    $array
@@ -703,70 +723,14 @@ class Arr
     static function search($key, &$array, $default = NULL)
     {
         # if the value is an associative array, then merge it into the container
-        if (self::is_assoc($key))
-        {
-            if (count($key) > 0)
-            {
-                // Merge given config settings over any previous ones (if $value is array)
-                $array = self::merge_recursive_replace($array, $key);
-            }
-        }
-        elseif (is_string($key))
-        {
-            //$array = $this->container;
+        if (self::is_assoc($key) and count($key) > 0)
+            // Merge given config settings over any previous ones (if $value is array)
+            //$array = self::merge_recursive_replace($array, $key);
+            return $array = self::merge_recursive_replace($array, $key);
 
-            # handle compound indexes
-            if (strpos($key, '.') !== FALSE)
-            {
-                $data_value = $array;
-                $valueParts = explode('.', $key);
-                foreach ($valueParts as $valuePart)
-                {
-                    if (isset($data_value[$valuePart]))
-                    {
-                        $data_value = $data_value[$valuePart];
-                    }
-                }
-            }
-
-            # handle simple indexes
-            else
-            {
-                $data_value = NULL;
-                //if ($this->has($key))
-                if (array_key_exists($key, $array))
-                {
-                    $data_value = $array[$key];
-                }
-                else
-                {
-                    $data_value = value($default);
-                }
-            }
-
-            return $data_value;
-        }
-
-        return NULL;
-    }
-
-    /**
-     * Determines if an array is an associative array.<br>
-     * ie:<br>
-     * <ul>
-     *    <li>Single dimension array: <pre>array("dog","cat","etc") == FALSE</pre>
-     *    <li>Associative array: <pre>array("animal"=>"dog", "place"=>"123 East") == TRUE</pre>
-     *
-     * @package SupportLoader
-     * @module  arrays
-     *
-     * @param $array - The array to test
-     *
-     * @return bool   - returns TRUE if an associative array
-     */
-    static function is_assoc($array)
-    {
-        return is_array($array) ? (bool) ! (array_values($array) === $array) : FALSE;
+        return (strpos($key, '.') !== FALSE)
+            ? self::value_from_notation($key, $array)
+            : self::array_value($key, $array, $default);
 
     }
 
@@ -801,6 +765,45 @@ class Arr
                     $return[$key] = $value;
 
         return $return;
+    }
+
+    /**
+     * @param $key
+     * @param $array
+     *
+     * @return mixed
+     */
+    private static function value_from_notation($key, &$array)
+    {
+        $data_value = $array;
+        $valueParts = explode('.', $key);
+
+        //ddump([$key, $valueParts]);
+
+        foreach ($valueParts as $valuePart)
+        {
+            if (isset($data_value[$valuePart]))
+            {
+                $data_value = $data_value[$valuePart];
+            }
+        }
+
+        return $data_value;
+    }
+
+    /**
+     * @param $key
+     * @param $array
+     * @param $default
+     *
+     * @return mixed|null
+     */
+    private static function array_value($key, &$array, $default)
+    {
+        if (array_key_exists($key, $array))
+            return $array[$key];
+        else
+            return value($default);
     }
 
     /**
