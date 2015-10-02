@@ -13,4 +13,6 @@ exclude_paths:
 - "og/src/support/illuminate/**/*"
 - "og/src/support/lib/**/*"
 - "og/src/views/illuminate/**/*"
+- "og/src/Views/illuminate/**/*"
 - ".phpstorm.meta.php"
+- "boot/debug.php"
