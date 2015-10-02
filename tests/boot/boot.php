@@ -47,4 +47,4 @@ $di = new Forge;
 $di->singleton(['config', Config::class], new Config);
 $di->make('config')->importFolder(APP_CONFIG);
 
-new Application($di);
+new Application();

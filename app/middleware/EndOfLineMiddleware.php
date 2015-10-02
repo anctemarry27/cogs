@@ -1,6 +1,9 @@
 <?php namespace App\Middleware;
 
-/**
+/** 
+ * Example Middleware: End of Line
+ * 
+ * 
  * @package Og
  * @version 0.1.0
  * @author  Greg Truesdell <odd.greg@gmail.com>
@@ -20,7 +23,6 @@ class EndOfLineMiddleware extends Middleware
      */
     public function __invoke(Request $request, Response $response, callable $next = NULL)
     {
-        $et = elapsed_time();
         $response->getBody()->write('<div>End of Line.</div>' . PHP_EOL);
 
         // delegate to parent

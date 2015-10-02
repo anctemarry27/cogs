@@ -108,19 +108,14 @@ final class Application
         # boot providers, etc.
         $this->boot();
 
-        $this->middleware->add('AuthMiddleware');
-        $this->middleware->add('RoutingMiddleware');
-        $this->middleware->addPath('HelloWorldMiddleware', "/hello");
-        $this->middleware->add('EndOfLineMiddleware');
-        $this->middleware->add('ElapsedTimeMiddleware');
+        $this->middleware->installMiddlewares(config('core.middleware'));
+        $this->serve();
+        
+        //$response = di()->has('Response')
+        //    ? di('Response')
+        //    : Routing::makeHttpResponse('Not Found', 200);
 
-        $this->server->listen();
-
-        $response = di()->has('Response')
-            ? di('Response')
-            : Routing::makeHttpResponse('Not Found',200);
-
-        expose(di('routing')->bodyToString($response));
+        //expose(di('routing')->bodyToString($response));
     }
 
     /**
@@ -182,6 +177,14 @@ final class Application
         $et = elapsed_time();
         $class = (new \ReflectionClass($class))->getShortName();
         $response->getBody()->write("<div><b>$class</b> middleware event fired @<b>$et</b></div>" . PHP_EOL);
+    }
+
+    /**
+     * @return void
+     */
+    private function serve()
+    {
+        $this->server->listen();
     }
 
 }

@@ -12,9 +12,9 @@ use Og\Providers\RoutingServiceProvider;
 
 return [
     # Reserved for the framework.
-    'meta' => [
-        'name' => 'Og: A PHP Micro-Framework',
-        'version' => '0.1.0@dev',
+    'meta'         => [
+        'name'        => 'Og: A PHP Micro-Framework',
+        'version'     => '0.1.0@dev',
         'description' => '4th Generation Implementation of the Radium Framework',
     ],
     #
@@ -25,16 +25,25 @@ return [
     #  Service Providers
     #
     #  Note that order is significant.
-    'providers' => [
+    'providers'    => [
         //SessionServiceProvider::class,
-        CoreServiceProvider::class,
+        //CoreServiceProvider::class,
         RoutingServiceProvider::class,
     ],
     #
-    # core framework middleware
+    # Middleware options:
+    #   '<class name>'          - middleware class to add
+    #   [<class_name>,'<path>]  - format for addPath
     #
-    'middleware' => [
-        # <middleware>[, ...]            
+    'middleware'   => [
+        'AuthMiddleware',
+        [
+            'HelloWorldMiddleware',
+            '/hello',
+        ],
+        'RoutingMiddleware',
+        'EndOfLineMiddleware',
+        'ElapsedTimeMiddleware',
     ],
     #
     # core dependencies

@@ -25,6 +25,8 @@ class HelloWorldMiddleware extends Middleware
 
         $response->getBody()->write('<div>Hello world!<br /></div>' . PHP_EOL);
 
-        return parent::__invoke($request, $response, $next);
+        # terminate the pipeline
+        return null;
+        //return parent::__invoke($request, $response, $next);
     }
 }

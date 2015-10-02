@@ -35,13 +35,13 @@ class Middleware extends MiddlewarePipe implements MiddlewareInterface
     public function __invoke(Request $request, Response $response, callable $next = NULL)
     {
         # TODO: Middleware Pre-Hook?
-        
+
         # call the app middleware before event
         $this->di->make('events')->fire(Application::NOTIFY_MIDDLEWARE, [$this, $request, $response]);
 
         # call parent middleware
         return parent::__invoke($request, $response, $next);
-        
+
         # TODO: Middleware Post-Hook?
     }
 
@@ -58,6 +58,20 @@ class Middleware extends MiddlewarePipe implements MiddlewareInterface
 
     /**
      * @param $abstract
+     *
+     * @return string
+     */
+    private function decorate_namespace($abstract)
+    {
+        # get the segments so we can check for a namespace
+        $segments = explode('\\', $abstract);
+
+        # if no namespace is evident then inject the Middleware namespace.
+        return count($segments) == 1 ? __NAMESPACE__ . "\\$abstract" : $abstract;
+    }
+
+    /**
+     * @param $abstract
      * @param $path
      */
     public function addPath($abstract, $path)
@@ -69,17 +83,19 @@ class Middleware extends MiddlewarePipe implements MiddlewareInterface
     }
 
     /**
-     * @param $abstract
-     *
-     * @return string
+     * @param array $middlewares - an array of middlewares
      */
-    private function decorate_namespace($abstract)
+    public function installMiddlewares(array $middlewares)
     {
-        # get the segments so we can check for a namespace
-        $segments = explode('\\', $abstract);
+        foreach ($middlewares as $middleware)
+        {
+            is_array($middleware)
+                # array as ['<middleware>','<path>']
+                ? $this->addPath($middleware[0],$middleware[1])
+                # '<middleware>'
+                : $this->add($middleware);
+        }
 
-        # if no namespace is evident then inject the Middleware namespace.
-        return count($segments) == 1 ? __NAMESPACE__ . "\\$abstract" : $abstract;
     }
 
 }
