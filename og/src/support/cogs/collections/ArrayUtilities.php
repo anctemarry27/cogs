@@ -17,8 +17,6 @@ use Og\Support\Arr;
  */
 trait ArrayUtilities
 {
-    /** @var array */
-    protected $storage = [];
 
     /**
      * Collapse the collection of items into a single array.

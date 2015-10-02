@@ -15,4 +15,20 @@
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>
+    <filter>
+        <!-- DO NOT SET TO "true" CODE COVERAGE WILL BREAK -->
+        <whitelist addUncoveredFilesFromWhitelist="false">
+            <directory suffix=".php">./og/app</directory>
+            <directory suffix=".php">./og/src</directory>
+            <directory suffix=".php">./boot</directory>
+            <exclude>
+                <directory suffix=".php">./og/src/support/illuminate</directory>
+                <directory suffix=".php">./og/src/views</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+    <logging>
+        <log type="coverage-clover" target="./local/build/logs/clover.xml"/>
+        <log type="coverage-html" target="./local/build/logs/coverage"/>
+    </logging>
 </phpunit>

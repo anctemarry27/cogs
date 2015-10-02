@@ -1,5 +1,7 @@
-/og/src/Support/lib/
-/og/src/Support/composer.lock
+/og/src/support/lib/
+/og/src/support/illuminate/
+/og/src/support/composer.lock
+/og/src/views/illuminate/
 /tests/cache
 /vendor/
 /local/
