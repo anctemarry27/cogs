@@ -206,7 +206,7 @@ trait ArrayUtilities
      */
     function search($key, $default = NULL)
     {
-        return Arr::search($this->storage, $key, $default);
+        return Arr::search($key, $this->storage, $default);
     }
 
     /**

@@ -694,13 +694,13 @@ class Arr
     }
 
     /**
-     * @param      $array
      * @param      $key
+     * @param      $array
      * @param null $default
      *
      * @return mixed|null
      */
-    static function search(&$array, $key, $default = NULL)
+    static function search($key, &$array, $default = NULL)
     {
         # if the value is an associative array, then merge it into the container
         if (self::is_assoc($key))

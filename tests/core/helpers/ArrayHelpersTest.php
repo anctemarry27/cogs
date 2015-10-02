@@ -296,4 +296,23 @@ class ArrayHelpersTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    public function test06()
+    {
+        $searchRA = [
+            'name'   => 'greg',
+            'record' => [
+                'age'    => 100,
+                'amount' => 26.58,
+                'source' => 'pension',
+            ],
+        ];
+
+        $this->assertEquals('not found', Arr::get('record.lazy', $searchRA, 'not found'));
+        $this->assertEquals($searchRA['record'], Arr::search('record.lazy', $searchRA, 'not found'));
+        $this->assertEquals(26.58, Arr::get('record.amount', $searchRA, 'not found'));
+        //$this->assertEquals('not found', Arr::search('not.there', $searchRA, 'not found'));
+
+        //ddump([$resultSearch, $resultGet]);
+    }
+
 }
