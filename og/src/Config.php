@@ -76,11 +76,13 @@ class Config extends ImmutableCollection implements \ArrayAccess, \JsonSerializa
      *
      * @param $base_path
      *
-     * @return array|mixed
+     * @return static
      */
     function importFolder($base_path)
     {
         $this->import($base_path);
+        
+        return $this;
     }
 
     /**

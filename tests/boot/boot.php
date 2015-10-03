@@ -6,6 +6,7 @@
 
 namespace Og;
 
+use App\Middleware\Middleware;
 use Dotenv\Dotenv;
 use Tracy\Debugger;
 
@@ -41,10 +42,8 @@ if (getenv('DEBUG') !== 'false')
 # note that debug requires that the environment has been loaded
 include BOOT . 'debug.php';
 
-$di = new Forge;
+$config = (new Config())->importFolder(APP_CONFIG);
+$forge = new Forge();
+$middleware = new Middleware($forge);
 
-# Core Configuration
-$di->singleton(['config', Config::class], new Config);
-$di->make('config')->importFolder(APP_CONFIG);
-
-new Application();
+new Application($forge, $middleware, $config);

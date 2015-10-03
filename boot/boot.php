@@ -6,6 +6,7 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
+use App\Middleware\Middleware;
 use Dotenv\Dotenv;
 use Tracy\Debugger;
 
@@ -15,7 +16,6 @@ include 'paths.php';
 
 include VENDOR . 'autoload.php';
 include SUPPORT . 'lib/autoload.php';
-
 
 # load environment
 if (file_exists(ROOT . '.env'))
@@ -35,7 +35,10 @@ if (getenv('DEBUG') !== 'false')
     include 'debug.php';
 }
 
-# Core Configuration
-$di = new Forge;
-$di->singleton(['config', Config::class], new Config);
-$di->make('config')->importFolder(APP_CONFIG);
+$app = new Application(
+    new Forge,
+    new Middleware(new Forge),
+    (new Config)->importFolder(APP_CONFIG)
+);
+
+$app->run();

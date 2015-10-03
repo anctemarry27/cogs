@@ -8,4 +8,3 @@
 
 include "../boot/boot.php";
 
-(new Og\Application)->run();

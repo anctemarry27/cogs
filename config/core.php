@@ -27,7 +27,7 @@ return [
     #  Note that order is significant.
     'providers'    => [
         //SessionServiceProvider::class,
-        //CoreServiceProvider::class,
+        CoreServiceProvider::class,
         RoutingServiceProvider::class,
     ],
     #
@@ -37,10 +37,7 @@ return [
     #
     'middleware'   => [
         'AuthMiddleware',
-        [
-            'HelloWorldMiddleware',
-            '/hello',
-        ],
+        ['HelloWorldMiddleware', '/hello',],
         'RoutingMiddleware',
         'EndOfLineMiddleware',
         'ElapsedTimeMiddleware',

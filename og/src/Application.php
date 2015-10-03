@@ -16,11 +16,14 @@ final class Application
 {
     const NOTIFY_MIDDLEWARE = "app.notify.middleware";
 
-    /** @var Context */
-    private $context;
+    /** @var Config */
+    private $config;
 
     /** @var Forge */
-    private $di;
+    private $container;
+
+    /** @var Context */
+    private $context;
 
     /** @var Middleware */
     private $middleware;
@@ -36,15 +39,22 @@ final class Application
 
     /**
      * Application constructor.
+     *
+     * @param Forge      $container
+     * @param Middleware $middleware
+     * @param Config     $config
      */
-    public function __construct()
+    public function __construct(Forge $container, Middleware $middleware, Config $config)
     {
         if ( ! static::$instance)
         {
-            $this->di = Forge::getInstance();
             static::$instance = $this;
-            $this->middleware = new Middleware($this->di);
-            $this->services = $this->di->getServices();
+
+            $this->container = $container;
+            $this->middleware = $middleware;
+            $this->config = $config;
+
+            $this->services = $container->getServices();
 
             $this->initialize();
         }
@@ -57,23 +67,26 @@ final class Application
      */
     private function initialize()
     {
-        # register the application
-        $this->di->singleton(['app', Application::class], $this);
+        # Core Configuration
+        $this->container->singleton(['config', Config::class], $this->config);
 
-        # register core services
+        # register first-order services
         $this->services->addAndRegister(SessionServiceProvider::class);
         $this->services->addAndRegister(CoreServiceProvider::class);
 
         # assign the application context
-        $this->context = $this->di['context'];
+        $this->context = $this->container['context'];
 
         # install the other providers located in config/providers.php
         $this->services->registerServiceProviders();
 
         # listen for the Middleware call
         /** @var Events $events */
-        $events = $this->di->make('events');
+        $events = $this->container->make('events');
         $events->on(static::NOTIFY_MIDDLEWARE, [$this, 'spyMiddleware']);
+
+        # register the application
+        $this->container->singleton(['app', Application::class], $this);
     }
 
     /**
@@ -89,7 +102,9 @@ final class Application
      */
     public function getInstance()
     {
-        return static::$instance ?: new static;
+        $forge = new Forge();
+
+        return static::$instance ?: new static($forge, new Middleware($forge), new Config);
     }
 
     /**
@@ -110,7 +125,7 @@ final class Application
 
         $this->middleware->installMiddlewares(config('core.middleware'));
         $this->serve();
-        
+
         //$response = di()->has('Response')
         //    ? di('Response')
         //    : Routing::makeHttpResponse('Not Found', 200);
@@ -139,10 +154,10 @@ final class Application
         $this->server = $server = Server::createServer($this->middleware, $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
 
         # register the server
-        $this->di->singleton(['server', Server::class], $server);
+        $this->container->singleton(['server', Server::class], $server);
 
         # register request and response
-        $this->di->add(['request', Request::class,],
+        $this->container->add(['request', Request::class,],
             function () use ($server)
             {
                 return new Request($server->{'request'});
@@ -150,12 +165,20 @@ final class Application
         );
 
         # register the response
-        $this->di->add(['response', Response::class,],
+        $this->container->add(['response', Response::class,],
             function () use ($server)
             {
                 return new Response($server->{'response'});
             }
         );
+    }
+
+    /**
+     * @return void
+     */
+    private function serve()
+    {
+        $this->server->listen();
     }
 
     /**
@@ -177,14 +200,6 @@ final class Application
         $et = elapsed_time();
         $class = (new \ReflectionClass($class))->getShortName();
         $response->getBody()->write("<div><b>$class</b> middleware event fired @<b>$et</b></div>" . PHP_EOL);
-    }
-
-    /**
-     * @return void
-     */
-    private function serve()
-    {
-        $this->server->listen();
     }
 
 }

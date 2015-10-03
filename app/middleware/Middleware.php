@@ -7,6 +7,7 @@
  */
 
 use Og\Application;
+use Og\Events;
 use Og\Forge;
 use Og\Interfaces\ContainerInterface;
 use Og\Interfaces\MiddlewareInterface;
@@ -17,12 +18,13 @@ use Zend\Stratigility\MiddlewarePipe;
 class Middleware extends MiddlewarePipe implements MiddlewareInterface
 {
     /** @var ContainerInterface|Forge */
-    protected $di;
+    protected $forge;
 
-    public function __construct(ContainerInterface $di)
+    public function __construct(ContainerInterface $forge)
     {
+        $this->forge = $forge;
+
         parent::__construct();
-        $this->di = $di;
     }
 
     /**
@@ -34,10 +36,15 @@ class Middleware extends MiddlewarePipe implements MiddlewareInterface
      */
     public function __invoke(Request $request, Response $response, callable $next = NULL)
     {
+        /** @var Events $events - cache for event object */
+        static $events;
+        $events = $events ?: $this->forge->make('events');
+
         # TODO: Middleware Pre-Hook?
 
         # call the app middleware before event
-        $this->di->make('events')->fire(Application::NOTIFY_MIDDLEWARE, [$this, $request, $response]);
+
+        $events->fire(Application::NOTIFY_MIDDLEWARE, [$this, $request, $response]);
 
         # call parent middleware
         return parent::__invoke($request, $response, $next);
@@ -46,14 +53,31 @@ class Middleware extends MiddlewarePipe implements MiddlewareInterface
     }
 
     /**
-     * @param $abstract
+     * @param array $middlewares - an array of middlewares
      */
-    public function add($abstract)
+    public function installMiddlewares(array $middlewares)
+    {
+        foreach ($middlewares as $middleware)
+        {
+            is_array($middleware)
+                # array as ['<middleware>','<path>']
+                ? $this->addPath($middleware[0], $middleware[1])
+                # '<middleware>'
+                : $this->add($middleware);
+        }
+
+    }
+
+    /**
+     * @param $abstract
+     * @param $path
+     */
+    public function addPath($abstract, $path)
     {
         # if no namespace is evident then inject the Middleware namespace.
         $abstract = $this->decorate_namespace($abstract);
 
-        $this->pipe(new $abstract($this->di));
+        $this->pipe($path, new $abstract($this->forge));
     }
 
     /**
@@ -72,30 +96,13 @@ class Middleware extends MiddlewarePipe implements MiddlewareInterface
 
     /**
      * @param $abstract
-     * @param $path
      */
-    public function addPath($abstract, $path)
+    public function add($abstract)
     {
         # if no namespace is evident then inject the Middleware namespace.
         $abstract = $this->decorate_namespace($abstract);
 
-        $this->pipe($path, new $abstract($this->di));
-    }
-
-    /**
-     * @param array $middlewares - an array of middlewares
-     */
-    public function installMiddlewares(array $middlewares)
-    {
-        foreach ($middlewares as $middleware)
-        {
-            is_array($middleware)
-                # array as ['<middleware>','<path>']
-                ? $this->addPath($middleware[0],$middleware[1])
-                # '<middleware>'
-                : $this->add($middleware);
-        }
-
+        $this->pipe(new $abstract($this->forge));
     }
 
 }

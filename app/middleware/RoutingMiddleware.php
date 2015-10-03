@@ -39,7 +39,7 @@ class RoutingMiddleware extends Middleware
         #
         #   $parameters is a key=>value array of template variables.
         #
-        $result = $this->di->make('routing')->match();
+        $result = $this->forge->make('routing')->match();
 
         # if count($result) == 3 then collect all three route values
         # else get the status and null the rest
@@ -79,7 +79,7 @@ class RoutingMiddleware extends Middleware
         $this->register_http_state($request, $response, $parameters);
 
         # call the route with dependency injection
-        if ($this->di->call($action, $parameters))
+        if ($this->forge->call($action, $parameters))
             # the target returned a valid response, so link it
             return parent::__invoke($request, $response, $next);
         else
@@ -114,8 +114,8 @@ class RoutingMiddleware extends Middleware
         # This is required so that the container can inject them
         # into the action method.
         # 
-        $this->di->add(['ServerRequest', Request::class], $request);
-        $this->di->add(['Response', Response::class], $response);
-        $this->di->add(Input::class, new Input($parameters));
+        $this->forge->add(['ServerRequest', Request::class], $request);
+        $this->forge->add(['Response', Response::class], $response);
+        $this->forge->add(Input::class, new Input($parameters));
     }
 }
