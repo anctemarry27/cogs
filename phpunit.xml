@@ -18,7 +18,7 @@
     <filter>
         <!-- DO NOT SET TO "true" CODE COVERAGE WILL BREAK -->
         <whitelist addUncoveredFilesFromWhitelist="false">
-            <directory suffix=".php">./og/app</directory>
+            <directory suffix=".php">./app</directory>
             <directory suffix=".php">./og/src</directory>
             <directory suffix=".php">./boot</directory>
             <exclude>
