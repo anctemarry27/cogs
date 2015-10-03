@@ -1,5 +1,4 @@
 /og/src/support/lib/
-/og/src/support/illuminate/
 /og/src/support/composer.lock
 /.env
 /og/src/views/illuminate/
@@ -11,6 +10,7 @@
 /composer.lock
 /local/bin/coveralls
 /local/bin/phpunit
+/vendor.zip
 /.idea/
 /public/Bukku_eBook_Book_Template.zip
 /public/capture_pixelhint.zip
