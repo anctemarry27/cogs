@@ -14,15 +14,7 @@
         "bin-dir": "local/bin"
     },
     "require"          : {
-        "php"                            : ">=5.6.11",
-        "league/flysystem"               : "^1.1@dev",
-        "psr/http-message"               : "1.*",
-        "symfony/yaml"                   : "^2.0@dev",
-        "vlucas/phpdotenv"               : "^2.1@dev",
-        "symfony/console"                : "^3.0@dev",
-        "symfony/finder"                 : "^3.0@dev",
-        "zendframework/zend-diactoros"   : "^1.0@dev",
-        "zendframework/zend-stratigility": "^1.0@dev"
+        "php": ">=5.6.11"
     },
     "require-dev"      : {
         "phpunit/phpunit"       : "^5.1@dev",
@@ -30,17 +22,29 @@
         "tracy/tracy"           : "^2.4@dev"
     },
     "autoload"         : {
-        "classmap": [ "db", "tests" ],
+        "classmap": [
+            "app",
+            "og",
+            "db",
+            "tests"
+        ],
         "psr-4"   : {
-            "App\\"                  : "app",
-            "Illuminate\\"           : "og/src/support/illuminate",
-            "Illuminate\\View\\"     : "og/src/views/illuminate/view",
-            "Og\\"                   : "og/src",
-            "Og\\Support\\"          : "og/src/support",
-            "Og\\Support\\Cogs\\"    : "og/src/support/cogs",
-            "Og\\Tests\\"            : "tests",
-            "Riimu\\Kit\\UrlParser\\": "og/src/Support/kit-urlparser"
-        }
+            "App\\"              : "app",
+            "Og\\"               : "og/src",
+            "Og\\Support\\"      : "og/src/support",
+            "Og\\Support\\Cogs\\": "og/src/support/cogs",
+            "Og\\Tests\\"        : "tests"
+        },
+        "files"   : [
+            "og/src/support/lib/autoload.php"
+        ]
+    },
+    "scripts"          : {
+        "pre-autoload-dump"      : "local/bin/autoload.sh",
+        "pre-update-cmd"         : "local/bin/update.sh",
+        "post-package-install"   : [ ],
+        "post-install-cmd"       : [ ],
+        "post-create-project-cmd": [ ]
     },
     "minimum-stability": "dev",
     "prefer-stable"    : true

@@ -6,7 +6,6 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use App\Middleware\Middleware;
 use Dotenv\Dotenv;
 use Tracy\Debugger;
 
@@ -15,7 +14,6 @@ include 'messages.php';
 include 'paths.php';
 
 include VENDOR . 'autoload.php';
-include SUPPORT . 'lib/autoload.php';
 
 # load environment
 if (file_exists(ROOT . '.env'))

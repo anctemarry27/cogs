@@ -5,8 +5,12 @@
 /og/src/views/illuminate/
 /tests/cache
 /vendor/
-/local/
+/local/build/
+/local/cache/
+/local/storage/
 /composer.lock
+/local/bin/coveralls
+/local/bin/phpunit
 /.idea/
 /public/Bukku_eBook_Book_Template.zip
 /public/capture_pixelhint.zip

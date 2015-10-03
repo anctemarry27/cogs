@@ -9,18 +9,26 @@
             "email": "odd.greg@gmail.com"
         }
     ],
-    "homepage"         : "https://github.com/OddGreg/og-framework",
+    "homepage"         : "https://github.com/OddGreg/cogs",
     "config"           : {
         "bin-dir"   : "local/bin",
         "vendor-dir": "lib"
     },
     "require"          : {
-        "php"                    : ">=5.6.11",
-        "aura/session"           : "3.x-dev",
-        "nikic/fast-route"       : "dev-master",
-        "ircmaxell/random-lib"   : "^1.1@dev",
-        "jeremeamia/SuperClosure": "^2.2@dev",
-        "twig/twig"              : "~1.0"
+        "php"                            : ">=5.6.11",
+        "aura/session"                   : "3.x-dev",
+        "nikic/fast-route"               : "dev-master",
+        "ircmaxell/random-lib"           : "^1.1@dev",
+        "jeremeamia/SuperClosure"        : "^2.2@dev",
+        "league/flysystem"               : "^1.1@dev",
+        "psr/http-message"               : "1.*",
+        "symfony/yaml"                   : "^2.0@dev",
+        "vlucas/phpdotenv"               : "^2.1@dev",
+        "symfony/console"                : "^3.0@dev",
+        "symfony/finder"                 : "^3.0@dev",
+        "zendframework/zend-diactoros"   : "^1.0@dev",
+        "zendframework/zend-stratigility": "^1.0@dev"
+
     },
     "require-dev"      : { },
     "autoload"         : {

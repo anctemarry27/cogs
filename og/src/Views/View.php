@@ -18,4 +18,17 @@ class View extends AbstractView implements ViewInterface, Renderable, ArrayAcces
     {
         parent::__construct();
     }
+
+    /**
+     * Renders a Blade template with passed and stored symbol data.
+     *
+     * @param string $view - view name i.e.: 'sample' resolves to [template_path]/sample.blade.php
+     * @param array  $data
+     *
+     * @return string
+     */
+    public function render($view, $data = [])
+    {
+        // TODO: Implement render() method.
+    }
 }

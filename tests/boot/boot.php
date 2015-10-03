@@ -21,7 +21,6 @@ include TEST_PATH . 'boot/messages.php';
 include TEST_PATH . 'boot/paths.php';
 
 include TEST_PATH . 'vendor/autoload.php';
-include SUPPORT . 'lib/autoload.php';
 
 # load environment
 if (file_exists(TEST_PATH . 'tests/.env'))
