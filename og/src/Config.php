@@ -72,6 +72,26 @@ class Config extends ImmutableCollection implements \ArrayAccess, \JsonSerializa
     }
 
     /**
+     * @param array $array
+     *
+     * @return static
+     */
+    function make(array $array = [])
+    {
+        return new static($array);
+    }
+
+    /**
+     * @param string $folder - name of folder with config files
+     *
+     * @return mixed
+     */
+    static public function createFromFolder($folder)
+    {
+        return (new static)->importFolder($folder);
+    }
+
+    /**
      * Merge config files in the CONFIG path.
      *
      * @param $base_path
@@ -81,7 +101,7 @@ class Config extends ImmutableCollection implements \ArrayAccess, \JsonSerializa
     function importFolder($base_path)
     {
         $this->import($base_path);
-        
+
         return $this;
     }
 
@@ -108,15 +128,5 @@ class Config extends ImmutableCollection implements \ArrayAccess, \JsonSerializa
         $files = glob($base_path . "*.php");
 
         return $files;
-    }
-
-    /**
-     * @param array $array
-     *
-     * @return static
-     */
-    function make(array $array = [])
-    {
-        return new static($array);
     }
 }

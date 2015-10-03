@@ -34,11 +34,3 @@ if (getenv('DEBUG') !== 'false')
     # note that debug requires that the environment has been loaded
     include 'debug.php';
 }
-
-$app = new Application(
-    new Forge,
-    new Middleware(new Forge),
-    (new Config)->importFolder(APP_CONFIG)
-);
-
-$app->run();
