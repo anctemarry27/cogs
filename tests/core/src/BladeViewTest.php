@@ -54,4 +54,9 @@ class BladeViewTest extends \PHPUnit_Framework_TestCase
             'BladeView should render text that matches the contents of: ' . ROOT . 'tests/templates/blade_test_01.html');
     }
 
+    public function test_02_BladeView_layout()
+    {
+        echo $this->bv->render('pages.home', ['contents' => 'This was passed at render time.']);
+    }
+
 }

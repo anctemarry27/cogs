@@ -187,3 +187,8 @@ if ( ! function_exists('url'))
         throw new \LogicException("url($route_name) is not implemented.");
     }
 }
+
+# include illuminate support helpers
+# - mainly for BladeViews and other compatibilities.
+# - note that this MUST follow conveniences.php content - not before.
+include SUPPORT . "illuminate/support/helpers.php";

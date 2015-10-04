@@ -7,10 +7,8 @@
  */
 
 return [
-    'app'      => [
-        'title'   => 'COGS - A Personal PHP Application Framework',
-        'version' => '0.1.0@alpha',
-    ],
+    'title'    => 'COGS - A Personal PHP Application Framework',
+    'version'  => '0.1.0@alpha',
     'debug'    => getenv('DEBUG') === 'true',
     'encoding' => 'UTF-8',
     'mode'     => 'development',

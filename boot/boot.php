@@ -9,11 +9,16 @@
 use Dotenv\Dotenv;
 use Tracy\Debugger;
 
+include 'paths.php';
 include 'conveniences.php';
 include 'messages.php';
-include 'paths.php';
 
 include VENDOR . 'autoload.php';
+
+# include illuminate support helpers
+# - mainly for BladeViews and other compatibilities.
+# - note that this MUST follow conveniences.php - not before.
+//include SUPPORT . "illuminate/support/helpers.php";
 
 # load environment
 if (file_exists(ROOT . '.env'))
