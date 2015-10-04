@@ -283,7 +283,7 @@ final class Forge implements ContainerInterface, ArrayAccess
      *
      * @return \Closure
      */
-    function callWithDependencies(Closure $callback, array $parameters = [])
+    function wrapClosureWithDependencies(Closure $callback, array $parameters = [])
     {
         return static::$container->wrap($callback, $parameters);
     }

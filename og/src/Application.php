@@ -8,6 +8,8 @@
 use App\Middleware\Middleware;
 use Og\Providers\CoreServiceProvider;
 use Og\Providers\SessionServiceProvider;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Server;
 use Zend\Stratigility\Http\Request;
 use Zend\Stratigility\Http\Response;
@@ -139,7 +141,7 @@ final class Application
     private function boot()
     {
         # register server, request, response
-        $this->initialize_http();
+        $this->initialize_server();
 
         # boot the service providers
         $this->services->bootAll();
@@ -148,7 +150,7 @@ final class Application
     /**
      * initialize the server/request/response and register with the service container.
      */
-    private function initialize_http()
+    private function initialize_server()
     {
         # create and register the server, request and response
         $this->server = $server = Server::createServer($this->middleware, $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
@@ -157,17 +159,19 @@ final class Application
         $this->container->singleton(['server', Server::class], $server);
 
         # register request and response
-        $this->container->add(['request', Request::class,],
+        $this->container->add(['request', ServerRequestInterface::class,],
             function () use ($server)
             {
+                # return the active request
                 return new Request($server->{'request'});
             }
         );
 
         # register the response
-        $this->container->add(['response', Response::class,],
+        $this->container->add(['response', ResponseInterface::class,],
             function () use ($server)
             {
+                # return the active response
                 return new Response($server->{'response'});
             }
         );

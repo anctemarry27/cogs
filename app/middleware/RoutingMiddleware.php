@@ -6,6 +6,7 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
+use Og\Routing;
 use Og\Support\Cogs\Collections\Input;
 use Og\Support\Str;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -18,6 +19,9 @@ class RoutingMiddleware extends Middleware
     const FOUND              = 1;
     const METHOD_NOT_ALLOWED = 2;
 
+    /** @var Routing */
+    private $routing;
+
     /**
      * @param Request       $request
      * @param Response      $response
@@ -27,6 +31,10 @@ class RoutingMiddleware extends Middleware
      */
     public function __invoke(Request $request, Response $response, callable $next = NULL)
     {
+        # we need to get the routing object here due to the strict
+        # middleware __invoke method signature. 
+        $this->routing = $this->forge->make(Routing::class);
+
         # Search for a route match using the registered routing object.
         #
         #   $status will be in the following:
@@ -37,23 +45,23 @@ class RoutingMiddleware extends Middleware
         #
         #   $action holds the callable.
         #
-        #   $parameters is a key=>value array of template variables.
+        #   $input is a key=>value array of template variables.
         #
-        $result = $this->forge->make('routing')->match();
+        $result = $this->routing->match();
 
         # if count($result) == 3 then collect all three route values
         # else get the status and null the rest
         if (count($result) == 3)
-            list($status, $action, $parameters) = $result;
+            list($status, $action, $input) = $result;
         else
         {
             # an error has occurred - most likely static::NOT_FOUND or static::METHOD_NOT_ALLOWED 
             $status = $result[0];
-            $action = $parameters = NULL;
+            $action = $input = NULL;
         }
 
-        # Get the request parameters - coerce into an array if necessary.
-        $parameters = (array) $parameters;
+        # Get the request input - coerce into an array if necessary.
+        $input = (array) $input;
 
         switch ($status)
         {
@@ -75,11 +83,11 @@ class RoutingMiddleware extends Middleware
             }
         }
 
-        # register the Request/Response/Input objects with the DI
-        $this->register_http_state($request, $response, $parameters);
+        # register the Request/Response/Input objects 
+        $this->forge->add(Input::class, new Input($input));
 
         # call the route with dependency injection
-        if ($this->forge->call($action, $parameters))
+        if ($this->forge->call($action, $input))
             # the target returned a valid response, so link it
             return parent::__invoke($request, $response, $next);
         else
@@ -89,6 +97,7 @@ class RoutingMiddleware extends Middleware
 
     /**
      * @param Response $response
+     * @param          $code
      *
      * @return Response
      */
@@ -100,22 +109,5 @@ class RoutingMiddleware extends Middleware
                  ->write("<span style='color:maroon'><b>$code Error</b></span> - <i>$error_message.</i>");
 
         return $response->withStatus($code);
-    }
-
-    /**
-     * @param Request  $request
-     * @param Response $response
-     * @param          $parameters
-     */
-    private function register_http_state(Request $request, Response $response, $parameters)
-    {
-        #
-        # Register the Routing states into the container.
-        # This is required so that the container can inject them
-        # into the action method.
-        # 
-        $this->forge->add(['ServerRequest', Request::class], $request);
-        $this->forge->add(['Response', Response::class], $response);
-        $this->forge->add(Input::class, new Input($parameters));
     }
 }
