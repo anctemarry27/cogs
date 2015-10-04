@@ -48,13 +48,13 @@
         {
             $context = $this->context;
 
-            di('events')->on('context.test.event', function (Context $context)
+            forge('events')->on('context.test.event', function (Context $context)
             {
                 $context->thaw();
                 $context['test.event'] = elapsed_time(TRUE);
             });
 
-            di('events')->notify('context.test.event', $context);
+            forge('events')->notify('context.test.event', $context);
 
         }
 

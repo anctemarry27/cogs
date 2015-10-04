@@ -12,7 +12,7 @@
             "app" instanceof Og\Application,
             Og\Application::class instanceof Og\Application,
             
-            "di" instanceof Og\Forge,
+            "forge" instanceof Og\Forge,
             Og\Forge::class instanceof Og\Forge,
             
             "collection" instanceof Og\Collection,
@@ -48,12 +48,12 @@
             "response" instanceof Zend\Stratigility\Http\Response,
             Zend\Stratigility\Http\Response::class instanceof Zend\Stratigility\Http\Response,
         ],
-        di("") => [
+        forge("") => [
             "" instanceof Og\Forge,
             "app" instanceof Og\Application,
             Og\Application::class instanceof Og\Application,
             
-            "di" instanceof Og\Forge,
+            "forge" instanceof Og\Forge,
             Og\Forge::class instanceof Og\Forge,
             
             "collection" instanceof Og\Collection,
@@ -97,7 +97,7 @@
             "app" instanceof Og\Application,
             Og\Application::class instanceof Og\Application,
             
-            "di" instanceof Og\Forge,
+            "forge" instanceof Og\Forge,
             Og\Forge::class instanceof Og\Forge,
             
             "collection" instanceof Og\Collection,
@@ -140,7 +140,7 @@
             "app" instanceof Og\Application,
             Og\Application::class instanceof Og\Application,
             
-            "di" instanceof Og\Forge,
+            "forge" instanceof Og\Forge,
             Og\Forge::class instanceof Og\Forge,
             
             "collection" instanceof Og\Collection,
@@ -180,7 +180,7 @@
             "app" instanceof Og\Application,
             Og\Application::class instanceof Og\Application,
             
-            "di" instanceof Og\Forge,
+            "forge" instanceof Og\Forge,
             Og\Forge::class instanceof Og\Forge,
             
             "collection" instanceof Og\Collection,

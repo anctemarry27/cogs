@@ -61,7 +61,7 @@ final class Events implements IlluminateEventsDispatcherContract
      */
     function __construct()
     {
-        $this->di = di();
+        $this->di = forge();
 
         if (static::$instance)
             return static::$instance;

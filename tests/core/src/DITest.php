@@ -67,10 +67,10 @@ class DITest extends PHPUnit_Framework_TestCase
         $di = $this->di;
 
         $this->assertTrue($di->container('getInstance') instanceof IlluminateContainer);
-        $this->assertTrue(di('ioc') instanceof IlluminateContainer);
-        $this->assertTrue(di('di') instanceof Forge);
-        $this->assertTrue(di('Og\Forge') instanceof Forge);
-        //$this->assertTrue(di(League\Container\ContainerInterface::class) instanceof Forge);
+        $this->assertTrue(forge('ioc') instanceof IlluminateContainer);
+        $this->assertTrue(forge('forge') instanceof Forge);
+        $this->assertTrue(forge('Og\Forge') instanceof Forge);
+        //$this->assertTrue(forge(League\Container\ContainerInterface::class) instanceof Forge);
 
         # tests singleton with closure
         $di->singleton('speck', function () { return 'speck'; });
@@ -96,9 +96,9 @@ class DITest extends PHPUnit_Framework_TestCase
     {
         $di = $this->di;
 
-        # verify di() equivalency
-        $this->assertEquals($di, di());
-        $this->assertEquals(Forge::getInstance(), di());
+        # verify forge() equivalency
+        $this->assertEquals($di, forge());
+        $this->assertEquals(Forge::getInstance(), forge());
 
         $this->assertTrue($di->container('getInstance') instanceof Illuminate\Container\Container);
         $this->assertTrue(array_key_exists('Og\Forge', $di->container('getBindings')));

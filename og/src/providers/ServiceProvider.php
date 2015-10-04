@@ -18,7 +18,7 @@ abstract class ServiceProvider
 
     public function __construct()
     {
-        $this->container = di();
+        $this->container = forge();
     }
 
     /**
@@ -45,7 +45,7 @@ abstract class ServiceProvider
 
     /**
      * Use the register method to register items with the container via the
-     * protected `$this->di` property or the `getContainer` method
+     * protected `$this->forge` property or the `getContainer` method
      * from trait `WithContainer`.
      *
      * @return void

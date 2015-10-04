@@ -20,7 +20,7 @@ class CoreServiceProvider extends ServiceProvider
         $di = $this->container;
 
         # register collections and paths
-        # $di->add(['collection', Collection::class]);
+        # $forge->add(['collection', Collection::class]);
         $di->add(['paths', Paths::class]);
 
         # cogs principle service container 

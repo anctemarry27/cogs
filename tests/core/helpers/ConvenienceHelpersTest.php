@@ -19,8 +19,8 @@ class HelpersTest extends \PHPUnit_Framework_TestCase
         /*
          * Test each function twice - first for value then after caching 
          */
-        $this->assertTrue(di() instanceof Forge);
-        $this->assertTrue(di('ioc') instanceof IlluminateContainer);
+        $this->assertTrue(forge() instanceof Forge);
+        $this->assertTrue(forge('ioc') instanceof IlluminateContainer);
 
         $this->assertTrue(config() instanceof Config);
         $this->assertTrue(config() instanceof Config);
@@ -62,7 +62,7 @@ class HelpersTest extends \PHPUnit_Framework_TestCase
 
     public function test_route()
     {
-        //di('routing')->getRouter()->namedPost('test.route.name1', '/route-test1',
+        //forge('routing')->getRouter()->namedPost('test.route.name1', '/route-test1',
         //    function (Request $request, Response $response)
         //    {
         //        $response->setContent('I made it.');
@@ -71,8 +71,8 @@ class HelpersTest extends \PHPUnit_Framework_TestCase
         //    }
         //);
         //
-        //di('router')->namedRouteDispatch('test.route.name1', '/route-test1');
-        //ddump(di('routing')->dispatch('GET','/route-test1'));
+        //forge('router')->namedRouteDispatch('test.route.name1', '/route-test1');
+        //ddump(forge('routing')->dispatch('GET','/route-test1'));
     }
 
 }

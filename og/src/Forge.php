@@ -371,7 +371,7 @@ final class Forge implements ContainerInterface, ArrayAccess
      */
     private function register_aliases()
     {
-        $this->singleton(['di', Forge::class], $this->getInstance());
+        $this->singleton(['forge', Forge::class], $this->getInstance());
         static::$container->instance(['container', ContainerInterface::class], $this->getInstance());
         static::$container->instance(['ioc', IlluminateContainer::class], $this->container('getInstance'));
     }

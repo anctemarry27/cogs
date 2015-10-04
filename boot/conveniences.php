@@ -16,14 +16,14 @@ if (PHP_VERSION_ID >= 70000)
     //include "service_container.php";
 }
 
-if ( ! function_exists('di'))
+if ( ! function_exists('forge'))
 {
     /**
      * @param $alias
      *
      * @return Forge|object
      */
-    function di($alias = '')
+    function forge($alias = '')
     {
         static $forge;
         $forge = $forge ?: Forge::getInstance();
@@ -56,7 +56,7 @@ if ( ! function_exists('config'))
     function config($key = '')
     {
         static $config = NULL;
-        $config = $config ?: di('config');
+        $config = $config ?: forge('config');
 
         return empty($key) ? $config : $config[$key];
     }
@@ -84,7 +84,7 @@ if ( ! function_exists('events'))
      */
     function events()
     {
-        return di('events');
+        return forge('events');
     }
 }
 
@@ -98,7 +98,7 @@ if ( ! function_exists('path'))
     function path($key = '')
     {
         static $paths = NULL;
-        $paths = $paths ?: di('paths');
+        $paths = $paths ?: forge('paths');
 
         return empty($key) ? $paths : $paths->get($key);
     }
@@ -129,7 +129,7 @@ if ( ! function_exists('request'))
 {
     function request()
     {
-        return new Request(di('server')->{'request'});
+        return new Request(forge('server')->{'request'});
     }
 }
 
@@ -144,8 +144,8 @@ if ( ! function_exists('input'))
     function input($key = NULL, $default = NULL)
     {
         return empty($key)
-            ? di('request')->getAttributes()
-            : di('request')->getAttribute($key, $default);
+            ? forge('request')->getAttributes()
+            : forge('request')->getAttribute($key, $default);
     }
 }
 
@@ -157,9 +157,9 @@ if ( ! function_exists('response'))
     function response($content = '', $status = 200)
     {
         if (func_num_args() == 0)
-            return di('response');
+            return forge('response');
 
-        return di('response')->write($content)->withStatus($status);
+        return forge('response')->write($content)->withStatus($status);
     }
 }
 

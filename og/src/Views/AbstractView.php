@@ -17,7 +17,7 @@ use Symfony\Component\Finder\Finder;
 abstract class AbstractView extends Context implements ViewInterface, ArrayAccess, Renderable
 {
     /** @var ContainerInterface|Forge - the forge, mainly */
-    protected $di;
+    protected $forge;
 
     /** @var Events - the COGS event dispatcher */
     protected $events;
@@ -36,7 +36,7 @@ abstract class AbstractView extends Context implements ViewInterface, ArrayAcces
      */
     public function __construct($settings = [])
     {
-        $this->di = Forge::getInstance();
+        $this->forge = Forge::getInstance();
         parent::__construct($settings);
     }
 

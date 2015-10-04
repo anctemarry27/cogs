@@ -20,7 +20,7 @@ class Context extends ImmutableCollection implements ArrayAccess
     protected $storage;
 
     /** @var Forge */
-    private $di;
+    private $forge;
 
     /**
      * @param array|Context $context
@@ -28,7 +28,7 @@ class Context extends ImmutableCollection implements ArrayAccess
     function __construct($context = [])
     {
         parent::__construct($context instanceof Context ? $context->copy() : $context);
-        $this->di = di();
+        $this->forge = forge();
         //$this->collection = $context instanceof Context ? $context->copy() : $context;
     }
 

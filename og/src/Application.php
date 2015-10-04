@@ -126,11 +126,11 @@ final class Application
         $this->middleware->installMiddlewares(config('core.middleware'));
         $this->serve();
 
-        //$response = di()->has('Response')
-        //    ? di('Response')
+        //$response = forge()->has('Response')
+        //    ? forge('Response')
         //    : Routing::makeHttpResponse('Not Found', 200);
 
-        //expose(di('routing')->bodyToString($response));
+        //expose(forge('routing')->bodyToString($response));
     }
 
     /**
