@@ -18,60 +18,59 @@ use Og\Services;
  * @backupGlobals          disabled
  * @backupStaticAttributes disabled
  */
-class DITest extends PHPUnit_Framework_TestCase
+class ForgeTest extends PHPUnit_Framework_TestCase
 {
     /** @var Forge */
-    private $di;
+    private $forge;
 
     /** @var \Og\Interfaces\ServiceManagerInterface */
-    private $sm;
+    private $services;
 
     public function setUp()
     {
-        $this->di = new Forge;
-        $this->sm = new Services($this->di);
+        $this->forge = new Forge;
+        $this->services = new Services($this->forge);
     }
 
     public function test00_construct()
     {
         $this->assertTrue((new Forge)->getInstance() === (new Forge)->getInstance());
-        $this->sm->registerServiceProviders();
+        $this->services->registerServiceProviders();
 
     }
 
     public function test01_instance()
     {
-        $this->di->add(['standard', stdClass::class]);
-        $this->assertTrue($this->di->get('standard') instanceof stdClass);
+        $this->forge->add(['standard', stdClass::class]);
+        $this->assertTrue($this->forge->get('standard') instanceof stdClass);
     }
 
     public function test02_add()
     {
-        $this->assertTrue($this->di->add('function', function () { return 'I am a function.'; }) instanceof Forge);
-        $this->assertEquals('I am a function.', $this->di['function']);
+        $this->assertTrue($this->forge->add('function', function () { return 'I am a function.'; }) instanceof Forge);
+        $this->assertEquals('I am a function.', $this->forge['function']);
 
-        $this->di->add('spanks', new TestServiceProvider($this->di));
-        $this->assertTrue($this->di->get('spanks') instanceof \Og\Providers\TestServiceProvider);
+        $this->forge->add('spanks', new TestServiceProvider($this->forge));
+        $this->assertTrue($this->forge->get('spanks') instanceof \Og\Providers\TestServiceProvider);
     }
 
     public function test03_remove()
     {
-        $di = $this->di;
+        $di = $this->forge;
 
         # following from test02...
-        $this->di->remove('spanks');
+        $this->forge->remove('spanks');
         $this->assertFalse($di->has('spanks'));
     }
 
     public function test_DI()
     {
-        $di = $this->di;
+        $di = $this->forge;
 
         $this->assertTrue($di->container('getInstance') instanceof IlluminateContainer);
         $this->assertTrue(forge('ioc') instanceof IlluminateContainer);
         $this->assertTrue(forge('forge') instanceof Forge);
         $this->assertTrue(forge('Og\Forge') instanceof Forge);
-        //$this->assertTrue(forge(League\Container\ContainerInterface::class) instanceof Forge);
 
         # tests singleton with closure
         $di->singleton('speck', function () { return 'speck'; });
@@ -95,7 +94,7 @@ class DITest extends PHPUnit_Framework_TestCase
 
     public function test_Instances()
     {
-        $di = $this->di;
+        $di = $this->forge;
 
         # verify forge() equivalency
         $this->assertEquals($di, forge());
@@ -110,7 +109,7 @@ class DITest extends PHPUnit_Framework_TestCase
      */
     public function test_InvalidArgumentException()
     {
-        $this->di->get('google');
+        $this->forge->get('google');
     }
 
     /**
@@ -119,7 +118,7 @@ class DITest extends PHPUnit_Framework_TestCase
     public function test_callException()
     {
         # this will fail with the expected exception
-        $this->di->{'spooky'}();
+        $this->forge->{'spooky'}();
     }
 
 }
