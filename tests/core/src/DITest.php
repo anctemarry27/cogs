@@ -9,6 +9,7 @@
 use Illuminate\Container\Container as IlluminateContainer;
 use Og\Forge;
 use Og\Providers\TestServiceProvider;
+use Og\Services;
 
 /**
  * Test the framework core classes
@@ -28,7 +29,7 @@ class DITest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->di = new Forge;
-        $this->sm = $this->di->getServices();
+        $this->sm = new Services($this->di);
     }
 
     public function test00_construct()

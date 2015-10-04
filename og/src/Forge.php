@@ -260,22 +260,6 @@ final class Forge implements ContainerInterface, ArrayAccess
     }
 
     /**
-     * Adds a service provider to the container.
-     * 
-     * Optionally, the service provider may be registered for use as a dependency.
-     * Normally, this is not necessary.
-     *
-     * @param string $provider
-     * @param bool   $as_dependency
-     *
-     * @return void
-     */
-    function addServiceProvider($provider, $as_dependency = FALSE)
-    {
-        static::$services->add($provider, $as_dependency);
-    }
-
-    /**
      * Call a Closure with dependency injection.
      *
      * @param  \Closure $callback
@@ -356,14 +340,6 @@ final class Forge implements ContainerInterface, ArrayAccess
     static function getInstance()
     {
         return self::$instance ?: new static();
-    }
-
-    /**
-     * @return Services
-     */
-    public static function getServices()
-    {
-        return self::$services;
     }
 
     /**

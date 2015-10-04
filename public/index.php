@@ -10,12 +10,15 @@ use App\Middleware\Middleware;
 use Og\Application;
 use Og\Config;
 use Og\Forge;
+use Og\Services;
 
 include "../boot/boot.php";
 
+$forge = Forge::getInstance();
 $app = new Application(
-    Forge::getInstance(),
-    Middleware::createWithForge(),
+    $forge,
+    new Services($forge),
+    new Middleware($forge),
     Config::createFromFolder(APP_CONFIG)
 );
 

@@ -43,20 +43,22 @@ final class Application
      * Application constructor.
      *
      * @param Forge      $container
+     * @param Services   $services
      * @param Middleware $middleware
      * @param Config     $config
      */
-    public function __construct(Forge $container, Middleware $middleware, Config $config)
+    public function __construct(Forge $container, Services $services,  Middleware $middleware, Config $config)
     {
         if ( ! static::$instance)
         {
             static::$instance = $this;
 
             $this->container = $container;
+            $this->services = $services;
             $this->middleware = $middleware;
             $this->config = $config;
 
-            $this->services = $container->getServices();
+            //$this->services = new Services($container); # $container->getServices();
 
             $this->initialize();
         }
@@ -106,7 +108,7 @@ final class Application
     {
         $forge = new Forge();
 
-        return static::$instance ?: new static($forge, new Middleware($forge), new Config);
+        return static::$instance ?: new static($forge, new Services($forge), new Middleware($forge), new Config);
     }
 
     /**

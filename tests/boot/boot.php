@@ -47,5 +47,6 @@ include BOOT . 'debug.php';
 $config = (new Config())->importFolder(APP_CONFIG);
 $forge = new Forge();
 $middleware = new Middleware($forge);
+$services = new Services($forge);
 
-new Application($forge, $middleware, $config);
+new Application($forge, $services, $middleware, $config);
