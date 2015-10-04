@@ -18,15 +18,17 @@ __WORK IS ONGOING AND THE CODE CHANGES FREQUENTLY.__
 ### Installation and Testing
 
 ```
-> git clone https://github.com/OddGreg/cogs.git project
-> cd project
-> composer install
+$ git clone https://github.com/OddGreg/cogs.git project
+$ cd project
+$ composer install
+$ chmod 777 local/cache/
 ```
 
 Edit the `.env-example` file to set your environment variables, then rename to `.env`. Optionally, run the tests:
 
 ```
-> phpunit 
+$ chmod 777 tests/cache/
+$ phpunit 
 ```
 
 ### Contribute
