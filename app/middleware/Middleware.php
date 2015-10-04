@@ -20,6 +20,11 @@ class Middleware extends MiddlewarePipe implements MiddlewareInterface
     /** @var ContainerInterface|Forge */
     protected $forge;
 
+    /**
+     * Middleware constructor.
+     *
+     * @param ContainerInterface $forge
+     */
     public function __construct(ContainerInterface $forge)
     {
         $this->forge = $forge;
@@ -97,6 +102,8 @@ class Middleware extends MiddlewarePipe implements MiddlewareInterface
     }
 
     /**
+     * Integrated Middleware Factory
+     * 
      * @return static
      */
     static public function createWithForge()
