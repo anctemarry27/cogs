@@ -5,7 +5,6 @@
 /tests/cache
 /vendor/
 /local/build/
-/local/cache/
 /local/storage/
 /composer.lock
 /local/bin/coveralls

@@ -1,11 +1,12 @@
 <?php namespace Og\Views;
 
+use Og\Support\Str;
+
 /**
  * @package Og
  * @version 0.1.0
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
-
 class BladeViewTest extends \PHPUnit_Framework_TestCase
 {
     /** @var BladeView */
@@ -16,10 +17,8 @@ class BladeViewTest extends \PHPUnit_Framework_TestCase
         # initial settings
         $this->bv = new BladeView(
             [
-                'cache' => ROOT . 'tests/cache',
-                'template_paths' => [
-                    ROOT . 'tests/templates',
-                ],
+                'cache'          => ROOT . 'tests/cache',
+                'template_paths' => [ROOT . 'tests/templates',],
             ]
         );
 
@@ -56,7 +55,10 @@ class BladeViewTest extends \PHPUnit_Framework_TestCase
 
     public function test_02_BladeView_layout()
     {
-        echo $this->bv->render('pages.home', ['contents' => 'This was passed at render time.']);
+        $this->assertTrue($this->bv->hasView('pages.home'));
+        $html = $this->bv->render('pages.home', ['contents' => 'This was passed at render time.']);
+        $this->assertTrue(Str::has('<div class="container">', $html));
+        $this->assertTrue(Str::has('This was passed at render time', $html));
     }
 
 }
