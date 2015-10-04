@@ -34,12 +34,9 @@ event messages, effectively arbitrating concerns over where or what generated or
 > git clone https://github.com/OddGreg/cogs.git project
 > cd project
 > composer install
-> cd og/Support
-> composer install
-> cd ../..
 ```
 
-Edit the `.env` file to set your environment variables. Optionally, run the tests:
+Edit the `.env-example` file to set your environment variables, then rename to `.env`. Optionally, run the tests:
 
 ```
 > phpunit 
@@ -49,5 +46,5 @@ Edit the `.env` file to set your environment variables. Optionally, run the test
 Contact me if you would like to contribute to this project.
 
 ### Change Log
-see [Changelog](https://github.com/OddGreg/og-framework/blob/0.1.0/CHANGELOG.md).
+Coming Soon.
 
