@@ -1,4 +1,4 @@
-<?php
+<?php namespace Og;
 
 /**
  * @package Og
@@ -7,10 +7,6 @@
  */
 
 use App\Middleware\Middleware;
-use Og\Application;
-use Og\Config;
-use Og\Forge;
-use Og\Services;
 
 include "../boot/boot.php";
 
