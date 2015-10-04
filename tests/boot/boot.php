@@ -49,4 +49,4 @@ $forge = new Forge();
 $middleware = new Middleware($forge);
 $services = new Services($forge);
 
-new Application($forge, $services, $middleware, $config);
+new Application($forge, $config, $services, $middleware);

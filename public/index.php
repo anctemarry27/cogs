@@ -14,12 +14,11 @@ use Og\Services;
 
 include "../boot/boot.php";
 
-$forge = Forge::getInstance();
-$app = new Application(
-    $forge,
-    new Services($forge),
-    new Middleware($forge),
-    Config::createFromFolder(APP_CONFIG)
-);
+$forge = new Forge;
+$config = Config::createFromFolder(APP_CONFIG);
+$services = new Services($forge);
+$middleware = new Middleware($forge);
+
+$app = new Application($forge, $config, $services, $middleware);
 
 $app->run();

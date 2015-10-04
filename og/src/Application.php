@@ -43,11 +43,11 @@ final class Application
      * Application constructor.
      *
      * @param Forge      $container
+     * @param Config     $config
      * @param Services   $services
      * @param Middleware $middleware
-     * @param Config     $config
      */
-    public function __construct(Forge $container, Services $services,  Middleware $middleware, Config $config)
+    public function __construct(Forge $container, Config $config, Services $services, Middleware $middleware)
     {
         if ( ! static::$instance)
         {
