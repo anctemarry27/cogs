@@ -24,7 +24,7 @@
             <exclude>
                 <directory suffix=".php">./og/src/support/illuminate</directory>
                 <directory suffix=".php">./og/src/support/lib</directory>
-                <directory suffix=".php">./og/src/views</directory>
+                <directory suffix=".php">./og/src/views/illuminate</directory>
             </exclude>
         </whitelist>
     </filter>

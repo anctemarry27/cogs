@@ -75,9 +75,11 @@ class Middleware extends MiddlewarePipe implements MiddlewareInterface
     public function addPath($abstract, $path)
     {
         # if no namespace is evident then inject the Middleware namespace.
+
+        /** @var static $abstract */
         $abstract = $this->decorate_namespace($abstract);
 
-        $this->pipe($path, new $abstract($this->forge));
+        $this->pipe($path, $abstract::createWithForge());
     }
 
     /**
@@ -95,14 +97,24 @@ class Middleware extends MiddlewarePipe implements MiddlewareInterface
     }
 
     /**
+     * @return static
+     */
+    static public function createWithForge()
+    {
+        return new static(Forge::getInstance());
+    }
+
+    /**
      * @param $abstract
      */
     public function add($abstract)
     {
         # if no namespace is evident then inject the Middleware namespace.
+
+        /** @var static $abstract */
         $abstract = $this->decorate_namespace($abstract);
 
-        $this->pipe(new $abstract($this->forge));
+        $this->pipe($abstract::createWithForge());
     }
 
 }

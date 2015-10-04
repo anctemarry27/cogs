@@ -15,7 +15,7 @@ include "../boot/boot.php";
 
 $app = new Application(
     Forge::getInstance(),
-    new Middleware(Forge::getInstance()),
+    Middleware::createWithForge(),
     Config::createFromFolder(APP_CONFIG)
 );
 
