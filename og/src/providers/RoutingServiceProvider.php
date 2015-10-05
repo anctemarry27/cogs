@@ -15,7 +15,7 @@ class RoutingServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->container->singleton(['routing', Routing::class], function ()
+        $this->forge->singleton(['routing', Routing::class], function ()
         {
             $routing = new Routing(
                 new HttpRequest(ServerRequestFactory::fromGlobals()),

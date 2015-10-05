@@ -14,20 +14,23 @@ class SessionServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        /** @var Forge $di */
-        $di = $this->container;
+        /** @var Forge $forge */
+        $forge = $this->forge;
+        
+        if ($forge->has('session'))
+            return;
 
         # configure the session
         $session_factory = new SessionFactory;
         $session = $session_factory->newInstance($_COOKIE);
-        $session->setName($di->get('config')->get('core.session_name'));
+        $session->setName($forge->get('config')->get('core.session_name'));
 
         # fail if the session start fails
         if ( ! $session->start())
             throw new \LogicException('Cannot continue: unable to start a new session.');
 
         # remember the session
-        $di->singleton(['session', Session::class], $session);
+        $forge->singleton(['session', Session::class], $session);
 
         $this->provides += [Session::class];
     }

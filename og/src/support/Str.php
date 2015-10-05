@@ -310,7 +310,7 @@ class Str
      *
      * @return string
      */
-    static function name_from_class($class_name, $suffix_to_remove = 'Controller')
+    static function alias_from_class($class_name, $suffix_to_remove = 'Controller')
     {
         return strtolower(self::remove_namespace($class_name, $suffix_to_remove));
     }

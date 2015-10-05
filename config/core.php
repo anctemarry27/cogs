@@ -14,7 +14,6 @@ return [
     # Reserved for the framework.
     'meta'         => [
         'name'        => 'Og: A PHP Micro-Framework',
-        'version'     => '0.1.0@dev',
         'description' => '4th Generation Implementation of the Radium Framework',
     ],
     #

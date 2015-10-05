@@ -17,7 +17,7 @@ class CoreServiceProvider extends ServiceProvider
     public function register()
     {
         /** @var Forge $di */
-        $di = $this->container;
+        $di = $this->forge;
 
         # register collections and paths
         # $forge->add(['collection', Collection::class]);

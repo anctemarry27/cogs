@@ -14,12 +14,12 @@ class TestServiceProvider extends ServiceProvider
      */
     function boot()
     {
-        $this->container->remove('test_provider');
-        $this->container->add('test_provider', function () { return 'I am a modified test provider.'; });
+        $this->forge->remove('test_provider');
+        $this->forge->add('test_provider', function () { return 'I am a modified test provider.'; });
     }
 
     function register()
     {
-        $this->container->add('test_provider', function () { return 'I am a test provider.'; });
+        $this->forge->add('test_provider', function () { return 'I am a test provider.'; });
     }
 }

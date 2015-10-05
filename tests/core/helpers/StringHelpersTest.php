@@ -33,9 +33,9 @@ class StringHelpersTest extends \PHPUnit_Framework_TestCase
 
         ### name_from_class($class_name, $suffix_to_remove = 'Controller')
 
-        $this->assertEquals('applicationcontroller', Str::name_from_class('Og\ApplicationController', ''));
-        $this->assertEquals('application', Str::name_from_class('Og\ApplicationController', 'Controller'));
-        $this->assertEquals('application', Str::name_from_class('Og\ApplicationController'));
+        $this->assertEquals('applicationcontroller', Str::alias_from_class('Og\ApplicationController', ''));
+        $this->assertEquals('application', Str::alias_from_class('Og\ApplicationController', 'Controller'));
+        $this->assertEquals('application', Str::alias_from_class('Og\ApplicationController'));
 
     }
 

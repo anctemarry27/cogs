@@ -10,12 +10,12 @@ use Og\Support\Str;
 class BladeViewTest extends \PHPUnit_Framework_TestCase
 {
     /** @var BladeView */
-    public $bv;
+    public $view;
 
     public function setUp()
     {
         # initial settings
-        $this->bv = new BladeView(
+        $this->view = new BladeView(
             [
                 'cache'          => ROOT . 'tests/cache',
                 'template_paths' => [ROOT . 'tests/templates',],
@@ -26,18 +26,19 @@ class BladeViewTest extends \PHPUnit_Framework_TestCase
 
     public function test_00_BladeView_hasView()
     {
-        $this->assertFalse($this->bv->hasView('nonexistent'));
-        $this->assertTrue($this->bv->hasView('simple'));
-
+        $this->assertFalse($this->view->hasView('nonexistent'));
+        $this->assertTrue($this->view->hasView('simple'));
+        $this->assertTrue($this->view->hasView('pages.home'));
+        $this->assertTrue($this->view->hasView('layouts.main'));
     }
 
     public function test_00_BladeView_paths()
     {
-        $this->bv->addViewPath(VIEWS . 'test_prepend_path');
-        $this->assertEquals(VIEWS . 'test_prepend_path', $this->bv->getViewPaths()[0]);
+        $this->view->addViewPath(VIEWS . 'test_prepend_path');
+        $this->assertEquals(VIEWS . 'test_prepend_path', $this->view->getViewPaths()[0]);
 
-        $this->bv->addViewPath(VIEWS . 'test_append_path', FALSE);
-        $paths = $this->bv->getViewPaths();
+        $this->view->addViewPath(VIEWS . 'test_append_path', FALSE);
+        $paths = $this->view->getViewPaths();
         $this->assertEquals(VIEWS . 'test_append_path', end($paths));
 
     }
@@ -46,17 +47,15 @@ class BladeViewTest extends \PHPUnit_Framework_TestCase
     {
         # simple render test
         $expected = file_get_contents(ROOT . 'tests/templates/test_BladeView_simple.html');
-        $this->bv['content'] = 'This is a test of the Blade template engine.';
+        $this->view['content'] = 'This is a test of the Blade template engine.';
 
-        $this->assertTrue($this->bv->hasView('simple'));
-        $this->assertEquals($expected, $this->bv->render('simple'),
+        $this->assertEquals($expected, $this->view->render('simple'),
             'BladeView should render text that matches the contents of: ' . ROOT . 'tests/templates/blade_test_01.html');
     }
 
     public function test_02_BladeView_layout()
     {
-        $this->assertTrue($this->bv->hasView('pages.home'));
-        $html = $this->bv->render('pages.home', ['contents' => 'This was passed at render time.']);
+        $html = $this->view->render('pages.home', ['contents' => 'This was passed at render time.']);
         $this->assertTrue(Str::has('<div class="container">', $html));
         $this->assertTrue(Str::has('This was passed at render time', $html));
     }

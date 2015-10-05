@@ -21,11 +21,11 @@ final class Application
     /** @var Config */
     private $config;
 
-    /** @var Forge */
-    private $container;
-
     /** @var Context */
     private $context;
+
+    /** @var Forge */
+    private $forge;
 
     /** @var Middleware */
     private $middleware;
@@ -42,28 +42,21 @@ final class Application
     /**
      * Application constructor.
      *
-     * @param Forge      $container
+     * @param Forge      $forge
      * @param Config     $config
      * @param Services   $services
      * @param Middleware $middleware
      */
-    public function __construct(Forge $container, Config $config, Services $services, Middleware $middleware)
+    public function __construct(Forge $forge, Config $config, Services $services, Middleware $middleware)
     {
-        if ( ! static::$instance)
-        {
-            static::$instance = $this;
+        $this->forge = $forge;
+        $this->services = $services;
+        $this->middleware = $middleware;
+        $this->config = $config;
 
-            $this->container = $container;
-            $this->services = $services;
-            $this->middleware = $middleware;
-            $this->config = $config;
-
-            //$this->services = new Services($container); # $container->getServices();
-
-            $this->initialize();
-        }
-
-        return static::$instance;
+        $this->initialize();
+        
+        static::$instance = $this;
     }
 
     /**
@@ -72,25 +65,29 @@ final class Application
     private function initialize()
     {
         # Core Configuration
-        $this->container->singleton(['config', Config::class], $this->config);
+        $this->forge->singleton(['config', Config::class], $this->config);
+
+        # load the provider list
+        $this->services->loadConfiguration((array) $this->config['core.providers']);
 
         # register first-order services
         $this->services->addAndRegister(SessionServiceProvider::class);
         $this->services->addAndRegister(CoreServiceProvider::class);
 
         # assign the application context
-        $this->context = $this->container['context'];
+        $this->context = $this->forge['context'];
 
         # install the other providers located in config/providers.php
         $this->services->registerServiceProviders();
 
         # listen for the Middleware call
         /** @var Events $events */
-        $events = $this->container->make('events');
+        $events = $this->forge->make('events');
         $events->on(static::NOTIFY_MIDDLEWARE, [$this, 'spyMiddleware']);
 
         # register the application
-        $this->container->singleton(['app', Application::class], $this);
+        $this->forge->singleton(['app', Application::class], $this);
+
     }
 
     /**
@@ -102,13 +99,37 @@ final class Application
     }
 
     /**
+     * @return Config
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
+     * @return Context
+     */
+    public function getContext()
+    {
+        return $this->context;
+    }
+
+    /**
+     * @return Forge
+     */
+    public function getForge()
+    {
+        return $this->forge;
+    }
+
+    /**
      * @return static
      */
     public function getInstance()
     {
         $forge = new Forge();
 
-        return static::$instance ?: new static($forge, new Services($forge), new Middleware($forge), new Config);
+        return static::$instance ?: new static($forge, new Config, new Services($forge), new Middleware($forge));
     }
 
     /**
@@ -117,6 +138,22 @@ final class Application
     public function getMiddleware()
     {
         return $this->middleware;
+    }
+
+    /**
+     * @return Server
+     */
+    public function getServer()
+    {
+        return $this->server;
+    }
+
+    /**
+     * @return Services
+     */
+    public function getServices()
+    {
+        return $this->services;
     }
 
     /**
@@ -158,10 +195,10 @@ final class Application
         $this->server = $server = Server::createServer($this->middleware, $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
 
         # register the server
-        $this->container->singleton(['server', Server::class], $server);
+        $this->forge->singleton(['server', Server::class], $server);
 
         # register request and response
-        $this->container->add(['request', ServerRequestInterface::class,],
+        $this->forge->add(['request', ServerRequestInterface::class,],
             function () use ($server)
             {
                 # return the active request
@@ -170,7 +207,7 @@ final class Application
         );
 
         # register the response
-        $this->container->add(['response', ResponseInterface::class,],
+        $this->forge->add(['response', ResponseInterface::class,],
             function () use ($server)
             {
                 # return the active response

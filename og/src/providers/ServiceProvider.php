@@ -11,14 +11,14 @@ use Og\Forge;
 abstract class ServiceProvider
 {
     /** @var Forge */
-    protected $container;
+    protected $forge;
 
     /** @var array */
     protected $provides = [];
 
     public function __construct()
     {
-        $this->container = forge();
+        $this->forge = forge();
     }
 
     /**

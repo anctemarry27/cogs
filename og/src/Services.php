@@ -15,18 +15,33 @@ class Services implements ServiceManagerInterface
     /** @var bool */
     private $booted = FALSE;
 
-    /** @var bool */
-    private $configured = FALSE;
-
     /** @var Forge */
-    private $di;
+    private $forge;
 
     /** @var array */
     private $providers = [];
 
-    public function __construct(ContainerInterface $di)
+    /**
+     * Services constructor.
+     *
+     * @param ContainerInterface $forge
+     */
+    public function __construct(ContainerInterface $forge)
     {
-        $this->di = $di;
+        $this->forge = $forge;
+    }
+
+    /**
+     * @param $provider
+     *
+     * @return $this
+     */
+    public function addAndRegister($provider)
+    {
+        $this->add($provider);
+        $this->registerServiceProvider($provider);
+
+        return $this;
     }
 
     /**
@@ -37,14 +52,12 @@ class Services implements ServiceManagerInterface
      *
      * @return $this
      */
-    function add($provider, $as_dependency = FALSE)
+    public function add($provider, $as_dependency = FALSE)
     {
-        $this->loadConfiguration();
-
         $this->providers[$provider] = ['registered' => FALSE, 'booted' => FALSE];;
 
         if ($as_dependency)
-            $this->di->add([$provider, $provider]);
+            $this->forge->add([$provider, $provider]);
 
         return $this;
     }
@@ -52,20 +65,35 @@ class Services implements ServiceManagerInterface
     /**
      * @param $provider
      *
-     * @return $this
+     * @return void
      */
-    function addAndRegister($provider)
+    public function registerServiceProvider($provider)
     {
-        $this->add($provider);
-        $this->registerServiceProvider($provider);
+        if ( ! $this->isRegistered($provider))
+        {
+            /** @var ServiceProvider $new_service */
+            $new_service = new $provider($this->forge);
+            $new_service->register();
+            $this->providers[$provider]['registered'] = TRUE;
+        }
+    }
 
-        return $this;
+    /**
+     * @param $service_name
+     *
+     * @return bool
+     */
+    public function isRegistered($service_name)
+    {
+        return array_key_exists($service_name, $this->providers)
+            ? $this->providers[$service_name]['registered']
+            : FALSE;
     }
 
     /**
      * Boot all registered providers.
      */
-    function bootAll()
+    public function bootAll()
     {
         if ( ! $this->booted)
         {
@@ -74,12 +102,24 @@ class Services implements ServiceManagerInterface
                 if ( ! $this->isRegistered($provider))
                     $this->registerServiceProvider($provider);
 
-                if (! $this->isBooted($provider))
-                    $this->di->make($provider)->boot();
+                if ( ! $this->isBooted($provider))
+                    $this->forge->make($provider)->boot();
             }
 
             $this->booted = TRUE;
         }
+    }
+
+    /**
+     * @param $service_name
+     *
+     * @return bool
+     */
+    public function isBooted($service_name)
+    {
+        return array_key_exists($service_name, $this->providers)
+            ? $this->providers[$service_name]['booted']
+            : FALSE;
     }
 
     /**
@@ -91,64 +131,16 @@ class Services implements ServiceManagerInterface
     }
 
     /**
-     * @param $service_name
-     *
-     * @return bool
-     */
-    function isBooted($service_name)
-    {
-        return array_key_exists($service_name, $this->providers)
-            ? $this->providers[$service_name]['booted']
-            : FALSE;
-    }
-
-    /**
-     * @param $service_name
-     *
-     * @return bool
-     */
-    function isRegistered($service_name)
-    {
-        return array_key_exists($service_name, $this->providers)
-            ? $this->providers[$service_name]['registered']
-            : FALSE;
-    }
-
-    /**
      * Load the Services configuration if not already loaded.
-     */
-    function loadConfiguration()
-    {
-        if ( ! $this->configured)
-        {
-            $this->configured = TRUE;
-            $providers = $this->di['config']->get('core.providers');
-
-            foreach ((array) $providers as $provider)
-                $this->add($provider);
-
-        }
-    }
-
-    /**
-     * @param $provider
      *
-     * @return void
+     * @param array $providers
+     *
+     * @return void|static
      */
-    function registerServiceProvider($provider)
+    public function loadConfiguration($providers)
     {
-        if ( ! $this->configured)
-        {
-            $this->loadConfiguration();
-        }
-
-        if (array_key_exists($provider, $this->providers) and ! $this->isRegistered($provider))
-        {
-            /** @var ServiceProvider $new_service */
-            $new_service = new $provider($this->di);
-            $new_service->register();
-            $this->providers[$provider]['registered'] = TRUE;
-        }
+        foreach ((array) $providers as $provider)
+            $this->add($provider);
     }
 
     /**
@@ -156,13 +148,11 @@ class Services implements ServiceManagerInterface
      *
      * @return $this
      */
-    function registerServiceProviders()
+    public function registerServiceProviders()
     {
         foreach ($this->providers as $service => $is)
-        {
             if ( ! $this->isRegistered($service))
                 $this->registerServiceProvider($service);
-        }
 
         return $this;
     }

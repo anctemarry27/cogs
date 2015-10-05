@@ -24,8 +24,6 @@ const APP_NAMESPACE = "App\\Http\\Controllers\\";
 $routes->addRoute(['GET', 'POST'], '/',
     function (Container $di, Request $request, Response $response)
     {
-        /** @var Response $response */
-
         return $response->getBody()->write('Root Route, Baby!');
     }
 );

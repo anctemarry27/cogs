@@ -9,15 +9,6 @@
 interface ServiceManagerInterface
 {
     /**
-     * Adds and then registers a service provider.
-     * 
-     * @param $provider
-     *
-     * @return mixed
-     */
-    function addAndRegister($provider);
-    
-    /**
      * Adds a service provider to the container
      *
      * @param string $provider
@@ -28,14 +19,25 @@ interface ServiceManagerInterface
     function add($provider, $as_dependency = FALSE);
 
     /**
+     * Adds and then registers a service provider.
+     *
+     * @param $provider
+     *
+     * @return mixed
+     */
+    function addAndRegister($provider);
+
+    /**
      * Boot all registered providers.
      */
     function bootAll();
 
     /**
+     * @param array|NULL $providers
+     *
      * @return static
      */
-    function loadConfiguration();
+    function loadConfiguration($providers);
 
     /**
      * Determines if a definition is registered via a service provider.
