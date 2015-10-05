@@ -60,7 +60,7 @@ class Middleware extends MiddlewarePipe implements MiddlewareInterface
     /**
      * @param array $middlewares - an array of middlewares
      */
-    public function installMiddlewares(array $middlewares)
+    public function loadQueue(array $middlewares)
     {
         foreach ($middlewares as $middleware)
         {
@@ -82,9 +82,9 @@ class Middleware extends MiddlewarePipe implements MiddlewareInterface
         # if no namespace is evident then inject the Middleware namespace.
 
         /** @var static $abstract */
-        $abstract = $this->decorate_namespace($abstract);
+        $abstract = $this->set_namespace($abstract);
 
-        $this->pipe($path, $abstract::createWithForge());
+        $this->pipe($path, $abstract::create());
     }
 
     /**
@@ -92,7 +92,7 @@ class Middleware extends MiddlewarePipe implements MiddlewareInterface
      *
      * @return string
      */
-    private function decorate_namespace($abstract)
+    private function set_namespace($abstract)
     {
         # get the segments so we can check for a namespace
         $segments = explode('\\', $abstract);
@@ -102,13 +102,17 @@ class Middleware extends MiddlewarePipe implements MiddlewareInterface
     }
 
     /**
-     * Integrated Middleware Factory
+     * Middleware 'Factory'
      * 
      * @return static
      */
-    static public function createWithForge()
+    static public function create()
     {
-        return new static(Forge::getInstance());
+        # cache a forge reference
+        static $forge = null;
+        $forge = $forge ?: Forge::getInstance();
+        
+        return new static($forge);
     }
 
     /**
@@ -119,9 +123,9 @@ class Middleware extends MiddlewarePipe implements MiddlewareInterface
         # if no namespace is evident then inject the Middleware namespace.
 
         /** @var static $abstract */
-        $abstract = $this->decorate_namespace($abstract);
+        $abstract = $this->set_namespace($abstract);
 
-        $this->pipe($abstract::createWithForge());
+        $this->pipe($abstract::create());
     }
 
 }

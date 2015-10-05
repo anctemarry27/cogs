@@ -6,15 +6,25 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use App\Middleware\Middleware;
-
 include "../boot/boot.php";
 
-$forge = new Forge;
-$config = Config::createFromFolder(APP_CONFIG);
-$services = new Services($forge);
-$middleware = new Middleware($forge);
+/* ***************************************************************\
+ * At this point, the Application has wired-up service providers  *
+ * and queued Middleware. Here you can interject any additional   *
+ * settings and conditions before running the application.        *
+ *                                                                *
+ * Variables made available by boot.php:                          *
+ *                                                                *
+ *      $app         => Application                               *
+ *      $config      => Config                                    *
+ *      $forge       => Forge                                     *
+ *      $middleware  => Middleware;                               *
+ *      $services    => Services                                  *
+ *                                                                *
+ * ***************************************************************/
 
-$app = new Application($forge, $config, $services, $middleware);
-
+/** @var Application $app
+ *
+ * Normally we just run the application.
+ */
 $app->run();

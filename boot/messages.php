@@ -1,15 +1,18 @@
-<?php namespace Og;
+<?php
 
-    /**
-     * @package Og
-     * @version 0.1.0
-     * @author  Greg Truesdell <odd.greg@gmail.com>
-     */
+/**
+ * @package Og
+ * @version 0.1.0
+ * @author  Greg Truesdell <odd.greg@gmail.com>
+ */
 
 # Application
-const NOTIFY_APPLICATION_SHUTDOWN = 'application.shutdown';
-const NOTIFY_APPLICATION_STARTUP = 'application.startup';
-const NOTIFY_APPLICATION_RESPONSE = 'application.response';
+const OG_APPLICATION_SHUTDOWN = 'application.shutdown';
+const OG_APPLICATION_STARTUP = 'application.startup';
+const OG_APPLICATION_RESPONSE = 'application.response';
+# Dispatch
+const OG_BEFORE_ROUTE_DISPATCH = 'before.route.dispatch';
+const OG_AFTER_ROUTE_DISPATCH = 'after.route.dispatch';
 
 # Errors
 const NOTIFY_CORE_ERROR = 'core.error';
@@ -30,6 +33,8 @@ const NOTIFY_ROUTING_REGISTERED = 'routing.registered';
 const NOTIFY_ROUTING_FOUND = 'routing.found';
 const NOTIFY_ROUTING_MATCH = 'routing.match';
 const NOTIFY_ROUTING_FAIL = 'routing.fail';
+
+# HTTP
 const NOTIFY_REQUEST_LOADED = 'request.loaded';
 
 # Auth

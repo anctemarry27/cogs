@@ -5,7 +5,7 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use Illuminate\Container\Container;
+use Illuminate\Container\Container as IlluminateContainer;
 use Og\Context;
 use Og\Events;
 use Og\Forge;
@@ -27,7 +27,7 @@ class CoreServiceProvider extends ServiceProvider
         $di->singleton([ContainerInterface::class, Forge::class], new Forge);
 
         # illuminate/container service container 
-        $di->singleton(['ioc', Container::class],
+        $di->singleton(['ioc', IlluminateContainer::class],
             function () { return Forge::getInstance()->container(); });
 
         # register Application context

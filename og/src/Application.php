@@ -24,6 +24,9 @@ final class Application
     /** @var Context */
     private $context;
 
+    /** @var Events */
+    private $events;
+
     /** @var Forge */
     private $forge;
 
@@ -55,7 +58,7 @@ final class Application
         $this->config = $config;
 
         $this->initialize();
-        
+
         static::$instance = $this;
     }
 
@@ -74,6 +77,9 @@ final class Application
         $this->services->addAndRegister(SessionServiceProvider::class);
         $this->services->addAndRegister(CoreServiceProvider::class);
 
+        # global events object
+        $this->events = $this->forge['events'];
+
         # assign the application context
         $this->context = $this->forge['context'];
 
@@ -83,7 +89,7 @@ final class Application
         # listen for the Middleware call
         /** @var Events $events */
         $events = $this->forge->make('events');
-        $events->on(static::NOTIFY_MIDDLEWARE, [$this, 'spyMiddleware']);
+        $events->on(static::NOTIFY_MIDDLEWARE, [$this, 'middlewareSnooper']);
 
         # register the application
         $this->forge->singleton(['app', Application::class], $this);
@@ -115,11 +121,11 @@ final class Application
     }
 
     /**
-     * @return Forge
+     * @return Events
      */
-    public function getForge()
+    public function getEvents()
     {
-        return $this->forge;
+        return $this->events;
     }
 
     /**
@@ -141,19 +147,24 @@ final class Application
     }
 
     /**
-     * @return Server
+     * Middleware listener/
+     *
+     * @param          $class
+     * @param Request  $request
+     * @param Response $response
+     *
+     * @internal param Context $context
      */
-    public function getServer()
+    function middlewareSnooper($class, $request, $response)
     {
-        return $this->server;
-    }
+        static $count = 0;
 
-    /**
-     * @return Services
-     */
-    public function getServices()
-    {
-        return $this->services;
+        $this->context->set('application.spy_middleware.fired', ++$count);
+        $this->context->set('application.spy_middleware.request_query', $request->getUri());
+
+        $et = elapsed_time();
+        $class = (new \ReflectionClass($class))->getShortName();
+        $response->getBody()->write("<div><b>$class</b> middleware event fired @<b>$et</b></div>" . PHP_EOL);
     }
 
     /**
@@ -164,14 +175,14 @@ final class Application
         # boot providers, etc.
         $this->boot();
 
-        $this->middleware->installMiddlewares(config('core.middleware'));
-        $this->serve();
+        # queue-up the Middleware
+        $this->middleware->loadQueue(config('core.middleware'));
 
-        //$response = forge()->has('Response')
-        //    ? forge('Response')
-        //    : Routing::makeHttpResponse('Not Found', 200);
+        # enter the Middleware loop
+        $this->runMiddleware();
 
-        //expose(forge('routing')->bodyToString($response));
+        # notify that application shutdown is imminent
+        $this->events->fire(OG_APPLICATION_SHUTDOWN, [$this]);
     }
 
     /**
@@ -181,6 +192,8 @@ final class Application
     {
         # register server, request, response
         $this->initialize_server();
+
+        $this->events->fire(OG_APPLICATION_STARTUP, [$this]);
 
         # boot the service providers
         $this->services->bootAll();
@@ -197,7 +210,7 @@ final class Application
         # register the server
         $this->forge->singleton(['server', Server::class], $server);
 
-        # register request and response
+        # register request
         $this->forge->add(['request', ServerRequestInterface::class,],
             function () use ($server)
             {
@@ -219,30 +232,9 @@ final class Application
     /**
      * @return void
      */
-    private function serve()
+    private function runMiddleware()
     {
         $this->server->listen();
-    }
-
-    /**
-     * Middleware listener/
-     *
-     * @param          $class
-     * @param Request  $request
-     * @param Response $response
-     *
-     * @internal param Context $context
-     */
-    function spyMiddleware($class, $request, $response)
-    {
-        static $count = 0;
-
-        $this->context->set('application.spy_middleware.fired', ++$count);
-        $this->context->set('application.spy_middleware.request_query', $request->getUri());
-
-        $et = elapsed_time();
-        $class = (new \ReflectionClass($class))->getShortName();
-        $response->getBody()->write("<div><b>$class</b> middleware event fired @<b>$et</b></div>" . PHP_EOL);
     }
 
 }

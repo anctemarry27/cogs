@@ -6,6 +6,7 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
+use App\Middleware\Middleware;
 use Dotenv\Dotenv;
 use Tracy\Debugger;
 
@@ -37,3 +38,21 @@ if (getenv('DEBUG') !== 'false')
     # note that debug requires that the environment has been loaded
     include 'debug.php';
 }
+
+$forge = new Forge;
+$config = Config::createFromFolder(APP_CONFIG);
+$services = new Services($forge);
+$middleware = new Middleware($forge);
+
+$app = new Application($forge, $config, $services, $middleware);
+
+//$app->getEvents()->on(OG_AFTER_ROUTE_DISPATCH,
+//    function ($request, $response) use ($app, $forge)
+//    {
+//        /** @var Routing $routing */
+//        $routing = $forge['routing'];
+//        $result = $routing->bodyToString($response);
+//
+//        echo($result);
+//    }
+//);

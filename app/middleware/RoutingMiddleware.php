@@ -31,6 +31,9 @@ class RoutingMiddleware extends Middleware
      */
     public function __invoke(Request $request, Response $response, callable $next = NULL)
     {
+        static $events = NULL;
+        $events = $events ?: $this->forge->get('events');
+
         # we need to get the routing object here due to the strict
         # middleware __invoke method signature. 
         $this->routing = $this->forge->make(Routing::class);
@@ -86,13 +89,25 @@ class RoutingMiddleware extends Middleware
         # register the Request/Response/Input objects 
         $this->forge->add(Input::class, new Input($input));
 
-        # call the route with dependency injection
-        if ($this->forge->call($action, $input))
-            # the target returned a valid response, so link it
-            return parent::__invoke($request, $response, $next);
-        else
-            # otherwise, return the response and short-circuit the middleware
-            return $response;
+        # before dispatch event
+        $events->fire(OG_BEFORE_ROUTE_DISPATCH, [$request, $response]);
+
+        # transfer control to the route handler
+        $result = $this->forge->call($action, $input);
+
+        # after dispatch event
+        $events->fire(OG_AFTER_ROUTE_DISPATCH, [$request, $response]);
+
+        # continue or stop
+        return $result ? parent::__invoke($request, $response, $next) : $response;
+
+        //# call the route with dependency injection
+        //if ($this->forge->call($action, $input))
+        //    # the target returned a valid response, so link it
+        //    return parent::__invoke($request, $response, $next);
+        //else
+        //    # otherwise, return the response and short-circuit the middleware
+        //    return $response;
     }
 
     /**
