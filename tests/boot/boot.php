@@ -17,7 +17,7 @@ define('Og\COLLECT_FUNCTIONS_AND_CLASSES', FALSE);
 date_default_timezone_set('America/Vancouver');
 
 include TEST_PATH . 'boot/paths.php';
-include TEST_PATH . 'boot/conveniences.php';
+include TEST_PATH . 'boot/helpers.php';
 include TEST_PATH . 'boot/messages.php';
 
 # include illuminate support helpers

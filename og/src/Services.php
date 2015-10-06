@@ -137,7 +137,7 @@ class Services implements ServiceManagerInterface
      *
      * @return void|static
      */
-    public function loadConfiguration($providers)
+    public function configure($providers)
     {
         foreach ((array) $providers as $provider)
             $this->add($provider);

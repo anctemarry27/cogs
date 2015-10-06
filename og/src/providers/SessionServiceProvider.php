@@ -26,7 +26,7 @@ class SessionServiceProvider extends ServiceProvider
         $session->setName($forge->get('config')->get('core.session_name'));
 
         # fail if the session start fails
-        if ( ! $session->start())
+        if ( $session->isStarted())
             throw new \LogicException('Cannot continue: unable to start a new session.');
 
         # remember the session

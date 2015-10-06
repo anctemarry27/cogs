@@ -9,7 +9,7 @@ use Illuminate\Contracts\Container\Container as IlluminateContainer;
  * @backupGlobals          disabled
  * @backupStaticAttributes disabled
  */
-class HelpersTest extends \PHPUnit_Framework_TestCase
+class ConvenienceHelpersTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * The only tests done here are for existence and validation.

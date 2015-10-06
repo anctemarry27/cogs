@@ -37,7 +37,7 @@ interface ServiceManagerInterface
      *
      * @return static
      */
-    function loadConfiguration($providers);
+    function configure($providers);
 
     /**
      * Determines if a definition is registered via a service provider.

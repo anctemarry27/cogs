@@ -60,7 +60,7 @@ class Middleware extends MiddlewarePipe implements MiddlewareInterface
     /**
      * @param array $middlewares - an array of middlewares
      */
-    public function loadQueue(array $middlewares)
+    public function loadPipeline(array $middlewares)
     {
         foreach ($middlewares as $middleware)
         {

@@ -1,6 +1,13 @@
 <?php
 
 /**
+ * Globally accessible convenience functions.
+ * 
+ * @note Please DO NOT USE THESE INDISCRIMINATELY!
+ *       These functions (and those appended at the end)
+ *       are intended mainly for views, testing and
+ *       implementation hiding when temporarily useful.
+ * 
  * @package Og
  * @version 0.1.0
  * @author  Greg Truesdell <odd.greg@gmail.com>
@@ -11,9 +18,10 @@ use Og\Forge;
 use Zend\Diactoros\Response\RedirectResponse;
 use Zend\Stratigility\Http\Request;
 
-if (PHP_VERSION_ID >= 70000)
+if (PHP_VERSION_ID <= 50610)
 {
-    //include "service_container.php";
+    echo("COGS requires PHP versions >= 5.6.10.");
+    exit(1);
 }
 
 if ( ! function_exists('forge'))
@@ -190,5 +198,5 @@ if ( ! function_exists('url'))
 
 # include illuminate support helpers
 # - mainly for BladeViews and other compatibilities.
-# - note that this MUST follow conveniences.php content - not before.
+# - note that this MUST follow globals.php content - not before.
 include SUPPORT . "illuminate/support/helpers.php";

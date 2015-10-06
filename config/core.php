@@ -8,27 +8,33 @@
  */
 
 use Og\Providers\CoreServiceProvider;
+use Og\Providers\ErrorHandlingServiceProvider;
 use Og\Providers\RoutingServiceProvider;
+use Og\Providers\SessionServiceProvider;
 
 return [
-    # Reserved for the framework.
+    # HTML META entries
     'meta'         => [
         'name'        => 'Og: A PHP Micro-Framework',
         'description' => '4th Generation Implementation of the Radium Framework',
     ],
+
     #
     #  The framework session name
     #
     'session_name' => 'COGS',
+
     #
     #  Service Providers
     #
     #  Note that order is significant.
     'providers'    => [
-        //SessionServiceProvider::class,
+        SessionServiceProvider::class,
+        ErrorHandlingServiceProvider::class,
         CoreServiceProvider::class,
         RoutingServiceProvider::class,
     ],
+
     #
     # Middleware options:
     #   '<class name>'          - middleware class to add
@@ -41,6 +47,7 @@ return [
         'EndOfLineMiddleware',
         'ElapsedTimeMiddleware',
     ],
+
     #
     # core dependencies
     #

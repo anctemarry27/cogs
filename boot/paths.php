@@ -16,7 +16,7 @@ if ( ! defined('ROOT'))
     define('CORE', ROOT . 'og/src/');
     define('HTTP', APP . 'http/');
     define('VENDOR', ROOT . 'vendor/');
-    define('VIEWS', APP . 'http/views/');
+    define('VIEWS', APP . 'resources/views/');
     define('STORAGE', ROOT . 'local/storage/');
     define('SUPPORT', CORE . 'Support/');
 }

@@ -19,10 +19,6 @@ class ServerCommand extends Command
     {
         $this->setName("server:run")
              ->setDescription("Run PHP Server")
-            //->setDefinition([
-            //    new InputOption('start', 's', InputOption::VALUE_OPTIONAL, 'Start number of the range of Fibonacci number', $start),
-            //    new InputOption('stop', 'e', InputOption::VALUE_OPTIONAL, 'stop number of the range of Fibonacci number', $stop),
-            //])
              ->setHelp(<<<EOT
 
 Runs 'PHP Server -t www'
@@ -39,16 +35,19 @@ EOT
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $header_style = new OutputFormatterStyle('white', 'green', ['bold']);
+        echo `clear`;
+        
+        $header_style = new OutputFormatterStyle('green', 'default', ['bold']);
         $output->getFormatter()->setStyle('header', $header_style);
 
-        //$start = intval($input->getOption('start'));
-        //$stop  = intval($input->getOption('stop'));
+        $output->writeln('<header>Running COGS PHP Server.</header>');
+        //$output->writeln('Use `ps -A | grep localhost` to locate sever PID.');
+        $output->writeln('php -S http://localhost:8080 -t public');
+        $output->writeln('Use ^c to terminate.');
+        $output->writeln('--------------------------------------');
 
-        $output->writeln('<header>Running Server</header>');
-        $output->writeln('Use `ps -A | grep localhost` to locate sever PID.');
-
-        $command = `php -S localhost:8080 -t public  &> /dev/null &`;
+        $command = `php -S localhost:8080 -t public`;
+        //$command = `php -S localhost:8080 -t public  &> /dev/null &`;
         echo $command;
     }
 

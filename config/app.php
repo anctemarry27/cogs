@@ -9,8 +9,20 @@
 return [
     'title'    => 'COGS - A Personal PHP Application Framework',
     'version'  => '0.1.0@alpha',
-    'debug'    => true,
+    'debug'    => TRUE,
     'encoding' => 'UTF-8',
     'mode'     => 'development',
     'timezone' => 'America/Vancouver',
+
+    'providers' => [
+
+    ],
+
+    'middleware' => [
+        'AuthMiddleware',
+        ['HelloWorldMiddleware', '/hello',],
+        'RoutingMiddleware',
+        'EndOfLineMiddleware',
+        'ElapsedTimeMiddleware',
+    ],
 ];

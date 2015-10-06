@@ -67,15 +67,7 @@ final class Application
      */
     private function initialize()
     {
-        # Core Configuration
-        $this->forge->singleton(['config', Config::class], $this->config);
-
-        # load the provider list
-        $this->services->loadConfiguration((array) $this->config['core.providers']);
-
-        # register first-order services
-        $this->services->addAndRegister(SessionServiceProvider::class);
-        $this->services->addAndRegister(CoreServiceProvider::class);
+        $this->register_core_services();
 
         # global events object
         $this->events = $this->forge['events'];
@@ -83,17 +75,27 @@ final class Application
         # assign the application context
         $this->context = $this->forge['context'];
 
-        # install the other providers located in config/providers.php
-        $this->services->registerServiceProviders();
-
         # listen for the Middleware call
+
         /** @var Events $events */
         $events = $this->forge->make('events');
         $events->on(static::NOTIFY_MIDDLEWARE, [$this, 'middlewareSnooper']);
 
+    }
+
+    private function register_core_services()
+    {
         # register the application
         $this->forge->singleton(['app', Application::class], $this);
 
+        # Core Configuration
+        $this->forge->singleton(['config', Config::class], $this->config);
+
+        # load the provider list
+        $this->services->configure((array) $this->config['core.providers']);
+        
+        # install the other providers located in config/core.php
+        $this->services->registerServiceProviders();
     }
 
     /**
@@ -176,7 +178,7 @@ final class Application
         $this->boot();
 
         # queue-up the Middleware
-        $this->middleware->loadQueue(config('core.middleware'));
+        $this->middleware->loadPipeline(config('app.middleware'));
 
         # enter the Middleware loop
         $this->runMiddleware();

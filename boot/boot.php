@@ -11,7 +11,7 @@ use Dotenv\Dotenv;
 use Tracy\Debugger;
 
 include 'paths.php';
-include 'conveniences.php';
+include 'helpers.php';
 include 'messages.php';
 
 include VENDOR . 'autoload.php';
@@ -25,11 +25,11 @@ include VENDOR . 'autoload.php';
 if (file_exists(ROOT . '.env'))
 {
     $dotenv = new Dotenv(ROOT);
-    $dotenv->load();
+    $dotenv->overload();
 }
 
 # install Tracy if in DEBUG mode
-if (getenv('DEBUG') !== 'false')
+if (getenv('DEBUG') === 'true')
 {
     Debugger::$maxDepth = 6;
     Debugger::enable(Debugger::DEVELOPMENT);
@@ -45,14 +45,3 @@ $services = new Services($forge);
 $middleware = new Middleware($forge);
 
 $app = new Application($forge, $config, $services, $middleware);
-
-//$app->getEvents()->on(OG_AFTER_ROUTE_DISPATCH,
-//    function ($request, $response) use ($app, $forge)
-//    {
-//        /** @var Routing $routing */
-//        $routing = $forge['routing'];
-//        $result = $routing->bodyToString($response);
-//
-//        echo($result);
-//    }
-//);
