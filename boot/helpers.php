@@ -24,6 +24,59 @@ if (PHP_VERSION_ID <= 50610)
     exit(1);
 }
 
+if ( ! function_exists('memoize'))
+{
+    /**
+     * Cache repeated function results.
+     *
+     * @param $lambda - the function whose results we cache.
+     *
+     * @return Closure
+     */
+    function memoize($lambda)
+    {
+        return function () use ($lambda)
+        {
+            # results cache
+            static $results = [];
+
+            # collect arguments and serialize the key
+            $args = func_get_args();
+            $key = serialize($args);
+
+            # if the key result is not cached then cache it
+            if (empty($results[$key]))
+                $results[$key] = call_user_func_array($lambda, $args);
+
+            return $results[$key];
+        };
+    }
+}
+
+if ( ! function_exists('partial'))
+{
+    /**
+     * Curry a function.
+     *
+     * @param $lambda - the function to curry.
+     * @param $arg    - the first or only argument
+     *
+     * @return Closure
+     */
+    function partial($lambda, $arg)
+    {
+        $func_args = func_get_args();
+        $args = array_slice($func_args, 1);
+
+        return function () use ($lambda, $args)
+        {
+            $full_args = array_merge($args, func_get_args());
+
+            return call_user_func_array($lambda, $full_args);
+        };
+    }
+}
+
 if ( ! function_exists('forge'))
 {
     /**
@@ -39,7 +92,7 @@ if ( ! function_exists('forge'))
         return empty($alias) ? $forge : $forge[$alias];
     }
 }
-else throw new Exception('Cannot exclusively define COGS global app() function.');
+else throw new Exception('Cannot exclusively define COGS global forge() function.');
 
 if ( ! function_exists('app'))
 {
