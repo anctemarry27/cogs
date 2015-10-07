@@ -2,12 +2,12 @@
 
 /**
  * Globally accessible convenience functions.
- * 
- * @note Please DO NOT USE THESE INDISCRIMINATELY!
+ *
+ * @note    Please DO NOT USE THESE INDISCRIMINATELY!
  *       These functions (and those appended at the end)
  *       are intended mainly for views, testing and
  *       implementation hiding when temporarily useful.
- * 
+ *
  * @package Og
  * @version 0.1.0
  * @author  Greg Truesdell <odd.greg@gmail.com>
@@ -93,6 +93,19 @@ if ( ! function_exists('events'))
     function events()
     {
         return forge('events');
+    }
+}
+
+if ( ! function_exists('dlog'))
+{
+    /**
+     * @param        $message
+     * @param string $priority
+     */
+    function dlog($message, $priority = 'info')
+    {
+        if (getenv('DEBUG') === 'true')
+            forge('logger')->log($message, $priority);
     }
 }
 

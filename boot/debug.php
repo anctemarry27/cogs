@@ -6,7 +6,17 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
+use Og\Forge;
 use Og\Support\Arr;
+use Tracy\Debugger;
+use Tracy\FireLogger;
+
+Debugger::$maxDepth = 6;
+Debugger::enable(Debugger::DEVELOPMENT, LOCAL_LOGS);
+Debugger::$showLocation = TRUE;
+
+$logger = Debugger::getLogger();
+Forge::getInstance()->instance(['logger', FireLogger::class], $logger);
 
 /**
  * @param bool $raw

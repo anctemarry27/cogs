@@ -5,7 +5,6 @@
  * @version 0.1.0
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
-
 class ErrorHandlingServiceProvider extends ServiceProvider
 {
     /**
@@ -25,8 +24,7 @@ class ErrorHandlingServiceProvider extends ServiceProvider
         {
             case E_NOTICE:
             case E_USER_NOTICE:
-                //dump(compact('error_number', 'readable_error', 'message', 'file', 'line', 'context'));
-
+                dump(compact('error_number', 'readable_error', 'message', 'file', 'line', 'context'));
                 return FALSE;
                 break;
 
@@ -42,7 +40,7 @@ class ErrorHandlingServiceProvider extends ServiceProvider
                 break;
 
             default :
-                ddump(compact('error_number', 'readable_error', 'message', 'file', 'line', 'context'));
+                dump(compact('error_number', 'readable_error', 'message', 'file', 'line', 'context'));
                 break;
         }
 
@@ -72,8 +70,14 @@ class ErrorHandlingServiceProvider extends ServiceProvider
             echo "<b>Trace:</b><br>";
             echo "<pre>$trace_string</pre>";
             echo "<b>Debug:</b><br>";
-            ddump(compact('code', 'file', 'line', 'message', 'previous', 'trace'));
+
+            dump(compact('code', 'file', 'line', 'message', 'previous', 'trace'));
         }
+    }
+
+    public function handle_shutdown()
+    {
+        dlog('[' . elapsed_time() . '] application::shutdown', 'debug');
     }
 
     /**
@@ -85,5 +89,6 @@ class ErrorHandlingServiceProvider extends ServiceProvider
 
         set_error_handler([$this, 'handle_error']);
         set_exception_handler([$this, 'handle_exception']);
+        register_shutdown_function([$this, 'handle_shutdown']);
     }
 }

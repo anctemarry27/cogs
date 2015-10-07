@@ -1,3 +1,6 @@
+/local/cache
+/tests/functions/
+/local/logs/
 /og/src/support/lib/
 /og/src/support/composer.lock
 /.env

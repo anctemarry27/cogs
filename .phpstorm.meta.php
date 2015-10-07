@@ -12,6 +12,9 @@
             "app" instanceof Og\Application,
             Og\Application::class instanceof Og\Application,
             
+            "logger" instanceof Tracy\Firelogger,
+            Tracy\Firelogger::class instanceof Tracy\Firelogger,
+            
             "forge" instanceof Og\Forge,
             Og\Forge::class instanceof Og\Forge,
             
@@ -56,6 +59,9 @@
             "forge" instanceof Og\Forge,
             Og\Forge::class instanceof Og\Forge,
             
+            "logger" instanceof Tracy\Firelogger,
+            Tracy\Firelogger::class instanceof Tracy\Firelogger,
+            
             "collection" instanceof Og\Collection,
             Og\Collection::class instanceof Og\Collection,
             
@@ -96,6 +102,9 @@
         new \Og\Forge => [
             "app" instanceof Og\Application,
             Og\Application::class instanceof Og\Application,
+            
+            "logger" instanceof Tracy\Firelogger,
+            Tracy\Firelogger::class instanceof Tracy\Firelogger,
             
             "forge" instanceof Og\Forge,
             Og\Forge::class instanceof Og\Forge,
@@ -140,6 +149,9 @@
             "app" instanceof Og\Application,
             Og\Application::class instanceof Og\Application,
             
+            "logger" instanceof Tracy\Firelogger,
+            Tracy\Firelogger::class instanceof Tracy\Firelogger,
+            
             "forge" instanceof Og\Forge,
             Og\Forge::class instanceof Og\Forge,
             
@@ -179,6 +191,9 @@
         \Og\Forge::get("") => [
             "app" instanceof Og\Application,
             Og\Application::class instanceof Og\Application,
+            
+            "logger" instanceof Tracy\Firelogger,
+            Tracy\Firelogger::class instanceof Tracy\Firelogger,
             
             "forge" instanceof Og\Forge,
             Og\Forge::class instanceof Og\Forge,

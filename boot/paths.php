@@ -18,15 +18,19 @@ if ( ! defined('ROOT'))
     define('VENDOR', ROOT . 'vendor/');
     define('VIEWS', APP . 'resources/views/');
     define('STORAGE', ROOT . 'local/storage/');
+    define('LOCAL_CACHE', ROOT . 'local/cache/');
+    define('LOCAL_LOGS', ROOT . 'local/logs/');
     define('SUPPORT', CORE . 'Support/');
 }
 
 return [
     'app'     => APP,
     'boot'    => BOOT,
+    'cache'   => LOCAL_CACHE,
     'config'  => APP_CONFIG,
     'core'    => CORE,
     'http'    => HTTP,
+    'logs'    => LOCAL_LOGS,
     'root'    => ROOT,
     'storage' => STORAGE,
     'support' => SUPPORT,

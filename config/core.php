@@ -29,8 +29,8 @@ return [
     #
     #  Note that order is significant.
     'providers'    => [
-        SessionServiceProvider::class,
         ErrorHandlingServiceProvider::class,
+        SessionServiceProvider::class,
         CoreServiceProvider::class,
         RoutingServiceProvider::class,
     ],

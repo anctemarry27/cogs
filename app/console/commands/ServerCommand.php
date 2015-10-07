@@ -24,7 +24,7 @@ class ServerCommand extends Command
 Runs 'PHP Server -t www'
 
 EOT
-            );
+             );
     }
 
     /**
@@ -36,7 +36,7 @@ EOT
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         echo `clear`;
-        
+
         $header_style = new OutputFormatterStyle('green', 'default', ['bold']);
         $output->getFormatter()->setStyle('header', $header_style);
 
@@ -49,6 +49,8 @@ EOT
         $command = `php -S localhost:8080 -t public`;
         //$command = `php -S localhost:8080 -t public  &> /dev/null &`;
         echo $command;
+
+        dlog('launched COGS server', 'info');
     }
 
 }
