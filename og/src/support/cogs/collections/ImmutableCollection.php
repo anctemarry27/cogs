@@ -4,7 +4,7 @@
  * @package Og
  * @version 0.1.0
  * @author  Greg Truesdell <odd.greg@gmail.com>
- */                                     
+ */
 
 use Og\Exceptions\CollectionMutabilityError;
 use Og\Exceptions\ContextMutabilityError;
@@ -20,14 +20,19 @@ abstract class ImmutableCollection extends BaseCollection
     protected $read_only = [];
 
     /**
+     * Set a new value and make it immutable.
+     * 
      * @param string $key
      * @param mixed  $value
      *
      * @return $this|null|ImmutableCollection|void
      */
-    function __set($key, $value)
+    public function __set($key, $value)
     {
-        return $this->set($key, $value);
+        $status = $this->set($key, $value);
+        $this->lock_one($key);
+        
+        return $status;
     }
 
     /**
@@ -39,7 +44,7 @@ abstract class ImmutableCollection extends BaseCollection
      *
      * @return $this
      */
-    function append($key, $value = NULL)
+    public function append($key, $value = NULL)
     {
         if ( ! $this->has($key) and ! $this->immutable($key))
         {
@@ -52,35 +57,12 @@ abstract class ImmutableCollection extends BaseCollection
     }
 
     /**
-     * @param $key
-     * @param $value
-     *
-     * @return $this|null
-     * @throws ContextMutabilityError
-     */
-    function set($key, $value)
-    {
-        if ( ! $this->mutable($key))
-            throw new ContextMutabilityError("Index `$key` is immutable.");
-
-        # attempt writing the value to the key
-        if (is_string($key))
-        {
-            list($key, $value) = Arr::expand_notated($key, $value);
-
-            return $this->search([$key => $value]);
-        }
-
-        return NULL;
-    }
-
-    /**
      * Freezes (make immutable) a key or the entire collection.
      * Use '*' for the key to freeze it all
      *
      * @param string $key
      */
-    function freeze($key = '*')
+    public function freeze($key = '*')
     {
         # mark all current entries as read_only?
         if ($key === '*')
@@ -98,9 +80,32 @@ abstract class ImmutableCollection extends BaseCollection
      *
      * @return bool
      */
-    function immutable($key)
+    public function immutable($key)
     {
         return array_key_exists($key, $this->read_only) and ($this->read_only[$key]);
+    }
+
+    /**
+     * @param $key
+     * @param $value
+     *
+     * @return $this|null
+     * @throws ContextMutabilityError
+     */
+    public function set($key, $value)
+    {
+        if ( ! $this->mutable($key))
+            throw new ContextMutabilityError("Index `$key` is immutable.");
+
+        # attempt writing the value to the key
+        if (is_string($key))
+        {
+            list($key, $value) = Arr::expand_notated($key, $value);
+
+            return $this->search([$key => $value]);
+        }
+
+        return NULL;
     }
 
     /**
@@ -109,7 +114,7 @@ abstract class ImmutableCollection extends BaseCollection
      *
      * @param string $key
      */
-    function thaw($key = '*')
+    public function thaw($key = '*')
     {
         # mark all current entries as read_only?
         if ($key === '*')

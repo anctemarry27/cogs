@@ -27,4 +27,5 @@ include "../boot/boot.php";
  *
  * Normally we just run the application.
  */
+$app = new Application(new Kernel(Forge::getInstance()));
 $app->run();

@@ -15,6 +15,7 @@
 
 use Og\Application;
 use Og\Forge;
+use Psr\Http\Message\ResponseInterface as ResponseInterface;
 use Zend\Diactoros\Response\RedirectResponse;
 use Zend\Stratigility\Http\Request;
 
@@ -89,7 +90,7 @@ if ( ! function_exists('forge'))
         static $forge;
         $forge = $forge ?: Forge::getInstance();
 
-        return empty($alias) ? $forge : $forge[$alias];
+        return empty($alias) ? $forge : $forge->get($alias);
     }
 }
 else throw new Exception('Cannot exclusively define COGS global forge() function.');
@@ -230,13 +231,39 @@ if ( ! function_exists('response'))
 {
     function response($content = '', $status = 200)
     {
-        if (func_num_args() == 0)
-            return forge('response');
-
-        return forge('response')->write($content)->withStatus($status);
+        return func_num_args() === 0
+            ? forge('response')
+            : forge('response')->write($content)->withStatus($status);
     }
 }
 
+if ( ! function_exists('response_body'))
+{
+    /**
+     * Retrieve the current contents of the Response body.
+     *
+     * @param ResponseInterface $stream
+     *
+     * @return string
+     */
+    function response_body($stream)
+    {
+        # accept either a Body or a Response for stream.
+        $stream = $stream instanceof ResponseInterface ? $stream->getBody() : $stream;
+
+        # use the current stream cursor as a length or remainder.
+        $stream_len = $stream->tell();
+
+        # if the stream is empty then return an empty string.
+        if ($stream_len < 1)
+            return '';
+
+        $stream->rewind();
+
+        # return the string contents of the stream.
+        return $stream->getContents();
+    }
+}
 /**
  * Redirect via RedirectResponse.
  */
@@ -264,5 +291,4 @@ if ( ! function_exists('url'))
 
 # include illuminate support helpers
 # - mainly for BladeViews and other compatibilities.
-# - note that this MUST follow globals.php content - not before.
 include SUPPORT . "illuminate/support/helpers.php";

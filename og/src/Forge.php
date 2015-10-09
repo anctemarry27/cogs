@@ -43,7 +43,7 @@ final class Forge implements ContainerInterface, ArrayAccess
      * Forge is a final Singleton.
      *
      */
-    function __construct()
+    public function __construct()
     {
         if ( ! static::$instance)
         {
@@ -67,7 +67,7 @@ final class Forge implements ContainerInterface, ArrayAccess
      *
      * @return mixed|null
      */
-    function __call($method, $arguments = NULL)
+    public function __call($method, $arguments = NULL)
     {
         if ($method and method_exists(static::$container, $method))
             return $this->container($method, $arguments);
@@ -79,11 +79,11 @@ final class Forge implements ContainerInterface, ArrayAccess
     /*
      *  Discourage cloning and serialization.
      */
-    function __clone()      { throw new ForgeNotPermittedError('Cloning the DI is not permitted.'); }
-    function __set_state()  { throw new ForgeNotPermittedError('Setting the DI state is not permitted.'); }
-    function __sleep()      { throw new ForgeNotPermittedError('Putting the DI to sleep is not permitted.'); }
-    function __toString()   { return get_class($this); }
-    function __wakeup()     { throw new ForgeNotPermittedError('Waking the DI is not permitted.'); }
+    public function __clone()      { throw new ForgeNotPermittedError('Cloning the DI is not permitted.'); }
+    public function __set_state()  { throw new ForgeNotPermittedError('Setting the DI state is not permitted.'); }
+    public function __sleep()      { throw new ForgeNotPermittedError('Putting the DI to sleep is not permitted.'); }
+    public function __toString()   { return get_class($this); }
+    public function __wakeup()     { throw new ForgeNotPermittedError('Waking the DI is not permitted.'); }
     /*@formatter:on */
 
     /**
@@ -100,7 +100,7 @@ final class Forge implements ContainerInterface, ArrayAccess
      *
      * @return $this
      */
-    function add($abstract, $concrete = NULL, $singleton = FALSE)
+    public function add($abstract, $concrete = NULL, $singleton = FALSE)
     {
         $pseudonym = NULL;
 
@@ -128,9 +128,28 @@ final class Forge implements ContainerInterface, ArrayAccess
      *
      * @return mixed
      */
-    function call($callback, array $args = [])
+    public function call($callback, array $args = [])
     {
         return static::$container->call($callback, $args);
+    }
+
+    /**
+     * call a method of the encapsulated illuminate/container.
+     *
+     * @param string $method
+     * @param array  $parameters
+     *
+     * @return IlluminateContainer|mixed|null
+     */
+    public function container($method = '', $parameters = NULL)
+    {
+        # override encapsulated getInstance() method
+        if ($method === 'getInstance' or $method === '')
+            return static::$container;
+
+        return empty($parameters)
+            ? call_user_func([static::$container, $method])
+            : call_user_func_array([static::$container, $method], (array) $parameters);
     }
 
     /**
@@ -143,7 +162,7 @@ final class Forge implements ContainerInterface, ArrayAccess
      *
      * @return mixed
      */
-    function get($abstract, array $args = [])
+    public function get($abstract, array $args = [])
     {
         if (static::$container->bound($abstract))
             return static::$container->make($abstract, $args);
@@ -160,7 +179,7 @@ final class Forge implements ContainerInterface, ArrayAccess
      *
      * @return bool
      */
-    function has($abstract)
+    public function has($abstract)
     {
         return static::$container->bound($abstract);
     }
@@ -173,7 +192,7 @@ final class Forge implements ContainerInterface, ArrayAccess
      * @param $abstract
      * @param $instance
      */
-    function instance($abstract, $instance)
+    public function instance($abstract, $instance)
     {
         static::$container->instance($abstract, $instance);
     }
@@ -185,22 +204,50 @@ final class Forge implements ContainerInterface, ArrayAccess
      *
      * @return boolean
      */
-    function isSingleton($alias)
+    public function isSingleton($alias)
     {
         return static::$container->isShared(is_string($alias) ? $alias : get_class($alias));
     }
 
     /**
-     * Static pseudonym of get()
+     * @param mixed $offset
      *
-     * @param       $abstract
-     * @param array $args
-     *
-     * @return mixed|object
+     * @return bool
      */
-    static function make($abstract, array $args = [])
+    public function offsetExists($offset)
     {
-        return static::$container->make((string) $abstract, (array) $args);
+        return $this->has($offset);
+    }
+
+    /**
+     * Offset to retrieve
+     *
+     * @param mixed $offset
+     *
+     * @return mixed
+     */
+    public function offsetGet($offset)
+    {
+        return static::get($offset);
+    }
+
+    /**
+     * @param mixed $offset
+     * @param mixed $value
+     */
+    public function offsetSet($offset, $value)
+    {
+        $this->add($offset, $value);
+    }
+
+    /**
+     * @param mixed $offset
+     *
+     * @throws ForgeNotPermittedError
+     */
+    public function offsetUnset($offset)
+    {
+        static::$container->offsetUnset($offset);
     }
 
     /**
@@ -210,9 +257,17 @@ final class Forge implements ContainerInterface, ArrayAccess
      *
      * @return void
      */
-    function remove($abstract)
+    public function remove($abstract)
     {
         static::$container->offsetUnset($abstract);
+    }
+
+    /**
+     * @param Closure $closure
+     */
+    public function share(Closure $closure)
+    {
+        static::$container->share($closure);
     }
 
     /**
@@ -223,7 +278,7 @@ final class Forge implements ContainerInterface, ArrayAccess
      *
      * @return void
      */
-    function shared($abstract, $concrete)
+    public function shared($abstract, $concrete)
     {
         static::$container->bind($abstract, $concrete, TRUE);
     }
@@ -238,7 +293,7 @@ final class Forge implements ContainerInterface, ArrayAccess
      *
      * @return void
      */
-    function singleton($abstract, $concrete = NULL)
+    public function singleton($abstract, $concrete = NULL)
     {
         $alias = NULL;
 
@@ -246,7 +301,7 @@ final class Forge implements ContainerInterface, ArrayAccess
         {
             $alias = $abstract[0];
             $abstract = $abstract[1];
-            
+
             # register the alias because the alias is provided
             static::$container->alias($abstract, $alias);
         }
@@ -267,69 +322,9 @@ final class Forge implements ContainerInterface, ArrayAccess
      *
      * @return \Closure
      */
-    function wrapClosureWithDependencies(Closure $callback, array $parameters = [])
+    public function wrapClosureWithDependencies(Closure $callback, array $parameters = [])
     {
         return static::$container->wrap($callback, $parameters);
-    }
-
-    /**
-     * @param mixed $offset
-     *
-     * @return bool
-     */
-    function offsetExists($offset)
-    {
-        return $this->has($offset);
-    }
-
-    /**
-     * Offset to retrieve
-     *
-     * @param mixed $offset
-     *
-     * @return mixed
-     */
-    function offsetGet($offset)
-    {
-        return static::get($offset);
-    }
-
-    /**
-     * @param mixed $offset
-     * @param mixed $value
-     */
-    function offsetSet($offset, $value)
-    {
-        $this->add($offset, $value);
-    }
-
-    /**
-     * @param mixed $offset
-     *
-     * @throws ForgeNotPermittedError
-     */
-    function offsetUnset($offset)
-    {
-        static::$container->offsetUnset($offset);
-    }
-
-    /**
-     * call a method of the encapsulated illuminate/container.
-     *
-     * @param string $method
-     * @param array  $parameters
-     *
-     * @return IlluminateContainer|mixed|null
-     */
-    function container($method = '', $parameters = NULL)
-    {
-        # override encapsulated getInstance() method
-        if ($method === 'getInstance' or $method === '')
-            return static::$container;
-
-        return empty($parameters)
-            ? call_user_func([static::$container, $method])
-            : call_user_func_array([static::$container, $method], (array) $parameters);
     }
 
     /**
@@ -340,6 +335,19 @@ final class Forge implements ContainerInterface, ArrayAccess
     static function getInstance()
     {
         return self::$instance ?: new static();
+    }
+
+    /**
+     * Static pseudonym of get()
+     *
+     * @param       $abstract
+     * @param array $args
+     *
+     * @return mixed|object
+     */
+    public static function make($abstract, array $args = [])
+    {
+        return static::$container->make((string) $abstract, (array) $args);
     }
 
     /**

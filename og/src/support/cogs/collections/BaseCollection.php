@@ -40,7 +40,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
      *
      * @return array
      */
-    function copy()
+    public function copy()
     {
         $copy = [];
 
@@ -54,7 +54,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
      *
      * @return mixed
      */
-    function __get($key)
+    public function __get($key)
     {
         return $this->get($key);
     }
@@ -67,7 +67,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
      *
      * @return void
      */
-    function __set($key, $value)
+    public function __set($key, $value)
     {
         $this->storage[$key] = $value;
     }
@@ -81,7 +81,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
      *
      * @return mixed
      */
-    function get($query, $default = NULL)
+    public function get($query, $default = NULL)
     {
         return Arr::query($query, $this->storage, $default);
     }
@@ -93,7 +93,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
      *
      * @return bool
      */
-    function __isset($key)
+    public function __isset($key)
     {
         return isset($this->storage[$key]);
     }
@@ -111,7 +111,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
      *
      * @return void
      */
-    function __unset($key)
+    public function __unset($key)
     {
         unset($this->storage[$key]);
     }
@@ -135,7 +135,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
      *
      * @return $this
      */
-    function append($key, $value = NULL)
+    public function append($key, $value = NULL)
     {
         if ( ! $this->has($key))
         {
@@ -154,7 +154,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
      *
      * @return bool
      */
-    function has($key)
+    public function has($key)
     {
         return ! is_null(Arr::query($key, $this->storage));
     }
@@ -165,7 +165,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
      *
      * @return $this|null
      */
-    function set($key, $value)
+    public function set($key, $value)
     {
         # attempt writing the value to the key
         if (is_string($key))
@@ -185,7 +185,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
      *
      * @param $key
      */
-    function forget($key)
+    public function forget($key)
     {
         if (static::offsetExists($key))
         {
@@ -203,7 +203,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
      *
      * @return bool
      */
-    function offsetExists($offset)
+    public function offsetExists($offset)
     {
         return $this->has($offset);
     }
@@ -211,7 +211,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
     /**
      * @param mixed $offset
      */
-    function offsetUnset($offset)
+    public function offsetUnset($offset)
     {
         Arr::forget($offset, $this->storage);
     }
@@ -223,7 +223,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
      * @param       $dot_path
      * @param       $target_value
      */
-    function delete($dot_path, $target_value)
+    public function delete($dot_path, $target_value)
     {
         Arr::forget($this->get($dot_path), $target_value);
     }
@@ -231,7 +231,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
     /**
      * @return \ArrayIterator
      */
-    function getIterator()
+    public function getIterator()
     {
         return new \ArrayIterator($this->storage);
     }
@@ -241,7 +241,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
      *
      * @return static
      */
-    function make(array $collection = [])
+    public function make(array $collection = [])
     {
         $new = new static;
         $new->merge($collection);
@@ -257,7 +257,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
      *
      * @return $this
      */
-    function merge($symbols)
+    public function merge($symbols)
     {
         $symbols = $this->normalize($symbols);
 
@@ -292,7 +292,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
      *
      * @return bool
      */
-    function none()
+    public function none()
     {
         return ! $this->any();
     }
@@ -302,7 +302,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
      *
      * @return bool
      */
-    function any()
+    public function any()
     {
         return $this->count() > 0;
     }
@@ -312,7 +312,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
      *
      * @return int
      */
-    function count()
+    public function count()
     {
         return count($this->storage, COUNT_NORMAL);
     }
@@ -322,7 +322,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
      *
      * @return array|mixed|null|object|string
      */
-    function offsetGet($offset)
+    public function offsetGet($offset)
     {
         return $this->get($offset);
     }
@@ -331,7 +331,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
      * @param mixed $offset
      * @param mixed $value
      */
-    function offsetSet($offset, $value)
+    public function offsetSet($offset, $value)
     {
         $this->set($offset, $value);
     }
@@ -339,7 +339,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
     /**
      * @param array $new_contents
      */
-    function replace(array $new_contents)
+    public function replace(array $new_contents)
     {
         $this->storage = [];
         foreach ($new_contents as $key => $value)
@@ -351,7 +351,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
      *
      * @return int
      */
-    function size()
+    public function size()
     {
         return sizeof($this->storage);
     }
@@ -359,7 +359,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
     /**
      * @return array
      */
-    function toArray()
+    public function toArray()
     {
         return $this->storage;
     }
@@ -372,7 +372,7 @@ abstract class BaseCollection implements CollectionInterface, \ArrayAccess, \Jso
      *
      * @return static
      */
-    function with($name, $value = NULL)
+    public function with($name, $value = NULL)
     {
         Arr::is_assoc($name)
             ? $this->merge($name)

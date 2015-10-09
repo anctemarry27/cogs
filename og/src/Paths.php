@@ -40,6 +40,8 @@ final class Paths extends Collection implements ArrayAccess
             },
             array_keys($import), array_values($import)
         );
+        
+        return $this;
     }
 
 }

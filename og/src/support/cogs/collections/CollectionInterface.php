@@ -13,7 +13,7 @@ interface CollectionInterface
      *
      * @return bool
      */
-    function any();
+    public function any();
 
     /**
      * Using the provided arrays.php helper, delete elements that
@@ -22,7 +22,7 @@ interface CollectionInterface
      * @param       $dot_path
      * @param       $target_value
      */
-    function delete($dot_path, $target_value);
+    public function delete($dot_path, $target_value);
 
     /**
      * Forget an element indexed with dot-notation.
@@ -31,7 +31,7 @@ interface CollectionInterface
      *
      * @param $key
      */
-    function forget($key);
+    public function forget($key);
 
     /**
      * Using the provided arrays.php helper, get a value from the collection
@@ -42,7 +42,7 @@ interface CollectionInterface
      *
      * @return mixed
      */
-    function get($query, $default = NULL);
+    public function get($query, $default = NULL);
 
     /**
      * TRUE if an indexed value exists.
@@ -51,7 +51,7 @@ interface CollectionInterface
      *
      * @return bool
      */
-    function has($key);
+    public function has($key);
 
     /**
      * Merges an array of symbols with the container.
@@ -59,7 +59,7 @@ interface CollectionInterface
      *
      * @param $symbols
      */
-    function merge($symbols);
+    public function merge($symbols);
 
     /**
      * @param $key
@@ -67,7 +67,7 @@ interface CollectionInterface
      *
      * @return $this|null
      */
-    function set($key, $value);
+    public function set($key, $value);
 
     /**
      * Merge a single key, value pair.
@@ -77,5 +77,5 @@ interface CollectionInterface
      *
      * @return static
      */
-    function with($name, $value = NULL);
+    public function with($name, $value = NULL);
 }

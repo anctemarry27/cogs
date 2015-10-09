@@ -23,7 +23,7 @@ class SessionServiceProvider extends ServiceProvider
         # configure the session
         $session_factory = new SessionFactory;
         $session = $session_factory->newInstance($_COOKIE);
-        $session->setName($forge->get('config')->get('core.session_name'));
+        $session->setName($forge->get('config')->get('kernel.session_name'));
 
         # fail if the session start fails
         if ( $session->isStarted())

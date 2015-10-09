@@ -82,7 +82,7 @@ class Middleware extends MiddlewarePipe implements MiddlewareInterface
         # if no namespace is evident then inject the Middleware namespace.
 
         /** @var static $abstract */
-        $abstract = $this->set_namespace($abstract);
+        $abstract = $this->filter_namespace($abstract);
 
         $this->pipe($path, $abstract::create());
     }
@@ -92,7 +92,7 @@ class Middleware extends MiddlewarePipe implements MiddlewareInterface
      *
      * @return string
      */
-    private function set_namespace($abstract)
+    private function filter_namespace($abstract)
     {
         # get the segments so we can check for a namespace
         $segments = explode('\\', $abstract);
@@ -123,7 +123,7 @@ class Middleware extends MiddlewarePipe implements MiddlewareInterface
         # if no namespace is evident then inject the Middleware namespace.
 
         /** @var static $abstract */
-        $abstract = $this->set_namespace($abstract);
+        $abstract = $this->filter_namespace($abstract);
 
         $this->pipe($abstract::create());
     }

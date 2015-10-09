@@ -21,7 +21,7 @@ class Collection Extends ImmutableCollection
     /**
      * Collection constructor.
      */
-    function __construct()
+    public function __construct()
     {
         parent::__construct([]);
         $this->yaml = new Yaml;
@@ -35,7 +35,7 @@ class Collection Extends ImmutableCollection
      *
      * @return $this
      */
-    function __call($method, $arguments)
+    public function __call($method, $arguments)
     {
         $this->storage[$method] = count($arguments) > 0 ? $arguments[0] : TRUE;
 
@@ -49,7 +49,7 @@ class Collection Extends ImmutableCollection
      *
      * @return string
      */
-    function exportJSON($options = 0)
+    public function exportJSON($options = 0)
     {
         return json_encode($this->storage, $options);
     }
@@ -59,7 +59,7 @@ class Collection Extends ImmutableCollection
      *
      * @return string
      */
-    function exportYAML()
+    public function exportYAML()
     {
         return $this->yaml->dump($this->storage);
     }
@@ -72,7 +72,7 @@ class Collection Extends ImmutableCollection
      *
      * @return mixed
      */
-    function importJSON($key, $json)
+    public function importJSON($key, $json)
     {
         $array = json_decode($json);
         $this->set($key, $array);
@@ -88,7 +88,7 @@ class Collection Extends ImmutableCollection
      *
      * @return array
      */
-    function importYAML($key, $yaml_string)
+    public function importYAML($key, $yaml_string)
     {
         $import = $this->yaml->parse($yaml_string);
         $this->set($key, $import);
@@ -104,7 +104,7 @@ class Collection Extends ImmutableCollection
      *
      * @return $this|void
      */
-    function merge($symbols)
+    public function merge($symbols)
     {
         $symbols = $this->normalize($symbols);
 

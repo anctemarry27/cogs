@@ -7,6 +7,7 @@
  */
 
 use ArrayAccess;
+use Og\Support\Cogs\Collections\CollectionInterface;
 use Og\Support\Cogs\Collections\ImmutableCollection;
 
 /**
@@ -15,7 +16,7 @@ use Og\Support\Cogs\Collections\ImmutableCollection;
  * Usage in the framework requires that there be only ONE Context,
  * which means that the context should ALWAYS be resolved from the DI.
  */
-class Context extends ImmutableCollection implements ArrayAccess
+class Context extends ImmutableCollection implements CollectionInterface, ArrayAccess
 {
     protected $storage;
 
@@ -26,5 +27,6 @@ class Context extends ImmutableCollection implements ArrayAccess
     {
         parent::__construct($context instanceof Context ? $context->copy() : $context);
     }
-
+    
+    
 }

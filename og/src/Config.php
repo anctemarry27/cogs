@@ -33,6 +33,65 @@ class Config extends ImmutableCollection implements \ArrayAccess, \JsonSerializa
     }
 
     /**
+     * Merge config files in the CONFIG path.
+     *
+     * @param $base_path
+     *
+     * @return static
+     */
+    function importFolder($base_path)
+    {
+        $this->import($base_path);
+
+        return $this;
+    }
+
+    /**
+     * @param array $array
+     *
+     * @return static
+     */
+    function make(array $array = [])
+    {
+        return new static($array);
+    }
+
+    /**
+     * @param string $folder - name of folder with config files
+     *
+     * @return mixed
+     */
+    static public function createFromFolder($folder)
+    {
+        return (new static)->importFolder($folder);
+    }
+
+    /**
+     * Glob a set of file names from a normalized path.
+     *
+     * @param $base_path
+     *
+     * @return array
+     */
+    private function files_from_path($base_path)
+    {
+        $base_path = Str::normalize_path($base_path);
+        $files = glob($base_path . "*.php");
+
+        return $files;
+    }
+
+    /**
+     * Imports config files found in the specified directory.
+     *
+     * @param $base_path - the base path of the folder that contains config files.
+     */
+    private function import($base_path)
+    {
+        $this->import_files($this->files_from_path($base_path));
+    }
+
+    /**
      * Import configuration data from a set of files.
      *
      * @param $files
@@ -65,68 +124,7 @@ class Config extends ImmutableCollection implements \ArrayAccess, \JsonSerializa
 
             # only import if the config file returns an array
             if (is_array($import))
-            {
                 $this->set($config_key, $import);
-            }
         }
-    }
-
-    /**
-     * @param array $array
-     *
-     * @return static
-     */
-    function make(array $array = [])
-    {
-        return new static($array);
-    }
-
-    /**
-     * @param string $folder - name of folder with config files
-     *
-     * @return mixed
-     */
-    static public function createFromFolder($folder)
-    {
-        return (new static)->importFolder($folder);
-    }
-
-    /**
-     * Merge config files in the CONFIG path.
-     *
-     * @param $base_path
-     *
-     * @return static
-     */
-    function importFolder($base_path)
-    {
-        $this->import($base_path);
-
-        return $this;
-    }
-
-    /**
-     * Imports config files found in the specified directory.
-     *
-     * @param $base_path - the base path of the folder that contains config files.
-     */
-    private function import($base_path)
-    {
-        $this->import_files($this->files_from_path($base_path));
-    }
-
-    /**
-     * Glob a set of file names from a normalized path.
-     *
-     * @param $base_path
-     *
-     * @return array
-     */
-    private function files_from_path($base_path)
-    {
-        $base_path = Str::normalize_path($base_path);
-        $files = glob($base_path . "*.php");
-
-        return $files;
     }
 }

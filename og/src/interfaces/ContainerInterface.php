@@ -16,7 +16,7 @@ interface ContainerInterface
      *
      * @return
      */
-    function add($abstract, $concrete = NULL);
+    public function add($abstract, $concrete = NULL);
 
     /**
      * Call the given Closure / class@method and inject its dependencies.
@@ -38,33 +38,22 @@ interface ContainerInterface
      *
      * @return mixed
      */
-    function get($abstract, array $args = []);
+    public function get($abstract, array $args = []);
 
     /**
      * @param string $abstract
      *
      * @return bool
      */
-    function has($abstract);
+    public function has($abstract);
 
-    /**
-     * Allows for methods to be invoked on any object that is resolved of the tyoe
-     * provided
-     *
-     * @param  string   $type
-     * @param  callable $callback
-     *
-     * @return \Og\Inflector|void
-     */
-    //public function inflector($type, callable $callback = NULL);
-    
     /**
      * @param $abstract
      * @param $concrete
      *
      * @return void
      */
-    function instance($abstract, $concrete);
+    public function instance($abstract, $concrete);
 
     /**
      * Check if an item is being managed as a singleton
@@ -82,13 +71,18 @@ interface ContainerInterface
      *
      * @return void
      */
-    function remove($abstract);
+    public function remove($abstract);
+
+    /**
+     * @param \Closure $closure
+     */
+    public function share(\Closure $closure);
 
     /**
      * @param      $abstract
      * @param null $concrete
      */
-    function shared($abstract, $concrete);
+    public function shared($abstract, $concrete);
 
     /**
      * Add a singleton definition to the container
@@ -98,7 +92,7 @@ interface ContainerInterface
      *
      * @return void
      */
-    function singleton($abstract, $concrete);
+    public function singleton($abstract, $concrete);
 
     /**
      * A static pseudonym of get() for easy access.
@@ -108,6 +102,6 @@ interface ContainerInterface
      *
      * @return mixed|object
      */
-    static function make($abstract, array $args = []);
+    public static function make($abstract, array $args = []);
 
 }

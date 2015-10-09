@@ -16,7 +16,7 @@ include 'messages.php';
 include VENDOR . 'autoload.php';
 
 $forge = new Forge;
-$config = Config::createFromFolder(APP_CONFIG);
+$config = Config::createFromFolder(CONFIG);
 date_default_timezone_set($config['app.timezone']);
 
 # load environment
@@ -34,6 +34,6 @@ if (getenv('DEBUG') === 'true')
     include 'debug.php';
 }
 
-$services = new Services($forge);
-$middleware = new Middleware($forge);
-$app = new Application($forge, $config, $services, $middleware);
+//$services = new Services($forge);
+//$middleware = new Middleware($forge);
+//$app = new Application(new Kernel($forge));

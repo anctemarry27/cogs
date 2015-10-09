@@ -47,7 +47,7 @@ EOT
         $output->getFormatter()->setStyle('header', $header_style);
 
         # check for files
-        $cache = glob(LOCAL_LOGS . '*');
+        $cache = glob(LOCAL_LOGS . '/*');
 
         if (empty($cache))
         {
@@ -56,7 +56,7 @@ EOT
         else
         {
             $output->writeln('<header>Clearing local logs...</header>');
-            $local_logs = LOCAL_LOGS . '*';
+            $local_logs = LOCAL_LOGS . '/*';
             $command = `rm -R $local_logs`;
 
             echo $command;

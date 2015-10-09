@@ -11,10 +11,11 @@ if ( ! defined('ROOT'))
     define('ROOT', dirname(__DIR__) . '/');
 
     define('APP', ROOT . 'app/');
-    define('APP_CONFIG', ROOT . 'config/');
+    define('CONFIG', ROOT . 'config/');
     define('BOOT', ROOT . 'boot/');
     define('CORE', ROOT . 'og/src/');
     define('HTTP', APP . 'http/');
+    define('KERNEL', ROOT . 'og/config/');
     define('VENDOR', ROOT . 'vendor/');
     define('VIEWS', APP . 'resources/views/');
     define('STORAGE', ROOT . 'local/storage/');
@@ -27,9 +28,10 @@ return [
     'app'     => APP,
     'boot'    => BOOT,
     'cache'   => LOCAL_CACHE,
-    'config'  => APP_CONFIG,
+    'config'  => CONFIG,
     'core'    => CORE,
     'http'    => HTTP,
+    'kernel'  => KERNEL,
     'logs'    => LOCAL_LOGS,
     'root'    => ROOT,
     'storage' => STORAGE,

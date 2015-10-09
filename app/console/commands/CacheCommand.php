@@ -41,7 +41,7 @@ EOT
         $output->getFormatter()->setStyle('header', $header_style);
 
         # check for files
-        $cache = glob(LOCAL_CACHE . '*');
+        $cache = glob(LOCAL_CACHE . '/*');
 
         if (empty($cache))
         {
@@ -50,7 +50,7 @@ EOT
         else
         {
             $output->writeln('<header>Clearing local caches...</header>');
-            $local_cache = LOCAL_CACHE . '*';
+            $local_cache = LOCAL_CACHE . '/*';
             $command = `rm -R $local_cache`;
 
             echo $command;
