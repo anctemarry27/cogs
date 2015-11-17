@@ -4,6 +4,9 @@
 [![Build Status](https://travis-ci.org/OddGreg/og-framework.svg?branch=master)](https://travis-ci.org/OddGreg/og-framework)
 [![Coverage Status](https://coveralls.io/repos/OddGreg/og-framework/badge.svg?branch=master&service=github)](https://coveralls.io/github/OddGreg/og-framework?branch=master)
 
+## NOTE: THIS PROJECT HAS BEEN ABANDONED IN FAVOR OF AN ALTERNATE IMPLEMENTATION.
+__The COGS Project has evolved into the Noid Project__, based heavily on the lessons learned from this project. Noid is currently under heavy, private development and will be pushed to Github sometime in Nov, 2015. Not that anyone would notice. 
+
 __Caveat Emptor__
 
      This is a complete rewrite of my Radium-Codex project. **WORK-IN-PROGRESS**.

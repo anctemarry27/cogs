@@ -7,8 +7,8 @@
  */
 
 use ArrayAccess;
-use Og\Support\Cogs\Collections\Collection;
-use Og\Support\Str;
+use Og\Support\Collections\Collection;
+use Og\Support\Util;
 
 final class Paths extends Collection implements ArrayAccess
 {
@@ -36,7 +36,7 @@ final class Paths extends Collection implements ArrayAccess
         array_map(
             function ($key, $path) use (&$import)
             {
-                $this->set($key, Str::normalize_path($path));
+                $this->set($key, Util::normalize_path($path));
             },
             array_keys($import), array_values($import)
         );

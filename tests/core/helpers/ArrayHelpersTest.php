@@ -5,7 +5,7 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use Og\Support\Arr;
+use Og\Support\Util;
 
 /**
  * Test the framework support functions
@@ -29,22 +29,22 @@ class ArrayHelpersTest extends \PHPUnit_Framework_TestCase
     {
         ### array_to_object
 
-        $obj = Arr::to_object($this->source_array);
+        $obj = Util::cast_array_to_object($this->source_array);
         $this->assertEquals($obj->Apples, $this->source_array['Apples']);
 
         ### object_to_array
 
-        $array = Arr::object_to_array($obj);
+        $array = Util::cast_object_as_array($obj);
         $this->assertEquals($this->source_array, $array);
 
         ### copy_object_to_array
 
-        $obj2 = Arr::to_object(
+        $obj2 = Util::cast_array_to_object(
             [
                 'a' => 'not much',
             ]
         );
-        $obj1 = Arr::to_object(
+        $obj1 = Util::cast_array_to_object(
             [
                 'apples'      => 10,
                 'beets'       => 'nope',
@@ -53,7 +53,7 @@ class ArrayHelpersTest extends \PHPUnit_Framework_TestCase
                 'value_obj'   => $obj2,
             ]
         );
-        $obj_array = Arr::copy_object($obj1);
+        $obj_array = Util::array_from_object($obj1);
         $this->assertEquals(
             [
                 'apples'      => 10,
@@ -74,7 +74,7 @@ class ArrayHelpersTest extends \PHPUnit_Framework_TestCase
                 'Beef'   => ['hamburger', 'roast beef'],
                 'Candy'  => ['start' => 'now', 'end' => 'then'],
             ],
-            Arr::insert_before_key('Candy', $this->source_array, "Beef", ['hamburger', 'roast beef'])
+            Util::insert_before('Candy', $this->source_array, "Beef", ['hamburger', 'roast beef'])
         );
 
         ### array_except($array, $keys)
@@ -84,7 +84,7 @@ class ArrayHelpersTest extends \PHPUnit_Framework_TestCase
                 'Apples' => 'One',
                 'Candy'  => ['start' => 'now', 'end' => 'then'],
             ],
-            Arr::except(['Beets'], $this->source_array)
+            Util::array_except(['Beets'], $this->source_array)
         );
 
         ### array_pull(&$array, $key, $default = NULL)
@@ -92,7 +92,7 @@ class ArrayHelpersTest extends \PHPUnit_Framework_TestCase
         # copy the test array
         $worker = $this->source_array;
         # pull 'Beets' -> 2
-        $this->assertEquals(2, Arr::pull("Beets", $worker, $default = FALSE));
+        $this->assertEquals(2, Util::array_pull("Beets", $worker, $default = FALSE));
         # verify removed from original
         $this->assertArrayNotHasKey("Beets", $worker);
 
@@ -109,7 +109,7 @@ class ArrayHelpersTest extends \PHPUnit_Framework_TestCase
                 'Candy.start' => 'now',
                 'Candy.end'   => 'then',
             ],
-            Arr::dict($this->source_array)
+            Util::array_flatten($this->source_array)
         );
 
         ### s_to_a - string to array
@@ -121,7 +121,7 @@ class ArrayHelpersTest extends \PHPUnit_Framework_TestCase
                 'candy.start',
                 'candy.end',
             ],
-            Arr::s_to_a('apples beets candy.start candy.end')
+            Util::array_from_str('apples beets candy.start candy.end')
         );
 
         ### s_to_aa - string to associative array
@@ -133,7 +133,7 @@ class ArrayHelpersTest extends \PHPUnit_Framework_TestCase
                 'candy.start' => 'now',
                 'candy.end'   => 'never',
             ],
-            Arr::s_to_aa('apples:10, beets:nope, candy.start:now, candy.end:never')
+            Util::assoc_from_str('apples:10, beets:nope, candy.start:now, candy.end:never')
         );
 
     }
@@ -144,7 +144,7 @@ class ArrayHelpersTest extends \PHPUnit_Framework_TestCase
 
         # forget by single key
         $worker = $this->source_array;
-        Arr::forget('Candy', $worker);
+        Util::array_forget('Candy', $worker);
         $this->assertEquals(
             [
                 'Apples' => 'One',
@@ -154,7 +154,7 @@ class ArrayHelpersTest extends \PHPUnit_Framework_TestCase
         );
         # forget by dot path 
         $worker = $this->source_array;
-        Arr::forget('Candy.start', $worker);
+        Util::array_forget('Candy.start', $worker);
         $this->assertEquals(
             [
                 'Apples' => 'One',
@@ -170,38 +170,38 @@ class ArrayHelpersTest extends \PHPUnit_Framework_TestCase
             'George' => ['age' => 26, 'gender' => 'Male'],
             'Lois'   => ['age' => 32, 'gender' => 'Female'],
         ];
-        $this->assertEquals([26, 32], Arr::extract_list('age', $records));
+        $this->assertEquals([26, 32], Util::extract_column('age', $records));
 
         ### (simple) array_make_compare_list(array $array)
 
-        $worker = Arr::s_to_aa('name:Laura, access:Administrator');
+        $worker = Util::assoc_from_str('name:Laura, access:Administrator');
         $this->assertEquals(
             [
                 'name=`Laura`',
                 'access=`Administrator`',
             ],
-            Arr::make_compare_list($worker)
+            Util::make_compare($worker)
         );
         # empty returns null
-        $this->assertNULL(Arr::make_compare_list([]));
+        $this->assertNull(Util::make_compare([]));
         # list returns null on invalid array (must be associative)
-        $this->assertNull(Arr::make_compare_list(['bad']));
+        $this->assertNull(Util::make_compare(['bad']));
     }
 
     public function test04()
     {
         ### array_fill_object($obj, $array)
 
-        $obj = Arr::to_object(Arr::s_to_aa('name:Greg, location:Vancouver, cat:Julius'));
+        $obj = Util::cast_array_to_object(Util::assoc_from_str('name:Greg, location:Vancouver, cat:Julius'));
         $this->assertEquals(
             [
                 'name'     => 'Greg',
                 'location' => 'Vancouver',
                 'cat'      => 'Julius',
             ],
-            Arr::object_to_array($obj)
+            Util::cast_object_as_array($obj)
         );
-        $obj = Arr::fill_object($obj, Arr::s_to_aa('need:Coffee'));
+        $obj = Util::fill_object($obj, Util::assoc_from_str('need:Coffee'));
         $this->assertEquals(
             [
                 'name'     => 'Greg',
@@ -209,7 +209,7 @@ class ArrayHelpersTest extends \PHPUnit_Framework_TestCase
                 'cat'      => 'Julius',
                 'need'     => 'Coffee',
             ],
-            Arr::object_to_array($obj));
+            Util::cast_object_as_array($obj));
 
     }
 
@@ -221,13 +221,13 @@ class ArrayHelpersTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [
-                'stdClass' => Arr::s_to_aa('one:1, two:2, three:3, four:4'),
+                'stdClass' => Util::assoc_from_str('one:1, two:2, three:3, four:4'),
             ],
-            Arr::generate_object_value_hash($obj, Arr::s_to_aa('one:1, two:2, three:3, four:4'))
+            Util::value_class($obj, Util::assoc_from_str('one:1, two:2, three:3, four:4'))
         );
         # non-object returns null
         /** @noinspection PhpParamsInspection */
-        $this->assertNull(Arr::generate_object_value_hash('not an object', Arr::s_to_aa('one:1, two:2, three:3, four:4')));
+        $this->assertNull(Util::value_class('not an object', Util::assoc_from_str('one:1, two:2, three:3, four:4')));
 
         ### pivot_array_on_index(array $input)
 
@@ -254,13 +254,13 @@ class ArrayHelpersTest extends \PHPUnit_Framework_TestCase
                         'http://yahoo.com',
                     ],
             ],
-            Arr::pivot_array_on_index($worker)
+            Util::pivot_array($worker)
         );
 
         ### array_get($array, $key, $default = NULL)
 
-        $this->assertEquals('now', Arr::get('Candy.start', $this->source_array));
-        $this->assertEquals('not found', Arr::get('Candy.nope', $this->source_array, 'not found'));
+        $this->assertEquals('now', Util::array_get('Candy.start', $this->source_array));
+        $this->assertEquals('not found', Util::array_get('Candy.nope', $this->source_array, 'not found'));
 
         ###  multi_explode(array $delimiters, $string, $trim)
 
@@ -270,7 +270,7 @@ class ArrayHelpersTest extends \PHPUnit_Framework_TestCase
                 1 => ' Break it up',
                 2 => ' Ok?',
             ],
-            Arr::multi_explode('This is a string. Break it up! Ok?', ['.', '!'])
+            Util::multi_explode('This is a string. Break it up! Ok?', ['.', '!'])
         );
 
         ### convert_list_to_indexed_array($array)
@@ -280,19 +280,19 @@ class ArrayHelpersTest extends \PHPUnit_Framework_TestCase
                 0 => 'one',
                 1 => 'two',
             ],
-            Arr::convert_list_to_indexed_array(Arr::s_to_a('one two'))
+            Util::array_to_numeric_index(Util::array_from_str('one two'))
         );
 
         ### get_array_value_safely($index, $array)
 
-        $this->assertEquals(
-            [
-                'start' => 'now',
-                'end'   => 'then',
-            ],
-            Arr::get_array_value_safely('Candy', $this->source_array)
-        );
-        $this->assertNull(Arr::get_array_value_safely('does-not-exist', $this->source_array));
+        //$this->assertEquals(
+        //    [
+        //        'start' => 'now',
+        //        'end'   => 'then',
+        //    ],
+        //    Util::get_array_value_safely('Candy', $this->source_array)
+        //);
+        //$this->assertNull(Util::get_array_value_safely('does-not-exist', $this->source_array));
 
     }
 
@@ -307,12 +307,12 @@ class ArrayHelpersTest extends \PHPUnit_Framework_TestCase
             ],
         ];
 
-        $this->assertEquals('not found', Arr::get('record.lazy', $searchRA, 'not found'));
-        $this->assertEquals($searchRA['record'], Arr::search('record.lazy', $searchRA, 'not found'));
-        $this->assertEquals(26.58, Arr::get('record.amount', $searchRA, 'not found'));
-        //$this->assertEquals('not found', Arr::search('not.there', $searchRA, 'not found'));
+        $this->assertEquals('not found', Util::array_get('record.lazy', $searchRA, 'not found'));
+        $this->assertEquals($searchRA['record'], Util::array_search_and_replace('record.lazy', $searchRA, 'not found'));
+        $this->assertEquals(26.58, Util::array_get('record.amount', $searchRA, 'not found'));
+        //$this->assertEquals('not found', Util::search('not.there', $searchRA, 'not found'));
 
-        //ddump([$resultSearch, $resultGet]);
+        //die_dump([$resultSearch, $resultGet]);
     }
 
 }

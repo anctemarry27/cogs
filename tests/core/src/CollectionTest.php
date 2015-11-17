@@ -1,4 +1,4 @@
-<?php namespace Og\Support\Cogs\Collections;
+<?php namespace Og\Support\Collections;
 
 /**
  * @package Og
@@ -6,7 +6,7 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use Og\Support\Arr;
+use Og\Support\Util;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\Yaml\Yaml;
 
@@ -59,11 +59,11 @@ class CollectionTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(static::$collection->get('set'), ['test' => 'set test']);
 
         $this->assertEquals(NULL, static::$collection->set(999, 'set test'));
-        $this->assertEquals('default', static::$collection->search('does-not-exist', 'default'));
+        $this->assertEquals('default', static::$collection->search_and_replace('does-not-exist', 'default'));
 
-        $this->assertEquals(['test' => 'set test'], static::$collection->search('set', 'default'));
+        $this->assertEquals(['test' => 'set test'], static::$collection->search_and_replace('set', 'default'));
 
-        $this->assertEquals(static::$collection->search('set.test'), 'set test');
+        $this->assertEquals(static::$collection->search_and_replace('set.test'), 'set test');
         static::$collection->forget('set');
         $this->assertTrue(! static::$collection->has('set'));
 
@@ -115,7 +115,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($collection->get('merge_with.merge'), 'this');
 
         # test with flat array
-        $collection->merge(Arr::s_to_a('merge with'));
+        $collection->merge(Util::array_from_str('merge with'));
         $this->assertEquals($collection->get('merge'), NULL);
         $this->assertEquals($collection->get('with'), NULL);
 
@@ -167,7 +167,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
             $result[] = $key;
 
         sort($result);
-        $this->assertEquals($result, Arr::s_to_a('json part1 part2 yaml'));
+        $this->assertEquals($result, Util::array_from_str('json part1 part2 yaml'));
     }
 
     public function test9_Mutability()
@@ -183,7 +183,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
 
     public function test_replace()
     {
-        $collection = new Collection(new Yaml);
+        $collection = new Collection;
         $collection['test'] = TRUE;
         $collection->replace(['test' => FALSE]);
         $this->assertFalse((bool) $collection->get('test'));
@@ -191,12 +191,14 @@ class CollectionTest extends PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
-        static::$collection = new Collection(new Yaml);
+        static::$collection = new Collection;
         static::$collection->append('part1', ['item1' => 'stuff',]);
         static::$collection->freeze('*');
         static::assertTrue(static::$collection->immutable('part1'));
         static::$collection->thaw('*');
         static::assertFalse(static::$collection->immutable('part1'));
     }
+    
+    
 }
     

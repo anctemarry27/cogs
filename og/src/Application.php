@@ -5,6 +5,7 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
+use Og\Kernel\Kernel;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\SapiEmitter;
@@ -43,27 +44,30 @@ final class Application
     public function __construct(Kernel $kernel)
     {
         $this->kernel = $kernel;
-        $this->initialize();
-
         static::$instance = $this;
+
+        $this->initialize();
     }
 
     /** @return string */
     public function __toString() { return get_class($this); }
 
-    /** @return static */
-    public function getInstance() { return static::$instance ?: new static(new Kernel(Forge::getInstance())); }
-
-    /** @return Kernel */
-    public function kernel() { return $this->kernel; }
-
-    public function last_ditch()
+    /**
+     * @return bool
+     */
+    public function final_server_callback()
     {
         $this->server->{'response'}->getBody()->write('Yo!');
         echo forge('routing')->bodyToString($this->server->{'response'});
 
         return FALSE;
     }
+
+    /** @return static */
+    public function getInstance() { return static::$instance ?: new static(new Kernel(Forge::getInstance())); }
+
+    /** @return Kernel */
+    public function kernel() { return $this->kernel; }
 
     /**
      * Middleware listener/
@@ -81,7 +85,7 @@ final class Application
         $this->kernel->context()->set('application.spy_middleware.fired', ++$count);
         $this->kernel->context()->set('application.spy_middleware.request_query', $request->getUri());
 
-        $et = elapsed_time();
+        $et = elapsed_time_since_request();
         $class = (new \ReflectionClass($class))->getShortName();
         $response->getBody()->write("<div><b>$class</b> middleware event fired @<b>$et</b></div>" . PHP_EOL);
     }
@@ -123,11 +127,8 @@ final class Application
      */
     private function initialize()
     {
-        # register the application
-        $this->kernel->forge()->singleton(['app', Application::class], static::$instance);
-
         # snoop on middleware events
-        $this->kernel->events()->on(static::NOTIFY_MIDDLEWARE, [$this, 'middlewareSnooper']);
+        $this->kernel->events()->listen(static::NOTIFY_MIDDLEWARE, [$this, 'middlewareSnooper']);
     }
 
     /**

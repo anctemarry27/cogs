@@ -6,7 +6,7 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use App\Middleware\Middleware;
+use Og\Kernel\Kernel;
 
 /**
  * Test the Collection Class

@@ -7,7 +7,7 @@
  */
 
 use Og\Forge;
-use Og\Support\Arr;
+use Og\Support\Util;
 use Tracy\Debugger;
 use Tracy\FireLogger;
 
@@ -23,7 +23,7 @@ Forge::getInstance()->instance(['logger', FireLogger::class], $logger);
  *
  * @return string
  */
-function elapsed_time($raw = FALSE)
+function elapsed_time_since_request($raw = FALSE)
 {
     return ! $raw
         ? sprintf("%8.1f ms", (microtime(TRUE) - $_SERVER['REQUEST_TIME_FLOAT']) * 1000)
@@ -59,12 +59,12 @@ function location_from_backtrace($index = 2)
  *
  * @return mixed
  */
-function idump($var = NULL, $depth = 12)
+function og_dump($var = NULL, $depth = 12)
 {
     \Tracy\Debugger::$maxDepth = $depth;
 
     $args = func_get_args();
-    Arr::forget(func_num_args() - 1, $args);
+    Util::array_forget(func_num_args() - 1, $args);
 
     $dumper = defined('PHPUNIT_TESTS__') ? 'Tracy\Dumper::toTerminal' : 'Tracy\Debugger::dump';
 
@@ -93,7 +93,7 @@ function expose($value = NULL, $depth = 8)
         $lfb = location_from_backtrace($fence);
     }
 
-    idump($trace, $depth);
+    og_dump($trace, $depth);
 }
 
 /**
@@ -102,7 +102,7 @@ function expose($value = NULL, $depth = 8)
  * @param     $value
  * @param int $depth
  */
-function ddump($value = NULL, $depth = 8)
+function die_dump($value = NULL, $depth = 8)
 {
     expose($value, $depth);
     if ( ! defined('PHPUNIT_TESTS__'))

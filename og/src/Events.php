@@ -14,15 +14,14 @@
  */
 
 use Illuminate\Contracts\Events\Dispatcher as IlluminateEventsDispatcherContract;
-use Og\Support\Str;
+use Og\Support\Util;
 
 final class Events implements IlluminateEventsDispatcherContract
-
 {
     /**
      * @var Forge
      */
-    private $di;
+    private $forge;
 
     /**
      * The event firing stack.
@@ -61,7 +60,7 @@ final class Events implements IlluminateEventsDispatcherContract
      */
     function __construct()
     {
-        $this->di = forge();
+        $this->forge = forge();
 
         if (static::$instance)
             return static::$instance;
@@ -180,7 +179,7 @@ final class Events implements IlluminateEventsDispatcherContract
     {
         foreach ($this->listeners as $key => $value)
         {
-            if (Str::endsWith($key, '_pushed'))
+            if (Util::ends_with($key, '_pushed'))
             {
                 $this->forget($key);
             }
@@ -212,7 +211,7 @@ final class Events implements IlluminateEventsDispatcherContract
     {
         foreach ((array) $events as $event)
         {
-            if (Str::has('*', $event))
+            if (Util::string_has('*', $event))
             {
                 $this->setup_wildcard_listen($event, $listener);
             }
@@ -277,7 +276,7 @@ final class Events implements IlluminateEventsDispatcherContract
     {
         foreach ($this->listeners as $key => $value)
         {
-            if (Str::endsWith('_queue', $key))
+            if (Util::ends_with('_queue', $key))
                 $this->forget($key);
         }
     }
@@ -378,7 +377,7 @@ final class Events implements IlluminateEventsDispatcherContract
      */
     private function create_class_listener($listener)
     {
-        $container = $this->di;
+        $container = $this->forge->container();
 
         return function () use ($listener, $container)
         {
@@ -413,7 +412,7 @@ final class Events implements IlluminateEventsDispatcherContract
 
         foreach ($this->wildcards as $wildcard => $listeners)
         {
-            if (Str::pattern_matches($eventName, $wildcard))
+            if (Util::pattern_matches($eventName, $wildcard))
                 $wildcards = array_merge($wildcards, $listeners);
         }
 
@@ -431,7 +430,7 @@ final class Events implements IlluminateEventsDispatcherContract
     {
         if (is_string($subscriber))
         {
-            return $this->di->make($subscriber);
+            return $this->forge->make($subscriber);
         }
 
         return $subscriber;

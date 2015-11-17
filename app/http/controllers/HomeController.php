@@ -6,24 +6,18 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use Og\Support\Cogs\Collections\Input;
-use Psr\Http\Message\ResponseInterface as Response;
-
-class HomeController extends Controller
+class HomeController extends RoutingController
 {
-    /**
-     * @param Input    $params
-     * @param Response $response
-     *
-     * @return int
-     */
-    public function index(Input $params, Response $response)
+    public function index()
     {
+        $name = input('name');
+        
         # determine if this call includes a 'name' query
-        if ($params->has('name'))
-            return $response->getBody()->write("Hello from the HomeController for {$params['name']}!");
+        if ($name)
+            // handle /controller/name
+            return response("Hello from the HomeController for {$name}!");
         else
-            return $response->getBody()->write('Hello from the HomeController!');
+            // handle /controller
+            return response('Hello from the HomeController!');
     }
-
 }

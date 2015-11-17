@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 echo ""
 echo "rebuilding SUPPORT autoload..."
-cd og/src/support
+cd og/support
 composer dumpautoload -o
 echo "...done rebuilding SUPPORT."
 echo ""

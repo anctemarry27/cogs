@@ -7,7 +7,7 @@
 
 namespace Og;
 
-use Og\Support\Str;
+use Og\Support\Util;
 
 /**
  * Test the framework core classes
@@ -38,7 +38,7 @@ class PathsTest extends \PHPUnit_Framework_TestCase
             'root' => ROOT,
             'vendors' => VENDOR,
             # import_array should normalize paths in the array
-            'config' => Str::stripTrailing('/', realpath(__DIR__ . '/../../config/')) . '/',
+            'config' => Util::strip_tail('/', realpath(__DIR__ . '/../../config/')) . '/',
         ]);
 
         $paths->add('goop', '/here/to/goop');

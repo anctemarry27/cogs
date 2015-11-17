@@ -6,34 +6,42 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-# reset timezone to UTC before configuration. 
-use App\Middleware\Middleware;
 use Dotenv\Dotenv;
+use Og\Kernel\Kernel;
 
 include 'paths.php';
-include 'helpers.php';
-include 'messages.php';
+include SUPPORT . 'helpers.php';
+include SUPPORT . 'messages.php';
 include VENDOR . 'autoload.php';
 
-$forge = new Forge;
-$config = Config::createFromFolder(CONFIG);
-date_default_timezone_set($config['app.timezone']);
+/** @noinspection PhpUnusedLocalVariableInspection */
+$forge  = new Forge(new \Illuminate\Container\Container);
 
-# load environment
+// register the Config
+$forge->add(['config', Config::class], Config::createFromFolder(CONFIG));
+
+// register the Kernel
+$forge->singleton(['kernel', Kernel::class], new Kernel($forge));
+
+// set the timezone (as required by earlier versions of PHP before 7.0.0
+date_default_timezone_set($forge['config']['app.timezone']);
+
+# load environment as a requirement
 if (file_exists(ROOT . '.env'))
 {
     $dotenv = new Dotenv(ROOT);
     $dotenv->overload();
 }
+else
+    throw new \LogicException('Unable to find root environment file. Did you remember to rename `.env-example?');
 
 # install Tracy if in DEBUG mode
-if (getenv('DEBUG') === 'true')
+if (strtolower(getenv('DEBUG')) === 'true')
 {
     # core debug utilities
     # note that debug requires that the environment has been loaded
     include 'debug.php';
 }
 
-//$services = new Services($forge);
-//$middleware = new Middleware($forge);
-//$app = new Application(new Kernel($forge));
+// register the application instance
+$forge['app'] = function () use ($forge) { return new Application($forge->make('kernel')); };

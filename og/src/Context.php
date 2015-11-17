@@ -7,8 +7,8 @@
  */
 
 use ArrayAccess;
-use Og\Support\Cogs\Collections\CollectionInterface;
-use Og\Support\Cogs\Collections\ImmutableCollection;
+use Og\Support\Collections\CollectionInterface;
+use Og\Support\Collections\ImmutableCollection;
 
 /**
  * Context is a dynamic data object wrangler.

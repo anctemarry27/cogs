@@ -36,26 +36,85 @@ final class Forge implements ContainerInterface, ArrayAccess
     /** @var static $instance */
     private static $instance = NULL;
 
-    /** @var Services */
-    private static $services;
-
     /**
      * Forge is a final Singleton.
      *
+     * The Forge requires the illuminate/container for compatibility.
+     * Although the constructor exposes the dependency and auto-instantiates
+     * the illuminate/container, the option is provided to instantiate the
+     * illuminate/container outside of the Forge.
+     *
+     * @param IlluminateContainer $container
      */
-    public function __construct()
+    public function __construct(IlluminateContainer $container = NULL)
     {
         if ( ! static::$instance)
         {
-            static::$container = new IlluminateContainer;
-            static::$services = new Services($this);
+            static::$container = $container ?: new IlluminateContainer;
             static::$instance = $this;
 
-            # DI encapsulates illuminate and league containers
             $this->register_aliases();
         }
 
         return static::$instance;
+    }
+
+    /**
+     * Register classes and aliases associated with the Forge.
+     */
+    private function register_aliases()
+    {
+        $this->singleton(['forge', Forge::class], $this->getInstance());
+        static::$container->instance(['container', ContainerInterface::class], $this->getInstance());
+        static::$container->instance(['ioc', IlluminateContainer::class], $this->container());
+    }
+
+    /**
+     * Return an instance of the Forge.
+     *
+     * If the forge has already been instantiated then return the object reference.
+     * Otherwise, return a new instantiation.
+     *
+     * @return static
+     */
+    static function getInstance()
+    {
+        /**
+         * If the internal container has been instantiated then return
+         * the current static instance.
+         *
+         * Otherwise, return a new forge instance.
+         */
+        return (static::$container instanceof IlluminateContainer)
+            ? static::$instance
+            : new static(new IlluminateContainer);
+    }
+
+    /**
+     * Return a reference to, or call a method of, the embedded illuminate/container.
+     *
+     * The only real purpose of this method is to expose the illuminate/container
+     * for use with imported or encapsulated packages that require the container.
+     *
+     * (ie: BladeView.)
+     *
+     * @todo - consider another way to do this. Breaking the 'information hiding' tenet is bad.
+     *
+     * @param string $method
+     * @param array  $parameters
+     *
+     * @return IlluminateContainer|mixed|null
+     */
+    public function container($method = '', $parameters = NULL)
+    {
+        # return the encapsulated illuminate/container instance is no method name is passed
+        if (empty($method))
+            return static::$container;
+
+        # otherwise, pass the method name on to the illuminate/container
+        return empty($parameters)
+            ? call_user_func([static::$container, $method])
+            : call_user_func_array([static::$container, $method], (array) $parameters);
     }
 
     /**
@@ -75,139 +134,16 @@ final class Forge implements ContainerInterface, ArrayAccess
             throw new \BadMethodCallException("The `$method` method is not associated with DI or its service container.");
     }
 
-    /*@formatter:off */
     /*
      *  Discourage cloning and serialization.
      */
-    public function __clone()      { throw new ForgeNotPermittedError('Cloning the DI is not permitted.'); }
-    public function __set_state()  { throw new ForgeNotPermittedError('Setting the DI state is not permitted.'); }
-    public function __sleep()      { throw new ForgeNotPermittedError('Putting the DI to sleep is not permitted.'); }
-    public function __toString()   { return get_class($this); }
-    public function __wakeup()     { throw new ForgeNotPermittedError('Waking the DI is not permitted.'); }
-    /*@formatter:on */
-
-    /**
-     * Add (bind) a abstract to an implementation with optional alias.
-     *
-     * Notes:
-     *      $abstract is either [alias,abstract] or abstract.
-     *      $concrete objects that are not invokable are added as instances.
-     *      All other cases result in binding.
-     *
-     * @param string|array $abstract
-     * @param mixed        $concrete
-     * @param bool         $singleton
-     *
-     * @return $this
-     */
-    public function add($abstract, $concrete = NULL, $singleton = FALSE)
-    {
-        $pseudonym = NULL;
-
-        if (is_array($abstract))
-        {
-            list($pseudonym, $abstract) = array_values($abstract);
-            static::$container->alias($abstract, $pseudonym);
-        }
-
-        if (is_object($concrete) and ! is_callable($concrete))
-            static::$container->instance($abstract, $concrete);
-        else
-            static::$container->bind($abstract, $concrete, $singleton);
-
-        return $this;
-    }
-
-    /**
-     * Call the given Closure / class@method and inject its dependencies.
-     *
-     * Note: Uses the illuminate/container `call` method.
-     *
-     * @param  callable|string $callback
-     * @param  array           $args
-     *
-     * @return mixed
-     */
-    public function call($callback, array $args = [])
-    {
-        return static::$container->call($callback, $args);
-    }
-
-    /**
-     * call a method of the encapsulated illuminate/container.
-     *
-     * @param string $method
-     * @param array  $parameters
-     *
-     * @return IlluminateContainer|mixed|null
-     */
-    public function container($method = '', $parameters = NULL)
-    {
-        # override encapsulated getInstance() method
-        if ($method === 'getInstance' or $method === '')
-            return static::$container;
-
-        return empty($parameters)
-            ? call_user_func([static::$container, $method])
-            : call_user_func_array([static::$container, $method], (array) $parameters);
-    }
-
-    /**
-     * Get a concrete item from the container.
-     *
-     * Note: Uses illuminate/container `bound()` and `make()` methods.
-     *
-     * @param  string $abstract
-     * @param  array  $args
-     *
-     * @return mixed
-     */
-    public function get($abstract, array $args = [])
-    {
-        if (static::$container->bound($abstract))
-            return static::$container->make($abstract, $args);
-
-        throw new \InvalidArgumentException("Forge alias `$abstract` does not exist.");
-    }
-
-    /**
-     * Report whether an abstract exists in the container.
-     *
-     * Note: Uses illuminate/container `bound()` method.
-     *
-     * @param string $abstract
-     *
-     * @return bool
-     */
-    public function has($abstract)
-    {
-        return static::$container->bound($abstract);
-    }
-
-    /**
-     * Associate an abstract with a concrete object.
-     *
-     * Note: Uses illuminate/container `instance()` method.
-     *
-     * @param $abstract
-     * @param $instance
-     */
-    public function instance($abstract, $instance)
-    {
-        static::$container->instance($abstract, $instance);
-    }
-
-    /**
-     * Check if an item is being managed as a singleton
-     *
-     * @param  string $alias
-     *
-     * @return boolean
-     */
-    public function isSingleton($alias)
-    {
-        return static::$container->isShared(is_string($alias) ? $alias : get_class($alias));
-    }
+    # @formatter:off
+    public function __clone()     { throw new ForgeNotPermittedError('Cloning the Forge is not permitted.'); }
+    public function __set_state() { throw new ForgeNotPermittedError('Setting the Forge state is not permitted.'); }
+    public function __sleep()     { throw new ForgeNotPermittedError('Putting the Forge to sleep is not permitted.'); }
+    public function __toString()  { return get_class($this); }
+    public function __wakeup()    { throw new ForgeNotPermittedError('Waking the Forge is not permitted.'); }
+    # @formatter:on
 
     /**
      * @param mixed $offset
@@ -251,6 +187,117 @@ final class Forge implements ContainerInterface, ArrayAccess
     }
 
     /**
+     * Add (bind) a abstract to an implementation with optional alias.
+     *
+     * Notes:
+     *      $abstract is either [alias,abstract] or abstract.
+     *      $concrete objects that are anonymous functions are added as instances.
+     *      All other cases result in binding.
+     *
+     * @param string|array $abstract
+     * @param mixed        $concrete
+     * @param bool         $singleton
+     *
+     * @return $this
+     */
+    public function add($abstract, $concrete = NULL, $singleton = FALSE)
+    {
+        // normalize $abstract array for illuminate/container
+        if (is_array($abstract))
+        {
+            list($alias, $abstract) = array_values($abstract);
+            $abstract = [$abstract => $alias];
+        }
+
+        // `add` treats non-callable concretes as instances
+        if (is_object($concrete) and ! is_callable($concrete))
+            static::$container->instance($abstract, $concrete);
+        else
+            static::$container->bind($abstract, $concrete, $singleton);
+    }
+
+    /**
+     * Call the given Closure / class@method and inject its dependencies.
+     *
+     * Note: Uses the illuminate/container `call` method.
+     *
+     * @param  callable|string $callback
+     * @param  array           $args
+     *
+     * @return mixed
+     */
+    public function callWithDependencyInjection($callback, array $args = [])
+    {
+        return static::$container->call($callback, $args);
+    }
+
+    /**
+     * Get a concrete item from the container.
+     *
+     * Note: Uses illuminate/container `bound()` and `make()` methods.
+     *
+     * @param  string $abstract
+     * @param  array  $args
+     *
+     * @return mixed
+     */
+    public function get($abstract, array $args = [])
+    {
+        if (static::$container->bound($abstract))
+            return static::$container->make($abstract, $args);
+
+        throw new \InvalidArgumentException("Dependency alias `$abstract` does not exist.");
+    }
+
+    /**
+     * Report whether an abstract exists in the container.
+     *
+     * @param string $abstract
+     *
+     * @return bool
+     */
+    public function has($abstract)
+    {
+        return static::$container->bound($abstract);
+    }
+
+    /**
+     * Associate an abstract with a concrete object.
+     *
+     * @param $abstract
+     * @param $instance
+     */
+    public function instance($abstract, $instance)
+    {
+        static::$container->instance($abstract, $instance);
+    }
+
+    /**
+     * Check if an item is being managed as a singleton
+     *
+     * @param  string $alias
+     *
+     * @return boolean
+     */
+    public function isSingleton($alias)
+    {
+        return static::$container->isShared(is_string($alias) ? $alias : get_class($alias));
+    }
+
+    /**
+     * Static pseudonym of get()
+     *
+     * @param       $abstract
+     * @param array $args
+     *
+     * @return mixed|object
+     */
+    public static function make($abstract, array $args = [])
+    {
+        return static::$container->make((string) $abstract, (array) $args);
+    }
+
+    /**
      * Remove an entry from the DI
      *
      * @param $abstract
@@ -278,8 +325,12 @@ final class Forge implements ContainerInterface, ArrayAccess
      *
      * @return void
      */
-    public function shared($abstract, $concrete)
+    public function shared($abstract, $concrete = NULL)
     {
+        // translate ['alias','concrete'] to ['alias'=>'concrete'] for embedded DI 
+        if (is_array($abstract))
+            $abstract = [$abstract[0] => $abstract[1]];
+
         static::$container->bind($abstract, $concrete, TRUE);
     }
 
@@ -311,53 +362,5 @@ final class Forge implements ContainerInterface, ArrayAccess
 
         if (is_callable($concrete))
             static::$container->singleton($abstract, $concrete);
-
     }
-
-    /**
-     * Call a Closure with dependency injection.
-     *
-     * @param  \Closure $callback
-     * @param  array    $parameters
-     *
-     * @return \Closure
-     */
-    public function wrapClosureWithDependencies(Closure $callback, array $parameters = [])
-    {
-        return static::$container->wrap($callback, $parameters);
-    }
-
-    /**
-     * Return an instance of the DI. Enforces Singleton status.
-     *
-     * @return static
-     */
-    static function getInstance()
-    {
-        return self::$instance ?: new static();
-    }
-
-    /**
-     * Static pseudonym of get()
-     *
-     * @param       $abstract
-     * @param array $args
-     *
-     * @return mixed|object
-     */
-    public static function make($abstract, array $args = [])
-    {
-        return static::$container->make((string) $abstract, (array) $args);
-    }
-
-    /**
-     * Register classes and aliases associated with the Forge.
-     */
-    private function register_aliases()
-    {
-        $this->singleton(['forge', Forge::class], $this->getInstance());
-        static::$container->instance(['container', ContainerInterface::class], $this->getInstance());
-        static::$container->instance(['ioc', IlluminateContainer::class], $this->container('getInstance'));
-    }
-
 }

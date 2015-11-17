@@ -51,7 +51,7 @@ class ConvenienceHelpersTest extends \PHPUnit_Framework_TestCase
         //$this->assertNull(input('password'));
         //
         ////$router = new Router(new RouteCollection, new RestfulStrategy);
-        ////$router->get('router.test.router', '/router.test/{id}', function (Request $request, $id) { ddump($request->attributes); return [$id]; });
+        ////$router->get('router.test.router', '/router.test/{id}', function (Request $request, $id) { die_dump($request->attributes); return [$id]; });
         ////$result = $router->dispatch('router.test.router', '/router.test/6')->getContent();
         //
         //$this->assertTrue(response('Page not found', 404) instanceof Response);
@@ -72,7 +72,7 @@ class ConvenienceHelpersTest extends \PHPUnit_Framework_TestCase
         //);
         //
         //forge('router')->namedRouteDispatch('test.route.name1', '/route-test1');
-        //ddump(forge('routing')->dispatch('GET','/route-test1'));
+        //die_dump(forge('routing')->dispatch('GET','/route-test1'));
     }
 
 }

@@ -11,50 +11,87 @@ use Og\Events;
 use Og\Forge;
 use Og\Interfaces\ContainerInterface;
 use Og\Interfaces\MiddlewareInterface;
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Message\ResponseInterface as ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface as RequestInterface;
+use Zend\Stratigility\Http\Request;
+use Zend\Stratigility\Http\Response;
 use Zend\Stratigility\MiddlewarePipe;
 
 class Middleware extends MiddlewarePipe implements MiddlewareInterface
 {
+    /** @var Events */
+    protected $events;
+
     /** @var ContainerInterface|Forge */
     protected $forge;
 
     /**
      * Middleware constructor.
-     *
-     * @param ContainerInterface $forge
      */
-    public function __construct(ContainerInterface $forge)
+    public function __construct()
     {
-        $this->forge = $forge;
-
         parent::__construct();
+        $this->forge  = Forge::getInstance();
+        $this->events = $this->forge->make(Events::class);
     }
 
     /**
-     * @param Request       $request
-     * @param Response      $response
-     * @param callable|NULL $next
+     * @param RequestInterface|Request   $request
+     * @param ResponseInterface|Response $response
+     * @param callable|NULL              $next
      *
      * @return Response
      */
-    public function __invoke(Request $request, Response $response, callable $next = NULL)
+    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next = NULL)
     {
         /** @var Events $events - cache for event object */
-        static $events;
-        $events = $events ?: $this->forge->make('events');
+        //static $events;
+        //$events = $events ?: $this->forge->make('events');
 
         # TODO: Middleware Pre-Hook?
 
         # call the app middleware before event
 
-        $events->fire(Application::NOTIFY_MIDDLEWARE, [$this, $request, $response]);
+        $this->events->fire(Application::NOTIFY_MIDDLEWARE, [$this, $request, $response]);
 
         # call parent middleware
-        return parent::__invoke($request, $response, $next);
+        return parent::__invoke($this->decorateRequest($request), $this->decorateResponse($response), $next);
 
         # TODO: Middleware Post-Hook?
+    }
+
+    /**
+     * Decorate the Request instance
+     *
+     * @param RequestInterface|Request $request
+     *
+     * @return Request
+     */
+    public function decorateRequest(RequestInterface $request)
+    {
+        if ($request instanceof Request)
+        {
+            return $request;
+        }
+
+        return new Request($request);
+    }
+
+    /**
+     * Decorate the Response instance
+     *
+     * @param ResponseInterface|Response $response
+     *
+     * @return Response
+     */
+    public function decorateResponse(ResponseInterface $response)
+    {
+        if ($response instanceof Response)
+        {
+            return $response;
+        }
+
+        return new Response($response);
     }
 
     /**
@@ -71,6 +108,19 @@ class Middleware extends MiddlewarePipe implements MiddlewareInterface
                 : $this->add($middleware);
         }
 
+    }
+
+    /**
+     * @param $abstract
+     */
+    public function add($abstract)
+    {
+        # if no namespace is evident then inject the Middleware namespace.
+
+        /** @var static $abstract */
+        $abstract = $this->filter_namespace($abstract);
+
+        $this->pipe($abstract::create());
     }
 
     /**
@@ -103,29 +153,16 @@ class Middleware extends MiddlewarePipe implements MiddlewareInterface
 
     /**
      * Middleware 'Factory'
-     * 
+     *
      * @return static
      */
     static public function create()
     {
         # cache a forge reference
-        static $forge = null;
+        static $forge = NULL;
         $forge = $forge ?: Forge::getInstance();
-        
+
         return new static($forge);
-    }
-
-    /**
-     * @param $abstract
-     */
-    public function add($abstract)
-    {
-        # if no namespace is evident then inject the Middleware namespace.
-
-        /** @var static $abstract */
-        $abstract = $this->filter_namespace($abstract);
-
-        $this->pipe($abstract::create());
     }
 
 }

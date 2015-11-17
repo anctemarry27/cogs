@@ -7,7 +7,7 @@
  */
 
 use FastRoute\RouteCollector;
-use Og\Support\Cogs\Collections\Input;
+use Og\Support\Collections\Input;
 use Zend\Diactoros\Response;
 
 /** @var routeCollector $routes */

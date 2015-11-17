@@ -21,7 +21,7 @@ if ( ! defined('ROOT'))
     define('STORAGE', ROOT . 'local/storage/');
     define('LOCAL_CACHE', ROOT . 'local/cache/');
     define('LOCAL_LOGS', ROOT . 'local/logs/');
-    define('SUPPORT', CORE . 'Support/');
+    define('SUPPORT', ROOT . 'og/Support/');
 }
 
 return [

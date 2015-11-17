@@ -6,16 +6,19 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use Og\Support\Cogs\Collections\ImmutableCollection;
-use Og\Support\Str;
+use Og\Support\Collections\ImmutableCollection;
+use Og\Support\Collections\ImportExportCollection;
+use Og\Support\Util;
 
 class Config extends ImmutableCollection implements \ArrayAccess, \JsonSerializable
 {
+    # include YAML and JSON import/export
+    use ImportExportCollection;
 
     /**
      * @param array $import
      */
-    function importArray(Array $import)
+    public function importArray(Array $import)
     {
         array_map(
             function ($key, $value) { $this->set($key, $value); },
@@ -27,7 +30,7 @@ class Config extends ImmutableCollection implements \ArrayAccess, \JsonSerializa
     /**
      * @param $file
      */
-    function importFile($file)
+    public function importFile($file)
     {
         $this->import_files([$file]);
     }
@@ -39,7 +42,7 @@ class Config extends ImmutableCollection implements \ArrayAccess, \JsonSerializa
      *
      * @return static
      */
-    function importFolder($base_path)
+    public function importFolder($base_path)
     {
         $this->import($base_path);
 
@@ -51,7 +54,7 @@ class Config extends ImmutableCollection implements \ArrayAccess, \JsonSerializa
      *
      * @return static
      */
-    function make(array $array = [])
+    public function make(array $array = [])
     {
         return new static($array);
     }
@@ -59,11 +62,21 @@ class Config extends ImmutableCollection implements \ArrayAccess, \JsonSerializa
     /**
      * @param string $folder - name of folder with config files
      *
-     * @return mixed
+     * @return static
      */
     static public function createFromFolder($folder)
     {
         return (new static)->importFolder($folder);
+    }
+
+    /**
+     * @param $filename
+     *
+     * @return static
+     */
+    static public function createFromYaml($filename)
+    {
+        return (new static)->importYAML('',\file_get_contents(CONFIG.$filename));
     }
 
     /**
@@ -75,8 +88,8 @@ class Config extends ImmutableCollection implements \ArrayAccess, \JsonSerializa
      */
     private function files_from_path($base_path)
     {
-        $base_path = Str::normalize_path($base_path);
-        $files = glob($base_path . "*.php");
+        $base_path = Util::normalize_path($base_path);
+        $files     = glob($base_path . "*.php");
 
         return $files;
     }

@@ -20,7 +20,7 @@ class ElapsedTimeMiddleware extends Middleware
      */
     public function __invoke(Request $request, Response $response, callable $next = NULL)
     {
-        $elapsed_time = elapsed_time();
+        $elapsed_time = elapsed_time_since_request();
         $response->getBody()->write("<div>Elapsed time : $elapsed_time</div>" . PHP_EOL);
 
         // delegate to parent

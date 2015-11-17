@@ -5,7 +5,7 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use Og\Support\Cogs\ClassFinder;
+use Og\Support\ClassFinder;
 use Symfony\Component\Console\Application;
 
 # include as much of the framework as possible

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-cd og/src/support
+cd og/support
 echo ""
 echo "Updating cogs SUPPORT packages..."
 composer update
-cd ../../..
+cd ../..
 echo "... done updating SUPPORT."
 echo ""

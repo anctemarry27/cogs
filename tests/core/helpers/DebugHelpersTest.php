@@ -19,12 +19,12 @@
 
         public function test01()
         {
-            ### elapsed_time()
+            ### elapsed_time_since_request()
 
-            $now = elapsed_time(TRUE);
-            $this->assertGreaterThan($now, elapsed_time(TRUE));
-            $this->assertStringEndsWith('ms', elapsed_time());
-            $this->assertStringEndsNotWith('ms', (string) elapsed_time(TRUE));
+            $now = elapsed_time_since_request(TRUE);
+            $this->assertGreaterThan($now, elapsed_time_since_request(TRUE));
+            $this->assertStringEndsWith('ms', elapsed_time_since_request());
+            $this->assertStringEndsNotWith('ms', (string) elapsed_time_since_request(TRUE));
 
             ### location_from_backtrace($index = 2)
 
@@ -39,7 +39,7 @@
             # another solution) is to call them for code coverage.
             
             //expose("expose test");
-            //ddump('ddump test');
+            //die_dump('die_dump test');
 
             ### readable_error_type($error_type)
 

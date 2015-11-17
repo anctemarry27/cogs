@@ -36,7 +36,6 @@ class ForgeTest extends PHPUnit_Framework_TestCase
     {
         $this->assertTrue((new Forge)->getInstance() === (new Forge)->getInstance());
         $this->services->registerServiceProviders();
-
     }
 
     public function test01_instance()
@@ -47,7 +46,7 @@ class ForgeTest extends PHPUnit_Framework_TestCase
 
     public function test02_add()
     {
-        $this->assertTrue($this->forge->add('function', function () { return 'I am a function.'; }) instanceof Forge);
+        $this->assertTrue($this->forge->add('function', function () { return 'I am a function.'; }) === NULL);
         $this->assertEquals('I am a function.', $this->forge['function']);
 
         $this->forge->add('spanks', new TestServiceProvider($this->forge));
@@ -67,7 +66,7 @@ class ForgeTest extends PHPUnit_Framework_TestCase
     {
         $di = $this->forge;
 
-        $this->assertTrue($di->container('getInstance') instanceof IlluminateContainer);
+        $this->assertTrue($di->container() instanceof IlluminateContainer);
         $this->assertTrue(forge('ioc') instanceof IlluminateContainer);
         $this->assertTrue(forge('forge') instanceof Forge);
         $this->assertTrue(forge('Og\Forge') instanceof Forge);
@@ -76,8 +75,8 @@ class ForgeTest extends PHPUnit_Framework_TestCase
         $di->singleton('speck', function () { return 'speck'; });
         $this->assertEquals('speck', $di['speck']);
 
-        $di->shared('elapsed_time', function () { return elapsed_time(); });
-        $this->assertStringEndsWith('ms', $di->offsetGet('elapsed_time'));
+        $di->shared('elapsed_time_since_request', function () { return elapsed_time_since_request(); });
+        $this->assertStringEndsWith('ms', $di->offsetGet('elapsed_time_since_request'));
 
         # note that the first argument to the function is always the DI
         # although we are not using it in this example
@@ -100,7 +99,7 @@ class ForgeTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($di, forge());
         $this->assertEquals(Forge::getInstance(), forge());
 
-        $this->assertTrue($di->container('getInstance') instanceof Illuminate\Container\Container);
+        $this->assertTrue($di->container() instanceof Illuminate\Container\Container);
         $this->assertTrue(array_key_exists('Og\Forge', $di->container('getBindings')));
     }
 

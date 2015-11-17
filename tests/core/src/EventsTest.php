@@ -6,7 +6,7 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use Og\Support\Cogs\Collections\Collection;
+use Og\Support\Collections\Collection;
 
 /**
  * Test the framework core classes

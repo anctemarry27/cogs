@@ -1,6 +1,6 @@
 <?php namespace Og\Views;
 
-use Og\Support\Str;
+use Og\Support\Util;
 
 /**
  * @package Og
@@ -56,8 +56,8 @@ class BladeViewTest extends \PHPUnit_Framework_TestCase
     public function test_02_BladeView_layout()
     {
         $html = $this->view->render('pages.home', ['contents' => 'This was passed at render time.']);
-        $this->assertTrue(Str::has('<div class="container">', $html));
-        $this->assertTrue(Str::has('This was passed at render time', $html));
+        $this->assertTrue(Util::string_has('<div class="container">', $html));
+        $this->assertTrue(Util::string_has('This was passed at render time', $html));
     }
 
 }

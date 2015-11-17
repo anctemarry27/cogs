@@ -6,7 +6,7 @@
      * @author  Greg Truesdell <odd.greg@gmail.com>
      */
 
-    use Og\Support\Cogs\Collections\Collection;
+    use Og\Support\Collections\Collection;
     use Symfony\Component\Yaml\Yaml;
 
     /**
@@ -89,6 +89,13 @@
 
             $this->assertTrue($config2 instanceof Config,
                 'make() should create a new config object.');
+            
+        }
+
+        public function test_export()
+        {
+            file_put_contents('tests/cogs.yaml', Config::createFromFolder(CONFIG)->exportYAML());
+            //die_dump(Config::createFromYaml('cogs.yaml')->copy());
         }
 
     }

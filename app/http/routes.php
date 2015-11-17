@@ -1,4 +1,5 @@
-<?php
+<?php namespace Og;
+
 /**
  * Route definitions.
  *
@@ -12,32 +13,16 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 use FastRoute\RouteCollector;
-use Og\Interfaces\ContainerInterface as Container;
-use Og\Support\Cogs\Collections\Input;
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
+use Og\Support\Collections\Input;
 
-const APP_NAMESPACE = "App\\Http\\Controllers\\";
+/** @var RouteCollector $routes */
 
-/** @var routeCollector $routes */
+$routes->addRoute(['GET'], '/controller[/{name}[/{action}]]', "HomeController@index");
 
 $routes->addRoute(['GET', 'POST'], '/',
-    function (Container $di, Request $request, Response $response)
-    {
-        return $response->getBody()->write('Root Route, Baby!');
-    }
-);
+    function () { return \response('Root Route, Baby!'); });
 
-$routes->addRoute(['GET'], '/controller', APP_NAMESPACE . "HomeController@index");
-$routes->addRoute(['GET'], '/controller/{name}', APP_NAMESPACE . "HomeController@index");
+//$routes->addRoute(['GET'], '/controller', "HomeController@index");
 
 $routes->addRoute(['GET', 'POST'], '/test/{name}',
-    function (Input $input, Response $response)
-    {
-        # Http response
-        $response->getBody()->write("Test Route [{$input['name']}]");
-
-        # test response as text 
-        return "Test Route [{$input['name']}]";
-    }
-);
+    function (Input $input) { return \response("Test Route [{$input['name']}]"); });
